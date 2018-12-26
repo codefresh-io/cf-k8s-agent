@@ -1,0 +1,29 @@
+{
+  "name": "cf-k8s-agent",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "morgan": "~1.9.0"
+  },
+  "main": "bin/www",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/codefresh-io/cf-k8s-agent.git"
+  },
+  "keywords": [
+    "kubernetes"
+  ],
+  "bugs": {
+    "url": "https://github.com/codefresh-io/cf-k8s-agent/issues"
+  },
+  "homepage": "https://github.com/codefresh-io/cf-k8s-agent#readme",
+  "description": ""
+}

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cf-k8s-agent
+  labels:
+    component: cf-k8s-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: cf-k8s-agent
+  template:
+    metadata:
+      labels:
+        component: cf-k8s-agent
+    spec:
+      containers:
+        - name: cf-k8s-agent
+          image: andriicodefresh/cf-k8s-agent
+          ports:
+            - containerPort: 9020

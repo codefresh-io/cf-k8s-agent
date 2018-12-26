@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cf-k8s-agent-node-port
+spec:
+  type: NodePort
+  ports:
+    - port: 9021
+      targetPort: 9020
+      nodePort: 31055
+  selector:
+    component: cf-k8s-agent
