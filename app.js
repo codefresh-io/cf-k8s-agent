@@ -4,34 +4,52 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const logger = require('morgan');
+const _ = require('lodash');
+const Kefir = require('kefir');
 
 const { Client } = require('kubernetes-client');
 const { config } = require('kubernetes-client');
 const JSONStream = require('json-stream');
 const rp = require('request-promise');
 
-let counter = 0;
+const resources = require('./k8s-resources');
+
+// let counter = 0;
 
 async function getClient() {
-    const client = new Client({ config: config.getInCluster() });
-    await client.loadSpec();
-    return client;
+    if (process.env.CLUSTER_URL) {
+        const conf = {
+            url: process.env.CLUSTER_URL,
+            auth: {
+                bearer: process.env.CLUSTER_TOKEN,
+            },
+            ca: process.env.CLUSTER_CA,
+        };
+        const client = new Client({ config: conf });
+        await client.loadSpec();
+        return client;
+    } else {
+        const client = new Client({ config: config.getInCluster() });
+        console.log('config', JSON.stringify(config.getInCluster()));
+        await client.loadSpec();
+        return client;
+    }
 }
 
 async function watch(client) {
-    const stream = client.apis.apps.v1.watch.namespaces('default').deployments.getStream();
-    const jsonStream = new JSONStream();
-    stream.pipe(jsonStream);
-    jsonStream.on('data', async (obj) => {
-        console.log('Event: ', JSON.stringify(obj, null, 2));
+    const obss = _.values(resources.resources).map((resource) => {
+        const stream = resource.getStream(client);
+        return Kefir.fromEvents(stream, 'data');
+    });
+
+    const mergedStream = Kefir.merge(obss);
+    mergedStream.onValue(async (obj) => {
         rp({
             method: 'POST',
             uri: `https://webhook.site/4717800e-cc87-4da0-a44b-585ef63e2531`,
             body: obj,
             json: true,
         }).then(console.log, console.error);
-        counter++;
-        if (counter === 4) stream.abort();
     });
 }
 

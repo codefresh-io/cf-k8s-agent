@@ -1,3 +1,9 @@
+ENV VARS:
+CLUSTER_URL: 'http://192.168.99.101:8443'
+CLUSTER_TOKEN: Authorization Bearer
+CLUSTER_CA: certificate of cluster
+
+
 docker build -t andriicodefresh/cf-k8s-agent .
 docker push andriicodefresh/cf-k8s-agent
 docker run -d andriicodefresh/cf-k8s-agent --port 9020:9020
