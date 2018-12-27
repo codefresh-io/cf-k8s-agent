@@ -10,10 +10,20 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
-    "morgan": "~1.9.0"
+    "json-stream": "^1.0.0",
+    "kubernetes-client": "^6.6.1",
+    "morgan": "~1.9.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   },
   "main": "bin/www",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.11.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/codefresh-io/cf-k8s-agent.git"
