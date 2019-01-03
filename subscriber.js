@@ -4,6 +4,7 @@ const _ = require('lodash');
 const Kefir = require('kefir');
 const rp = require('request-promise');
 const resourcesFactory = require('./k8s-resources');
+const config = require('./config');
 
 class Subscriber {
     constructor(client) {
@@ -33,8 +34,12 @@ class Subscriber {
         this.mergedStream.onValue(async (obj) => {
             rp({
                 method: 'POST',
-                uri: `https://webhook.site/4717800e-cc87-4da0-a44b-585ef63e2531`,
+                uri: `${config.apiUrl}/api/k8s-monitor/events`,
                 body: obj,
+                headers: {
+                    'authorization': config.token,
+                    'x-cluster-id': process.env.CLUSTER_ID,
+                },
                 json: true,
             }).catch(console.error);
         });
