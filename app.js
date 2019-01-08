@@ -18,8 +18,9 @@ async function getClient() {
             },
             ca: process.env.CLUSTER_CA,
         };
-        const client = new Client({ config: conf });
-        await client.loadSpec();
+        // const client = new Client({ config: conf });
+        const client = new Client({ config: config.fromKubeconfig(), version: '1.9' });
+        // await client.loadSpec();
         return client;
     } else {
         const client = new Client({ config: config.getInCluster() });

@@ -19,26 +19,30 @@ class Subscriber {
         this.resources = await resourcesFactory(this.client);
 
         const obss = _.entries(this.resources).map(([key, resource]) => {
-            const stream = resource.getStream();
+            const stream = resource.startStream().getStream();
+            const jsonStream = resource.getJsonStream();
             console.log(new Date().toISOString(), `stream ${key} start`);
 
-            stream.on('close', () => {
-                console.log(new Date().toISOString(), `stream ${key} close`);
-                delete _this.resources[stream.ownerResource];
+            jsonStream.on('close', () => {
+                console.log(new Date().toISOString(), `stream ${key} closed`);
+                // delete _this.resources[stream.ownerResource];
+                const reStream = resource.restartStream().getJsonStream();
+                _this.mergedStream.merge(Kefir.fromEvents(reStream, 'data'));
+                console.log(new Date().toISOString(), `stream ${key} recreated`);
             });
 
-            return Kefir.fromEvents(stream, 'data');
+            return Kefir.fromEvents(jsonStream, 'data');
         });
 
         this.mergedStream = Kefir.merge(obss);
         this.mergedStream.onValue(async (obj) => {
             rp({
                 method: 'POST',
-                uri: `${config.apiUrl}/api/k8s-monitor/events`,
+                uri: config.apiUrl,
                 body: obj,
                 headers: {
                     'authorization': config.token,
-                    'x-cluster-id': process.env.CLUSTER_ID,
+                    'x-cluster-id': process.env.CLUSTER_ID || 'cf-load@codefresh-load',
                 },
                 json: true,
             }).catch(console.error);
