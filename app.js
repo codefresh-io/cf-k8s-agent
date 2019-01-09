@@ -48,6 +48,6 @@ app.use(bodyParser());
 
 app.use('/', indexRouter);
 
-init().catch(console.error);
+init().then(() => console.log(JSON.stringify(process.env))).catch(console.error);
 
 module.exports = app;

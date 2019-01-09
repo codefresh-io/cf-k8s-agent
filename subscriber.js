@@ -42,7 +42,7 @@ class Subscriber {
                 body: obj,
                 headers: {
                     'authorization': config.token,
-                    'x-cluster-id': process.env.CLUSTER_ID || 'cf-load@codefresh-load',
+                    'x-cluster-id': config.clusterId,
                 },
                 json: true,
             }).catch(console.error);
