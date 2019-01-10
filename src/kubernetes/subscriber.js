@@ -3,8 +3,8 @@
 const _ = require('lodash');
 const Kefir = require('kefir');
 const rp = require('request-promise');
-const resourcesFactory = require('./k8s-resources');
-const config = require('./config');
+const resourcesFactory = require('../k8s-resources');
+const config = require('../config');
 
 class Subscriber {
     constructor(client) {

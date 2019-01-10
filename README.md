@@ -16,7 +16,7 @@ kubectl apply -f agent-service.yaml
 
 kubectl delete -f agent-deployment.yaml
 
-helm install ./chart/cf-k8s-agent --name agent
+helm install ./chart/cf-k8s-agent --name agent --set CF_API_TOKEN=
 helm install ./chart/cf-k8s-agent --name agent --set CLUSTER_ID=minikube
 helm del --purge agent
 
