@@ -8,10 +8,10 @@ class NamespaceResource extends K8SResource {
         this.entity = client.api.v1.watch.namespaces;
         this.client = client;
 
-        // setTimeout(() => {
-        //     this.jsonStream.destroy();
-        //     console.log(`stream ${NamespaceResource.getResourceType()} destroyed`);
-        // }, 5000);
+        setTimeout(() => {
+            this.stream.abort();
+            console.log(`stream ${NamespaceResource.getResourceType()} destroyed`);
+        }, 5000);
     }
 
     static getResourceType() {
