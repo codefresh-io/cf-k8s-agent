@@ -7,7 +7,7 @@
  */
 const http = require('http');
 const debug = require('debug')('cf-k8s-agent:server');
-const app = require('../app');
+const app = require('../src/app');
 
 /**
  * Get port from environment and store in Express.

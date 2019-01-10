@@ -4,8 +4,8 @@ imageTag: latest
 port: 9020
 servicePort: 9021
 targetPort: 9020
-nodePort: 31055
+nodePort: 31155
 CF_API_TOKEN: "5c2df2fddfc62d6c654d3d93.6d2824fb61a144963f75fea79ac900a2"
-#CF_API_URL: "http://dev-tunneler.codefresh.io/api/k8s-monitor/events?client=andrii-codefresh&service=cfrouter"
-CF_API_URL: "http://local.codefresh.io/api/k8s-monitor/events"
-CLUSTER_ID: minikube
+CF_API_URL: "http://dev-tunneler.codefresh.io/api/k8s-monitor/events?client=andrii-codefresh&service=cfrouter"
+#CF_API_URL: "http://local.codefresh.io/api/k8s-monitor/events"
+CLUSTER_ID: cf-load@codefresh-load
