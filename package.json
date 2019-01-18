@@ -16,7 +16,8 @@
     "lodash": "^4.17.11",
     "morgan": "~1.9.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "cf-logs": "git+https://github.com/codefresh-io/cf-logs.git#8e01a5e68468c7b89fb95f1834a82af1987e50ca"
   },
   "main": "bin/www",
   "devDependencies": {

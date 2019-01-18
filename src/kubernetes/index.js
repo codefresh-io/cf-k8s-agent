@@ -1,9 +1,9 @@
 'use strict';
 
-const { getClient } = require('./client');
-const Subscriber = require('./subscriber');
+const { clientFactory } = require('./client');
+const Listener = require('./listener');
 
 module.exports = {
-    getClient,
-    Subscriber,
+    clientFactory,
+    Listener,
 };
