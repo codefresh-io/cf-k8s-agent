@@ -5,7 +5,6 @@ const JSONStream = require('json-stream');
 class K8SResource {
     constructor(type, client, entity) {
         this.type = type;
-        this.client = client;
         this.entity = entity;
     }
 
