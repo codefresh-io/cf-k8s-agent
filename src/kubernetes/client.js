@@ -1,41 +1,34 @@
 'use strict';
 
-const { Client, config: kubeConfig } = require('kubernetes-client');
+const {Client, config: kubeConfig} = require('kubernetes-client');
 const config = require('../config');
 
-async function clientFactory() {
-    let conf;
-    if (config.clusterUrl) {
 
-        // Run outside cluster
-        if (config.useCurrentContext) {
-
-            // Use current context
-            conf = kubeConfig.fromKubeconfig();
-
-        } else {
-
-            // Use auth from environment
-            conf = {
-                url: config.clusterUrl,
-                auth: {
-                    bearer: config.clusterToken,
-                },
-                ca: config.clusterCA,
-            };
-
-        }
-
-    } else {
-
+function _resolveConfig() {
+    if (!config.clusterUrl) {
         // Run inside cluster
-        conf = kubeConfig.getInCluster();
-
+        return kubeConfig.getInCluster();
     }
+    if (config.useCurrentContext) {
+        // Use current context
+        return kubeConfig.fromKubeconfig();
+    }
+    // Use auth from environment
+    return {
+        url: config.clusterUrl,
+        auth: {
+            bearer: config.clusterToken,
+        },
+        ca: config.clusterCA,
+    };
+}
 
-    const client = new Client({ config: conf });
+async function clientFactory() {
+    const k8sConfig = _resolveConfig();
+
+    const client = new Client({config: k8sConfig});
     await client.loadSpec();
-    global.logger.debug(`Client config, ${JSON.stringify(conf)}`);
+    global.logger.debug(`Client config, ${JSON.stringify(k8sConfig)}`);
     return client;
 }
 

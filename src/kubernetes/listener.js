@@ -25,6 +25,7 @@ class Listener {
             setTimeout(() => {
                 global.logger.info(`${new Date().toISOString()}: Trying to restart stream ${type}`);
                 this._restartStream(type, resource);
+                //TODO: move to config retry
             }, 2000);
         };
     }
@@ -41,9 +42,9 @@ class Listener {
 
     async subscribe() {
         const _this = this;
-        this.streams = [];
         this.resources = await resourcesFactory(this.client);
 
+        //TODO : rename
         const obss = _.entries(this.resources).map(([type, resource]) => {
             const { stream, jsonStream } = resource.startStream();
             stream.on('close', _this._closeHandler(type, resource));

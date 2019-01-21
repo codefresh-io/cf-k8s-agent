@@ -6,8 +6,7 @@ const RESOURCE_TYPE = 'deployment';
 
 class DeploymentResource extends K8SResource {
     constructor(client) {
-        super(RESOURCE_TYPE);
-        this.entity = client.apis.apps.v1.watch.deployments;
+        super(RESOURCE_TYPE, client.apis.apps.v1.watch.deployments);
         this.client = client;
     }
 }
