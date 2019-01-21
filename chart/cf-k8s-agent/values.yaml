@@ -6,6 +6,7 @@ servicePort: 9021
 targetPort: 9020
 nodePort: 31155
 CF_API_TOKEN: ""
-CF_API_URL: "http://dev-tunneler.codefresh.io/api/k8s-monitor/events?client=andrii-codefresh&service=cfrouter"
+CF_API_URL: "https://app-load.codefresh.io/api/k8s-monitor"
+#CF_API_URL: "http://dev-tunneler.codefresh.io/api/k8s-monitor/events?client=andrii-codefresh&service=cfrouter"
 #CF_API_URL: "http://local.codefresh.io/api/k8s-monitor/events"
 CLUSTER_ID: cf-load@codefresh-load

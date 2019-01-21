@@ -15,15 +15,10 @@ class K8SResource {
         this.stream.ownerResource = this;
         const jsonStream = new JSONStream();
         this.jsonStream = this.stream.pipe(jsonStream);
-        return this;
-    }
-
-    getStream() {
-        return this.stream;
-    }
-
-    getJsonStream() {
-        return this.jsonStream;
+        return {
+            stream: this.stream,
+            jsonStream: this.jsonStream,
+        };
     }
 
     restartStream() {

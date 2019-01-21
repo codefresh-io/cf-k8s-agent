@@ -1,28 +1,44 @@
 'use strict';
 
-const { Client, config } = require('kubernetes-client');
+const { Client, config: kubeConfig } = require('kubernetes-client');
+const config = require('../config');
 
-async function getClient() {
-    if (process.env.CLUSTER_URL) {
-        const conf = {
-            url: process.env.CLUSTER_URL,
-            auth: {
-                bearer: process.env.CLUSTER_TOKEN,
-            },
-            ca: process.env.CLUSTER_CA,
-        };
-        const client = new Client({ config: conf });
-        // const client = new Client({ config: config.fromKubeconfig(), version: '1.9' });
-        await client.loadSpec();
-        return client;
+async function clientFactory() {
+    let conf;
+    if (config.clusterUrl) {
+
+        // Run outside cluster
+        if (config.useCurrentContext) {
+
+            // Use current context
+            conf = kubeConfig.fromKubeconfig();
+
+        } else {
+
+            // Use auth from environment
+            conf = {
+                url: config.clusterUrl,
+                auth: {
+                    bearer: config.clusterToken,
+                },
+                ca: config.clusterCA,
+            };
+
+        }
+
     } else {
-        const client = new Client({ config: config.getInCluster() });
-        // console.log('config', JSON.stringify(config.getInCluster()));
-        await client.loadSpec();
-        return client;
+
+        // Run inside cluster
+        conf = kubeConfig.getInCluster();
+
     }
+
+    const client = new Client({ config: conf });
+    await client.loadSpec();
+    global.logger.debug(`Client config, ${JSON.stringify(conf)}`);
+    return client;
 }
 
 module.exports = {
-    getClient,
+    clientFactory,
 };

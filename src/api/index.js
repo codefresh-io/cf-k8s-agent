@@ -1,10 +1,11 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
+const express = require('express');
 
-    res.json({index: 'Hello from kubernetes cluster'});
+const router = express.Router();
+
+router.get('/ping', (req, res) => {
+    res.status(200).send();
 });
 
 module.exports = router;

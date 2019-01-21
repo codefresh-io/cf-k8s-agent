@@ -1,20 +1,17 @@
 'use strict';
 
-const fs = require('fs').promises;
-const path = require('path');
+const Namespace = require('./resources/Namespace');
+const Deployment = require('./resources/Deployment');
+const Service = require('./resources/Service');
+const Pod = require('./resources/Pod');
 
 async function createResources(client) {
-    const resources = {};
-
-    const files = await fs.readdir(path.join(__dirname, 'resources'));
-    files.forEach((file) => {
-        if (path.extname(file) === '.js') {
-            const Res = require(`./resources/${file}`); // eslint-disable-line
-            resources[path.basename(file, '.js')] = new Res(client);
-        }
-    });
-
-    return resources;
+    return {
+        namespace: new Namespace(client),
+        deployment: new Deployment(client),
+        service: new Service(client),
+        pod: new Pod(client),
+    };
 }
 
 module.exports = createResources;

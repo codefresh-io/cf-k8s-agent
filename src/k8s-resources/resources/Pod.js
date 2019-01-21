@@ -2,15 +2,13 @@
 
 const K8SResource = require('../ResourceBase');
 
+const RESOURCE_TYPE = 'pod';
+
 class ServiceResource extends K8SResource {
     constructor(client) {
-        super(ServiceResource.getResourceType());
+        super(RESOURCE_TYPE);
         this.entity = client.api.v1.watch.pods;
         this.client = client;
-    }
-
-    static getResourceType() {
-        return 'pod';
     }
 }
 
