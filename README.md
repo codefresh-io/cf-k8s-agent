@@ -6,10 +6,10 @@ CF_API_TOKEN: codefresh API token
 CLUSTER_ID: cluster name from account's integration
 
 
-docker build -t andriicodefresh/cf-k8s-agent .
-docker push andriicodefresh/cf-k8s-agent
-docker run -d andriicodefresh/cf-k8s-agent --port 9020:9020
-docker start cf-k8s-agent
+docker build -t codefresh/cf-k8s-agent .
+docker push codefresh/cf-k8s-agent
+//docker run -d codefresh/cf-k8s-agent --port 9020:9020
+//docker start cf-k8s-agent
 
 kubectl apply -f agent-deployment.yaml
 kubectl apply -f agent-service.yaml

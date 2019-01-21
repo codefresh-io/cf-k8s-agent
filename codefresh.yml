@@ -1,0 +1,44 @@
+version: '1.0'
+
+stages:
+- preparation
+- test
+- build
+- push
+- run
+
+steps:
+
+  install_dependencies:
+    title: 'Installing testing dependencies'
+    stage: preparation
+    image: codefresh/node-tester-image:9.6.1
+    commands:
+    - yarn install --frozen-lockfile
+
+  build_step:
+    title: "Building production image"
+    stage: build
+    type: build
+    dockerfile: Dockerfile
+    image_name: codefresh/cf-k8s-agent
+    metadata:
+      set:
+      - CF_QUALITY: true
+
+  push_to_cfcr:
+    title: 'Pushing image to cfcr'
+    stage: push
+    type: push
+    image_name: codefresh/cf-codefresh
+    registry: CFCR
+    candidate: ${{build_step}}
+    tags:
+    - ${{CF_BRANCH_TAG_NORMALIZED}}
+    - ${{CF_REVISION}}
+
+  run_pipeline_template:
+    image: codefresh/cli
+    stage: run
+    commands:
+    - codefresh run ${{TEMPLATE_PIPELINE_NAME}} -b master -v ORIGIN_WORKFLOW_CF_REVISION=${{CF_REVISION}} -v ORIGIN_WORKFLOW_CF_BRANCH_TAG_NORMALIZED=${{CF_BRANCH_TAG_NORMALIZED}} -v ORIGIN_WORKFLOW_CF_BRANCH=${{CF_BRANCH}}  -v ORIGIN_WORKFLOW_CHART_NAME=${{CHART_NAME}} -v ORIGIN_WORKFLOW_REPO_NAME=${{REPO_NAME}} -v ORIGIN_WORKFLOW_SERVICE_NAME=${{SERVICE_NAME}} -v ORIGIN_WORKFLOW_CHART_NAME_UPPER=${{CHART_NAME_UPPER}}
