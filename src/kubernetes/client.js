@@ -1,8 +1,7 @@
 'use strict';
 
-const {Client, config: kubeConfig} = require('kubernetes-client');
+const { Client, config: kubeConfig } = require('kubernetes-client');
 const config = require('../config');
-
 
 function _resolveConfig() {
     if (!config.clusterUrl) {

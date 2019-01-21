@@ -9,4 +9,6 @@ module.exports = {
     apiUrl: process.env.CF_API_URL,
     clusterId: process.env.CLUSTER_ID,
     useCurrentContext: false,
+
+    retryInterval: 2000,
 };

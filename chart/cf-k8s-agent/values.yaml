@@ -1,5 +1,5 @@
 replicaCount: 1
-image: andriicodefresh/cf-k8s-agent
+image: codefresh/cf-k8s-agent
 imageTag: latest
 port: 9020
 servicePort: 9021
