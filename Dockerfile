@@ -4,9 +4,9 @@ COPY . /app
 
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y git
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache bash git openssh
 
 RUN npm install
 
