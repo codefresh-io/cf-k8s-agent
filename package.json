@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "./node_modules/.bin/mocha src/**/*.test.js --recursive"
+    "test": "./node_modules/.bin/mocha src/**/*.test.js --recursive",
+    "lint": "eslint"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -23,7 +24,7 @@
   "main": "bin/www",
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.11.0",
+    "eslint": "^4.18.2",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
