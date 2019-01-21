@@ -4,6 +4,7 @@ const _ = require('lodash');
 const Kefir = require('kefir');
 const resourcesFactory = require('../k8s-resources');
 const { sendEvents } = require('../api/codefresh.api');
+const config = require('../config');
 
 class Listener {
     constructor(client) {
@@ -25,8 +26,7 @@ class Listener {
             setTimeout(() => {
                 global.logger.info(`${new Date().toISOString()}: Trying to restart stream ${type}`);
                 this._restartStream(type, resource);
-                //TODO: move to config retry
-            }, 2000);
+            }, config.retryInterval);
         };
     }
 
@@ -44,8 +44,7 @@ class Listener {
         const _this = this;
         this.resources = await resourcesFactory(this.client);
 
-        //TODO : rename
-        const obss = _.entries(this.resources).map(([type, resource]) => {
+        const observables = _.entries(this.resources).map(([type, resource]) => {
             const { stream, jsonStream } = resource.startStream();
             stream.on('close', _this._closeHandler(type, resource));
             stream.on('error', _this._errorHandler(type, resource));
@@ -55,7 +54,7 @@ class Listener {
             return Kefir.fromEvents(jsonStream, 'data');
         });
 
-        this.mergedStream = Kefir.merge(obss);
+        this.mergedStream = Kefir.merge(observables);
         this.mergedStream.onValue(sendEvents);
     }
 }

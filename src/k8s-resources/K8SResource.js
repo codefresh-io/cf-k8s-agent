@@ -3,19 +3,21 @@
 const JSONStream = require('json-stream');
 
 class K8SResource {
-    constructor(client, entity) {
-        this.entity = entity;
+    constructor(type, client, entity) {
+        this.type = type;
         this.client = client;
+        this.entity = entity;
     }
 
     startStream(force = false) {
         if (!force && this.stream) {
-            //TODO : add logs
+            global.logger.info(`${new Date().toISOString()}: Return existing stream of type "${this.type}"`);
             return this;
         }
+
+        global.logger.info(`${new Date().toISOString()}: Start new stream of type "${this.type}"`);
         this.stream = this.entity.getStream();
-        //TODO : check is it using
-        this.stream.ownerResource = this;
+
         return {
             stream: this.stream,
             jsonStream: this.stream.pipe(new JSONStream()),

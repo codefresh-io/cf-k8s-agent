@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "./node_modules/.bin/mocha src/**/*.test.js --recursive"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cf-logs": "git+https://github.com/codefresh-io/cf-logs.git#8e01a5e68468c7b89fb95f1834a82af1987e50ca",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
@@ -16,16 +18,18 @@
     "lodash": "^4.17.11",
     "morgan": "~1.9.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2",
-    "cf-logs": "git+https://github.com/codefresh-io/cf-logs.git#8e01a5e68468c7b89fb95f1834a82af1987e50ca"
+    "request-promise": "^4.2.2"
   },
   "main": "bin/www",
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^5.11.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^5.2.0",
+    "proxyquire": "^2.1.0"
   },
   "repository": {
     "type": "git",
