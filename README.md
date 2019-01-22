@@ -1,5 +1,4 @@
 # CF-K8S-AGENT
-[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/codefresh-inc/codefresh-io%2Fcf-k8s-agent%2Fcf-k8s-agent?type=cf-1)]( https://g.codefresh.io/public/accounts/codefresh-inc/pipelines/codefresh-io/cf-k8s-agent/cf-k8s-agent)
 
 ## Installation
 
@@ -8,33 +7,34 @@
 * [Helm](https://docs.helm.sh/using_helm/#quickstart) - The package manager for Kubernetes
 
 ### Install Agent in cluster
-helm install ./chart/cf-k8s-agent --name agent --set CF_API_TOKEN=123
+`helm install ./chart/cf-k8s-agent --name agent --set CF_API_TOKEN=<API_TOKEN>`
 
 ### Running Agent outside of cluster
+* `docker run -d -p 9020:9020 codefresh/cf-k8s-agent`
 
-### Uninstall Agent
-helm del --purge agent
+Use CLUSTER_URL, CLUSTER_TOKEN, CLUSTER_CA for cluster credentials
+or USE_CURRENT_CONTEXT for using current kubernetes context
 
-### Environment
+### Uninstall Agent from cluster
+`helm del --purge agent`
+
+### Environment variables
 * CLUSTER_URL: 'http://192.168.99.101:8443'
 * CLUSTER_TOKEN: Authorization Bearer
 * CLUSTER_CA: Certificate of cluster
 * CF_API_TOKEN: Codefresh API token
 * CLUSTER_ID: cluster name from account's integration
+* USE_CURRENT_CONTEXT: use current context instead of cluster credentials. False by default.
 
+### Using with minikube
+* start minikube with RBAC 
 
-docker build -t codefresh/cf-k8s-agent .
-docker push codefresh/cf-k8s-agent
+`minikube start --kubernetes-version=v1.7.0 --extra-config=apiserver.authorization-mode=RBAC`
 
-//docker run -d codefresh/cf-k8s-agent --port 9020:9020
-//docker start cf-k8s-agent
-//kubectl apply -f agent-deployment.yaml
-//kubectl apply -f agent-service.yaml
-//kubectl delete -f agent-deployment.yaml
-//kubectl delete -f agent-service.yaml
+* create role binding
 
+`kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --user=system:serviceaccount:default:default`
 
-minikube start --kubernetes-version=v1.7.0 --extra-config=apiserver.authorization-mode=RBAC
-//kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
-kubectl create clusterrolebinding binding1 --clusterrole=cluster-admin --user=system:serviceaccount:default:default
-minikube dashboard
+* check status, get credentials
+
+`minikube dashboard`
