@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: "{{ template "fullname" . }}-svc"
 spec:
-  type: NodePort
+  type:  {{ default "ClusterIP" .Values.serviceType | quote }}
   ports:
     - port: {{ .Values.servicePort }}
       targetPort: {{ .Values.targetPort }}

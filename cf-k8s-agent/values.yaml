@@ -1,6 +1,7 @@
 replicaCount: 1
 image: codefresh/cf-k8s-agent
 imageTag: latest
+serviceType: ClusterIP
 port: 9020
 servicePort: 9021
 targetPort: 9020

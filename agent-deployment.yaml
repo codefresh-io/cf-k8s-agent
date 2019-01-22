@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: cf-k8s-agent
-          image: andriicodefresh/cf-k8s-agent
+          image: codefresh/cf-k8s-agent
           ports:
             - containerPort: 9020
