@@ -6,6 +6,9 @@ const resourcesFactory = require('../k8s-resources');
 const { sendEvents } = require('../api/codefresh.api');
 const config = require('../config');
 
+/**
+ * Class for monitoring cluster resources
+ */
 class Listener {
     constructor(client) {
         this.client = client;
@@ -13,6 +16,13 @@ class Listener {
         this.resources = {};
     }
 
+    /**
+     * Creator of handler function for stream 'close' event
+     * @param type
+     * @param resource
+     * @returns {Function}
+     * @private
+     */
     _closeHandler(type, resource) {
         return () => {
             global.logger.info(`Stream ${type} closed`);
@@ -20,6 +30,13 @@ class Listener {
         };
     }
 
+    /**
+     * Creator of handler function for stream 'error' event
+     * @param type
+     * @param resource
+     * @returns {Function}
+     * @private
+     */
     _errorHandler(type, resource) {
         return (err) => {
             global.logger.error(`Error in ${type} stream. ${err}`);
@@ -30,6 +47,13 @@ class Listener {
         };
     }
 
+    /**
+     * Restarts stream and sets event handlers. Appends new stream in merged kefir stream.
+     * Used for restarting stream after closing or error
+     * @param type
+     * @param resource
+     * @private
+     */
     _restartStream(type, resource) {
         const { stream, jsonStream } = resource.restartStream();
         stream.on('close', this._closeHandler(type, resource));
@@ -40,6 +64,11 @@ class Listener {
         global.logger.info(`Stream ${type} was recreated`);
     }
 
+    /**
+     * Gets all supported resources, creates streams for each of them,
+     * merges them in one stream and handle events data from this stream
+     * @returns {Promise<void>}
+     */
     async subscribe() {
         const _this = this;
         this.resources = await resourcesFactory(this.client);

@@ -24,6 +24,12 @@ async function sendEvents(obj) {
     rp(options).catch(global.logger.error);
 }
 
+/**
+ * Clear cluster events in monitor. Should be used when agent starts.
+ * Agent will send all resources when watching will start.
+ * @param obj
+ * @returns {Promise<void>}
+ */
 async function clearEvents() {
     const options = {
         method: 'DELETE',

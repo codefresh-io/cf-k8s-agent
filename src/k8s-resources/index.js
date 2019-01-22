@@ -2,6 +2,11 @@
 
 const K8SResource = require('./K8SResource');
 
+/**
+ * Factory for creating instances of all supported resources
+ * @param client
+ * @returns {Promise<{deployment: K8SResource, service: K8SResource, pod: K8SResource}>}
+ */
 async function createResources(client) {
     return {
         // namespace: new K8SResource('namespace', client.api.v1.watch.namespaces),

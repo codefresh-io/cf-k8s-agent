@@ -2,12 +2,20 @@
 
 const JSONStream = require('json-stream');
 
+/**
+ * Class for implementing of cluster resources
+ */
 class K8SResource {
     constructor(type, entity) {
         this.type = type;
         this.entity = entity;
     }
 
+    /**
+     * Starts new stream for monitoring of resource.
+     * @param force - true will cause starting of new stream even if stream of this type already exists
+     * @returns { stream|jsonStream }
+     */
     startStream(force = false) {
         if (!force && this.stream) {
             global.logger.info(`Return existing stream of type "${this.type}"`);
@@ -23,6 +31,10 @@ class K8SResource {
         };
     }
 
+    /**
+     * Restarts stream
+     * @returns {stream|jsonStream}
+     */
     restartStream() {
         return this.startStream(true);
     }

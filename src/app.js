@@ -22,7 +22,10 @@ const { clientFactory, Listener } = require('./kubernetes');
 
 async function init() {
     try {
+        // Get instances for each resource and clear cache for them
         const [client] = await Promise.all([clientFactory(), clearEvents()]);
+
+        // Create listener for all resources and subscribe for cluster events
         const listener = new Listener(client);
         await listener.subscribe();
     } catch (error) {

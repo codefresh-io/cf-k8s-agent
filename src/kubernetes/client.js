@@ -22,10 +22,14 @@ function _resolveConfig() {
     };
 }
 
+/**
+ * Creates client for working with cluster
+ * @returns {Promise<KubernetesClient.Client>}
+ */
 async function clientFactory() {
     const k8sConfig = _resolveConfig();
 
-    const client = new Client({config: k8sConfig});
+    const client = new Client({ config: k8sConfig });
     await client.loadSpec();
     return client;
 }
