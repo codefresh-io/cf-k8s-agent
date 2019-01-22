@@ -1,5 +1,11 @@
 # CF-K8S-AGENT
 
+Service for monitoring cluster resources. Agent can be set as inside cluster as outside of it.
+
+Agent starts streams for watching updates cluster resources and sends information about updated resources to Codefresh API.
+
+The aim is to provide updates for UI in case of cluster resources have changing.  
+
 ## Installation
 
 ### Prerequisite:
