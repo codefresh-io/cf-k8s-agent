@@ -1,6 +1,16 @@
 'use strict';
 
-global.logger = require('cf-logs').Logger('codefresh:k8sAgent');
+const { createLogger, transports, format } = require('winston');
+
+const { combine, timestamp, printf } = format;
+
+const myFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
+
+global.logger = createLogger({
+    level: 'debug',
+    format: combine(timestamp(), myFormat),
+    transports: [new transports.Console()],
+});
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -32,6 +42,6 @@ app.use(bodyParser());
 
 app.use('/', indexRouter);
 
-init().then(() => global.logger.debug(`Agent has started with environment: ${JSON.stringify(process.env)}`));
+init().then(() => global.logger.info(`Agent has started...`));
 
 module.exports = app;

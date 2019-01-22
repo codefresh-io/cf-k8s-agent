@@ -20,7 +20,7 @@ async function sendEvents(obj) {
         json: true,
     };
 
-    global.logger.debug(`Sending event. ${JSON.stringify(options)}`);
+    global.logger.debug(`Sending event. Cluster: ${config.clusterId}.`);
     rp(options).catch(global.logger.error);
 }
 
@@ -34,7 +34,7 @@ async function clearEvents() {
         },
     };
 
-    global.logger.debug(`Delete events. ${JSON.stringify(options)}`);
+    global.logger.debug(`Delete events. Cluster: ${config.clusterId}.`);
     return rp(options);
 }
 

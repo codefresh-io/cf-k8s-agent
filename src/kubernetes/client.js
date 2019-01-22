@@ -27,7 +27,6 @@ async function clientFactory() {
 
     const client = new Client({config: k8sConfig});
     await client.loadSpec();
-    global.logger.debug(`Client config, ${JSON.stringify(k8sConfig)}`);
     return client;
 }
 

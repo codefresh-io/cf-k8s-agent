@@ -10,11 +10,11 @@ class K8SResource {
 
     startStream(force = false) {
         if (!force && this.stream) {
-            global.logger.info(`${new Date().toISOString()}: Return existing stream of type "${this.type}"`);
+            global.logger.info(`Return existing stream of type "${this.type}"`);
             return this;
         }
 
-        global.logger.info(`${new Date().toISOString()}: Start new stream of type "${this.type}"`);
+        global.logger.info(`Start new stream of type "${this.type}"`);
         this.stream = this.entity.getStream();
 
         return {

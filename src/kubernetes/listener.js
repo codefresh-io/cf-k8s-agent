@@ -15,7 +15,7 @@ class Listener {
 
     _closeHandler(type, resource) {
         return () => {
-            global.logger.info(`${new Date().toISOString()}: stream ${type} closed`);
+            global.logger.info(`Stream ${type} closed`);
             this._restartStream(type, resource);
         };
     }
@@ -24,7 +24,7 @@ class Listener {
         return (err) => {
             global.logger.error(`Error in ${type} stream. ${err}`);
             setTimeout(() => {
-                global.logger.info(`${new Date().toISOString()}: Trying to restart stream ${type}`);
+                global.logger.info(`Trying to restart stream ${type}`);
                 this._restartStream(type, resource);
             }, config.retryInterval);
         };
@@ -37,7 +37,7 @@ class Listener {
 
         this.mergedStream = this.mergedStream.merge(Kefir.fromEvents(jsonStream, 'data'));
         this.mergedStream.onValue(sendEvents);
-        global.logger.info(`${new Date().toISOString()}: Stream ${type} was recreated`);
+        global.logger.info(`Stream ${type} was recreated`);
     }
 
     async subscribe() {
@@ -49,7 +49,7 @@ class Listener {
             stream.on('close', _this._closeHandler(type, resource));
             stream.on('error', _this._errorHandler(type, resource));
 
-            global.logger.info(`${new Date().toISOString()}: Stream ${type} was started`);
+            global.logger.info(`Stream ${type} was started`);
 
             return Kefir.fromEvents(jsonStream, 'data');
         });
