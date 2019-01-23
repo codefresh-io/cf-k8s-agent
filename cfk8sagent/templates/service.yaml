@@ -1,0 +1,21 @@
+# kind: scheduler-kubernetes
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    test: "hello"
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name  | quote }}
+    heritage: {{ .Release.Service  | quote }}
+    version: {{ .Values.imageTag | quote }}
+spec:
+  type: {{ default "ClusterIP" .Values.serviceType | quote }}
+  ports:
+  - name: "http"
+    port: {{ .Values.port }}
+    protocol: TCP
+    targetPort: {{ .Values.port }}
+  selector:
+    app: {{ template "fullname" . }}

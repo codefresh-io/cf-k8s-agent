@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name  | quote }}
+    heritage: {{ .Release.Service  | quote }}
+    version: {{ .Values.imageTag | quote }}
+spec:
+  replicas: {{ default 1 .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+  template:
+    metadata:
+      {{- if .Values.redeploy }}
+      annotations:
+        forceRedeployUniqId: {{ now | quote }}
+      {{- end }}
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+        release: {{ .Release.Name  | quote }}
+        heritage: {{ .Release.Service  | quote }}
+        version: {{ .Values.imageTag | quote }}
+    spec:
+      affinity:
+{{ toYaml (default .Values.global.appServiceAffinity .Values.affinity) | indent 8 }}
+      imagePullSecrets:
+        - name: "{{ template "fullname" . }}-registry"
+      containers:
+      - name: {{ template "fullname" . }}
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+        env:
+          - name: API_URI
+            value: "{{ .Release.Name }}-{{ .Values.global.cfapiService }}"
+          - name: API_PORT
+            value: {{ .Values.global.cfapiInternalPort | quote }}
+          - name: SERVICE_NAME
+            value: {{ template "name" . }}
+          - name: FORMAT_LOGS_TO_ELK
+            value: "{{ .Values.formatLogsToElk }}"
+
+          {{- if .Values.global.env }}
+          {{- range $key, $value := .Values.global.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end}}
+          {{- end}}
+          {{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          - name: PORT
+            value: {{ .Values.port | quote }}
+          - name: NEWRELIC_LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "fullname" . }}
+                key: newrelic-license-key
+        ports:
+        - containerPort: {{ .Values.port }}
+          protocol: TCP
+        {{- if .Values.global.addResolvConf }}
+        volumeMounts:
+        - mountPath: /etc/resolv.conf
+          name: resolvconf
+          subPath: resolv.conf
+          readOnly: true
+        {{- end }}
+        readinessProbe:
+          httpGet:
+            path: /api/ping
+            port: {{ .Values.port }}
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+      volumes:
+      {{- if .Values.global.addResolvConf }}
+      - name: resolvconf
+        configMap:
+          name: {{ .Release.Name }}-{{ .Values.global.codefresh }}-resolvconf
+      {{- end }}
