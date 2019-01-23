@@ -36,7 +36,7 @@ env:
 
 ## port
 container port
-default: `port: 80`
+default: `port: 80` 
 
 ## servicePort
 port of the kubernetes service listen to
