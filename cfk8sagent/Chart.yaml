@@ -1,0 +1,15 @@
+apiVersion: v1
+description: Codefresh agent tool
+name: cfk8sagent
+keywords:
+- codefresh
+- kubernetes
+- agent
+home: https://codefresh.io/
+icon: https://avatars1.githubusercontent.com/u/11412079?v=3
+sources:
+- https://github.com/codefresh-io/cf-k8s-agent
+maintainers:
+- name: Andrii Shaforostov
+  email: andrii@codefresh.io
+
