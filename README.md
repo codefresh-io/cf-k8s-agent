@@ -1,4 +1,5 @@
 # CF-K8S-AGENT
+[![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/codefresh-inc/codefresh-io%2Fcf-k8s-agent%2Fcf-k8s-agent?branch=master&key=eyJhbGciOiJIUzI1NiJ9.NTY3MmQ4ZGViNjcyNGI2ZTM1OWFkZjYy.AN2wExsAsq7FseTbVxxWls8muNx_bBUnQWQVS8IgDTI&type=cf-1)]( https://g.codefresh.io/pipelines/cf-k8s-agent/builds?repoOwner=codefresh-io&repoName=cf-k8s-agent&serviceName=codefresh-io%2Fcf-k8s-agent&filter=trigger:build~Build;branch:master;pipeline:5c45f80949931558b4bc6909~cf-k8s-agent)
 
 Service for monitoring cluster resources. Agent can be set as inside cluster as outside of it.
 

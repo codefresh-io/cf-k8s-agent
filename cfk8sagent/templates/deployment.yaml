@@ -40,6 +40,36 @@ spec:
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
         imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
         env:
+
+          {{- if .Values.requiredInfraComponenets.mongo }}
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "fullname" . }}
+                key: mongo-uri
+          {{- end}}
+          - name: RABBIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
+                key: rabbitmq-password
+          - name: RABBIT_USER
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
+                key: rabbitmq-username
+          - name: EVENTBUS_URI
+            value: amqp://$(RABBIT_USER):$(RABBIT_PASSWORD)@{{ default (printf "%s-%s" .Release.Name .Values.global.rabbitService) .Values.global.rabbitmqHostname }}
+
+          - name: POSTGRES_HOST
+            value: {{ default (printf "%s-%s" .Release.Name .Values.global.postgresService) .Values.global.postgresHostname | quote }}
+          - name: POSTGRES_DATABASE
+            value: {{ .Values.global.postgresDatabase }}
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
+                key: postgres-user
           - name: API_URI
             value: "{{ .Release.Name }}-{{ .Values.global.cfapiService }}"
           - name: API_PORT
