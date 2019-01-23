@@ -40,6 +40,18 @@ spec:
             value: {{ template "name" . }}
           - name: PORT
             value: {{ .Values.port | quote }}
+          - name: CLUSTER_URL
+            value: {{ .Values.CLUSTER_URL | quote }}
+          - name: CLUSTER_TOKEN
+            value: {{ .Values.CLUSTER_TOKEN | quote }}
+          - name: CLUSTER_CA
+            value: {{ .Values.CLUSTER_CA | quote }}
+          - name: CF_API_TOKEN
+            value: {{ .Values.CF_API_TOKEN | quote }}
+          - name: CLUSTER_ID
+            value: {{ .Values.CLUSTER_ID | quote }}
+          - name: CF_API_URL
+            value: {{ .Values.CF_API_URL | quote }}
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}

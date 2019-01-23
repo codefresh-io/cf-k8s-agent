@@ -17,13 +17,14 @@ imageTag: master
 image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
 
 # env set of evnrionment varialbe to be add to the containers
-env:
-  # CLUSTER_URL - optional. for setup outside cluster when current context is used
-  # CLUSTER_TOKEN - optional. for setup outside cluster when current context is used
-  # CLUSTER_CA - optional. for setup outside cluster when current context is used
-  # CF_API_TOKEN - should be set when the chart is installing
-  # CLUSTER_ID - cluster name as it registered in account
-  CF_API_URL: https://q.codefresh.io/api/k8s-monitor
+#env:
+
+# CLUSTER_URL - optional. for setup outside cluster when current context is used
+# CLUSTER_TOKEN - optional. for setup outside cluster when current context is used
+# CLUSTER_CA - optional. for setup outside cluster when current context is used
+# CF_API_TOKEN - should be set when the chart is installing
+# CLUSTER_ID - cluster name as it registered in account
+CF_API_URL: https://q.codefresh.io/api/k8s-monitor
 
 # port container port
 port: 80
