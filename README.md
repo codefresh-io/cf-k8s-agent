@@ -26,12 +26,13 @@ or USE_CURRENT_CONTEXT for using current kubernetes context
 `helm del --purge agent`
 
 ### Environment variables
-* CLUSTER_URL: 'http://192.168.99.101:8443'
-* CLUSTER_TOKEN: Authorization Bearer
-* CLUSTER_CA: Certificate of cluster
-* CF_API_TOKEN: Codefresh API token
-* CLUSTER_ID: cluster name from account's integration
-* USE_CURRENT_CONTEXT: use current context instead of cluster credentials. False by default.
+* clusterUrl: 'http://192.168.99.101:8443'
+* clusterToken: Authorization Bearer
+* clusterCA: Certificate of cluster
+* cfApiToken: Codefresh API token
+* clusterId: cluster name from account's integration
+* cfApiUrl: Codefresh API URL
+* useCurrentContext: use current context instead of cluster credentials. False by default.
 
 ### Using with minikube
 * start minikube with RBAC 
