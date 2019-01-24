@@ -11,7 +11,7 @@ imagePullPolicy: Always
 redeploy: false
 
 # imageTag set the tag of the image
-imageTag: master
+imageTag: configurate-chart
 
 # image base name of the image
 image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent

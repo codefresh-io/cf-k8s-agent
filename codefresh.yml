@@ -37,6 +37,17 @@ steps:
     - ${{CF_BRANCH_TAG_NORMALIZED}}
     - ${{CF_REVISION}}
 
+  push_to_dockerhub:
+    title: 'Pushing image to hub.docker.com'
+    stage: push
+    type: push
+    image_name: andriicodefresh/cf-k8s-agent
+    registry: dockerhub
+    candidate: ${{build_step}}
+    tags:
+    - ${{CF_BRANCH_TAG_NORMALIZED}}
+    - ${{CF_REVISION}}
+
   run_pipeline_template:
     image: codefresh/cli
     stage: run
