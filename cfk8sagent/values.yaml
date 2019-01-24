@@ -11,10 +11,11 @@ imagePullPolicy: Always
 redeploy: false
 
 # imageTag set the tag of the image
-imageTag: configurate-chart
+imageTag: latest
 
 # image base name of the image
-image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
+# image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
+image:  andriicodefresh/cf-k8s-agent
 
 # env set of evnrionment varialbe to be add to the containers
 #env:
