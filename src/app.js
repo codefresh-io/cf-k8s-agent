@@ -16,14 +16,24 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
-const { clearEvents } = require('./api/codefresh.api');
+const { initEvents } = require('./api/codefresh.api');
 
 const { clientFactory, Listener } = require('./kubernetes');
 
 async function init() {
     try {
-        // Get instances for each resource and clear cache for them
-        const [client] = await Promise.all([clientFactory(), clearEvents()]);
+        // Register binded accounts
+        let accounts;
+        try {
+            accounts = process.env.ACCOUNTS ? JSON.parse(process.env.ACCOUNTS) : null;
+            accounts = accounts && Array.isArray(accounts) ? accounts : null;
+        } catch (error) {
+            accounts = null;
+            global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
+        }
+
+        // Get instances for each resource and init cache for them
+        const [client] = await Promise.all([clientFactory(), initEvents(accounts)]);
 
         // Create listener for all resources and subscribe for cluster events
         const listener = new Listener(client);

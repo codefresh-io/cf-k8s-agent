@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+spec:
+  replicas: {{ default 1 .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+    spec:
+      imagePullSecrets:
+      - name: "{{ template "fullname" . }}-registry"
+      containers:
+        - name: {{ template "fullname" . }}
+          image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+          env:
+            - name: CF_API_TOKEN
+              value: {{ .Values.cfApiToken }}
+            - name: CF_API_URL
+              value: {{ .Values.cfApiUrl }}
+            - name: CLUSTER_ID
+              value: {{ .Values.clusterId }}
+          ports:
+            - containerPort: {{ .Values.port }}
