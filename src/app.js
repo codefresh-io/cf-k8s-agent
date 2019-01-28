@@ -26,7 +26,7 @@ async function init() {
         let accounts;
         try {
             accounts = process.env.ACCOUNTS ? JSON.parse(process.env.ACCOUNTS) : null;
-            accounts = accounts && Array.isArray(accounts) ? accounts : null;
+            accounts = accounts && Array.isArray(accounts) ? accounts : [];
         } catch (error) {
             accounts = null;
             global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
@@ -55,6 +55,8 @@ app.use(bodyParser());
 
 app.use('/', indexRouter);
 
-init().then(() => global.logger.info(`Agent has started...`));
+init().then(() => global.logger.info(`Agent has started...`)).catch(e => {
+    console.error(e);
+});
 
 module.exports = app;

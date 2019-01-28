@@ -42,6 +42,7 @@ async function initEvents(accounts = []) {
         body: {
             accounts,
         },
+        json: true,
     };
 
     global.logger.debug(`Init events. Cluster: ${config.clusterId}.`);
