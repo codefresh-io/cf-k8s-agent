@@ -10,7 +10,6 @@ global.logger = {
 };
 
 const client = {};
-_.set(client, 'api.v1.watch.namespaces.getStream', () => streamFactory(70, 'a'));
 _.set(client, 'apis.apps.v1.watch.deployments.getStream', () => streamFactory(50, 'b'));
 _.set(client, 'api.v1.watch.services.getStream', () => streamFactory(40, 'c'));
 _.set(client, 'api.v1.watch.pods.getStream', () => streamFactory(30, 'd'));
@@ -20,22 +19,17 @@ const expectation = [
     '40: c-1',
     '50: b-1',
     '60: d-2',
-    '70: a-1',
     '80: c-2',
     '90: d-3',
     '100: b-2',
     '120: c-3',
     '120: d-4',
-    '140: a-2',
     '150: b-3',
     '150: d-5',
     '160: c-4',
     '200: b-4',
     '200: c-5',
-    '210: a-3',
     '250: b-5',
-    '280: a-4',
-    '350: a-5',
 ];
 
 const streamData = [];

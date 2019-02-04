@@ -1,8 +1,10 @@
 'use strict';
 
 const rp = require('request-promise');
-const _ = require('lodash');
 const config = require('../config');
+const MetadataFilter = require('../filters/MetadataFilter');
+
+let metadataFilter;
 
 /**
  * Send cluster event to monitor
@@ -10,10 +12,18 @@ const config = require('../config');
  * @returns {Promise<void>}
  */
 const sendEvents = async (obj) => {
+    let data = obj;
+    if (metadataFilter) {
+        data = {
+            ...data,
+            object: metadataFilter.buildResponse(obj.object, obj.object.kind),
+        };
+    }
+
     const options = {
         method: 'POST',
         uri: `${config.apiUrl}/events`,
-        body: obj,
+        body: data,
         headers: {
             'authorization': config.token,
             'x-cluster-id': config.clusterId,
@@ -46,6 +56,24 @@ async function initEvents(accounts = []) {
     };
 
     global.logger.debug(`Init events. Cluster: ${config.clusterId}.`);
+    return Promise.all([getMetadata(), rp(options)])
+        .then(([metadata]) => {
+            metadataFilter = new MetadataFilter(metadata);
+        });
+}
+
+async function getMetadata() {
+    const options = {
+        method: 'GET',
+        uri: `${config.apiUrl}/events/metadata`,
+        headers: {
+            'authorization': config.token,
+            'x-cluster-id': config.clusterId,
+        },
+        json: true,
+    };
+
+    global.logger.debug(`Get metadata`);
     return rp(options);
 }
 
