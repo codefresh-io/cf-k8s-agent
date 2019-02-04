@@ -40,6 +40,7 @@ async function init() {
         await listener.subscribe();
     } catch (error) {
         global.logger.error(`Can't init agent. Reason: ${error}`);
+        throw error;
     }
 }
 
@@ -55,8 +56,6 @@ app.use(bodyParser());
 
 app.use('/', indexRouter);
 
-init().then(() => global.logger.info(`Agent has started...`)).catch(e => {
-    console.error(e);
-});
+init().then(() => global.logger.info(`Agent has started...`)).catch(() => process.exit(1));
 
 module.exports = app;
