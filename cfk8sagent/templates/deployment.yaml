@@ -31,81 +31,34 @@ spec:
         heritage: {{ .Release.Service  | quote }}
         version: {{ .Values.imageTag | quote }}
     spec:
-      affinity:
-{{ toYaml (default .Values.global.appServiceAffinity .Values.affinity) | indent 8 }}
-      imagePullSecrets:
-        - name: "{{ template "fullname" . }}-registry"
       containers:
       - name: {{ template "fullname" . }}
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
         imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
         env:
-
-          {{- if .Values.requiredInfraComponenets.mongo }}
-          - name: MONGO_URI
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "fullname" . }}
-                key: mongo-uri
-          {{- end}}
-          - name: RABBIT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
-                key: rabbitmq-password
-          - name: RABBIT_USER
-            valueFrom:
-              secretKeyRef:
-                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
-                key: rabbitmq-username
-          - name: EVENTBUS_URI
-            value: amqp://$(RABBIT_USER):$(RABBIT_PASSWORD)@{{ default (printf "%s-%s" .Release.Name .Values.global.rabbitService) .Values.global.rabbitmqHostname }}
-
-          - name: POSTGRES_HOST
-            value: {{ default (printf "%s-%s" .Release.Name .Values.global.postgresService) .Values.global.postgresHostname | quote }}
-          - name: POSTGRES_DATABASE
-            value: {{ .Values.global.postgresDatabase }}
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: "{{ .Release.Name }}-{{ .Values.global.codefresh }}"
-                key: postgres-user
-          - name: API_URI
-            value: "{{ .Release.Name }}-{{ .Values.global.cfapiService }}"
-          - name: API_PORT
-            value: {{ .Values.global.cfapiInternalPort | quote }}
           - name: SERVICE_NAME
             value: {{ template "name" . }}
-          - name: FORMAT_LOGS_TO_ELK
-            value: "{{ .Values.formatLogsToElk }}"
-
-          {{- if .Values.global.env }}
-          {{- range $key, $value := .Values.global.env }}
-          - name: {{ $key }}
-            value: {{ $value | quote }}
-          {{- end}}
-          {{- end}}
+          - name: PORT
+            value: {{ .Values.port | quote }}
+          - name: CLUSTER_URL
+            value: {{ .Values.clusterUrl | quote }}
+          - name: CLUSTER_TOKEN
+            value: {{ .Values.clusterToken | quote }}
+          - name: CLUSTER_CA
+            value: {{ .Values.clusterCA | quote }}
+          - name: CF_API_TOKEN
+            value: {{ .Values.cfApiToken | quote }}
+          - name: CLUSTER_ID
+            value: {{ .Values.clusterId | quote }}
+          - name: CF_API_URL
+            value: {{ .Values.cfApiUrl | quote }}
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
-          - name: PORT
-            value: {{ .Values.port | quote }}
-          - name: NEWRELIC_LICENSE_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "fullname" . }}
-                key: newrelic-license-key
         ports:
         - containerPort: {{ .Values.port }}
           protocol: TCP
-        {{- if .Values.global.addResolvConf }}
-        volumeMounts:
-        - mountPath: /etc/resolv.conf
-          name: resolvconf
-          subPath: resolv.conf
-          readOnly: true
-        {{- end }}
         readinessProbe:
           httpGet:
             path: /api/ping
@@ -114,9 +67,3 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
-      volumes:
-      {{- if .Values.global.addResolvConf }}
-      - name: resolvconf
-        configMap:
-          name: {{ .Release.Name }}-{{ .Values.global.codefresh }}-resolvconf
-      {{- end }}

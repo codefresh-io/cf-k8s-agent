@@ -1,5 +1,5 @@
 # serviceType type of the service, set to LoadBalancer to expose the ip when there is not ingress
-#serviceType: ClusterIP
+serviceType: ClusterIP
 
 # replicaCount number of pods to be schedualed
 replicaCount: 1
@@ -11,36 +11,25 @@ imagePullPolicy: Always
 redeploy: false
 
 # imageTag set the tag of the image
-imageTag: master
+imageTag: latest
 
 # image base name of the image
-image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
-
-# affinity special spesification
-affinity: {}
-
-# format logs for elk
-formatLogsToElk: true
+# image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
+image:  andriicodefresh/cf-k8s-agent
 
 # env set of evnrionment varialbe to be add to the containers
-env:
-  NODE_ENV: kubernetes
+#env:
+
+# clusterUrl - optional. for setup outside cluster when current context is used
+# clusterToken - optional. for setup outside cluster when current context is used
+# clusterCA - optional. for setup outside cluster when current context is used
+# cfApiToken - should be set when the chart is installing
+# clusterId - cluster name as it registered in account
+# useCurrentContext - use current context instead of cluster credentials. False by default.
+cfApiUrl: https://q.codefresh.io/api/k8s-monitor
 
 # port container port
 port: 80
 
 # servicePort port of the kubernetes service listen to
 servicePort: 80
-
-# dockercfg docker config valid string
-#dockercfg: {}
-## Base64 Encode without \n ###
-### auth: printf 'username:password' | openssl base64 | awk 'BEGIN{ORS="";} {print}' ####
-dockerconfigjson: {}
-
-newrelicLicenseKey: ""
-
-# requiredInfraComponenets will try to add environment variables for those infrastructure components
-#requiredInfraComponenets:
-#  mongo: true
-#  postgres: true
