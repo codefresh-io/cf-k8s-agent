@@ -32,8 +32,19 @@ async function init() {
             global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
         }
 
+        // if (process.env.ACCOUNTS) {
+        //     // global.logger.debug(`ACCOUNTS: ${process.env.ACCOUNTS}`);
+        //     global.logger.debug(`ACCOUNTS: ${JSON.stringify(process.env.ACCOUNTS)}`);
+        // }
+
         // Get instances for each resource and init cache for them
         const [client] = await Promise.all([clientFactory(), initEvents(accounts)]);
+
+        console.log(`Clean: ${process.env.CLEAN}`);
+        if (process.env.CLEAN === 'true') {
+            global.logger.debug(`Exit after cleaning`);
+            process.exit(0);
+        }
 
         // Create listener for all resources and subscribe for cluster events
         const listener = new Listener(client);

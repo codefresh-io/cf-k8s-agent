@@ -14,8 +14,6 @@ spec:
       labels:
         app: {{ template "fullname" . }}
     spec:
-      imagePullSecrets:
-      - name: "{{ template "fullname" . }}-registry"
       containers:
         - name: {{ template "fullname" . }}
           image: "{{ .Values.image }}:{{ .Values.imageTag }}"
@@ -26,5 +24,9 @@ spec:
               value: {{ .Values.cfApiUrl }}
             - name: CLUSTER_ID
               value: {{ .Values.clusterId }}
+            - name: CLEAN
+              value: "{{ .Values.clean }}"
+            - name: ACCOUNTS
+              value: '{{ .Values.ACCOUNTS }}'
           ports:
             - containerPort: {{ .Values.port }}
