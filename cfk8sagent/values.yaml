@@ -28,6 +28,7 @@ image:  andriicodefresh/cf-k8s-agent
 # useCurrentContext - use current context instead of cluster credentials. False by default.
 cfApiUrl: https://q.codefresh.io/api/k8s-monitor{path}
 clusterId: clusterName
+clusterUrl: ""
 clean: false
 dockerconfigjson: {}
 
