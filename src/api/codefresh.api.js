@@ -40,7 +40,7 @@ const sendEvents = async (obj) => {
     };
 
     global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${data.object['metadata.name']}. ${data.type}`);
-    // global.logger.debug(`-------------------->: ${JSON.stringify(data)} :<-------------------`);
+    global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
     rp(options).catch(global.logger.error);
 };
 
@@ -70,7 +70,7 @@ async function initEvents(accounts = []) {
     return Promise.all([getMetadata(), rp(options)])
         .then(([metadata]) => {
             metadataFilter = new MetadataFilter(metadata);
-            // global.logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
+            global.logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
         });
 }
 
