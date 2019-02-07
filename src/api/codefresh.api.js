@@ -86,7 +86,7 @@ async function getMetadata() {
         json: true,
     };
 
-    global.logger.debug(`Get metadata.`);
+    global.logger.debug(`Get metadata from ${uri}.`);
     return rp(options);
 }
 
