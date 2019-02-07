@@ -16,6 +16,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
+const version = require('../package.json').version;
 const { initEvents } = require('./api/codefresh.api');
 
 const { clientFactory, Listener } = require('./kubernetes');
@@ -67,6 +68,7 @@ app.use(bodyParser());
 
 app.use('/', indexRouter);
 
-init().then(() => global.logger.info(`Agent has started...`)).catch(() => process.exit(1));
+
+init().then(() => global.logger.info(`Agent ${version} has started...`)).catch(() => process.exit(1));
 
 module.exports = app;
