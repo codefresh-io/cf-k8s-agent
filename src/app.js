@@ -66,7 +66,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser());
 
-app.use('/', indexRouter);
+app.use('/api', indexRouter);
 
 
 init().then(() => global.logger.info(`Agent ${version} has started...`)).catch(() => process.exit(1));
