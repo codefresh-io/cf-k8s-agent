@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const rp = require('request-promise');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
@@ -12,8 +13,7 @@ let metadataFilter;
  * @returns {Promise<void>}
  */
 const sendEvents = async (obj) => {
-    let data = { ...obj };
-    // global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${data.object.metadata.name}. ${data.type}`);
+    let data = _.cloneDeep(obj);
 
     if (data.kind === 'Status') {
         global.logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
