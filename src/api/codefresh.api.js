@@ -6,6 +6,7 @@ const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 
 let metadataFilter;
+let counter;
 
 /**
  * Send cluster event to monitor
@@ -26,6 +27,8 @@ const sendEvents = async (obj) => {
             object: metadataFilter.buildResponse(obj.object, obj.object.kind),
         };
     }
+
+    data.counter = counter++;
 
     const uri = config.apiUrl.replace('{path}', '/events');
     const options = {
@@ -70,6 +73,7 @@ async function initEvents(accounts = []) {
     return Promise.all([getMetadata(), rp(options)])
         .then(([metadata]) => {
             metadataFilter = new MetadataFilter(metadata);
+            counter = 1;
             global.logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
         });
 }

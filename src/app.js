@@ -16,7 +16,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
-const version = require('../package.json').version;
+const { version } = require('../package.json');
 const { initEvents } = require('./api/codefresh.api');
 
 const { clientFactory, Listener } = require('./kubernetes');
@@ -32,11 +32,6 @@ async function init() {
             accounts = null;
             global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
         }
-
-        // if (process.env.ACCOUNTS) {
-        //     // global.logger.debug(`ACCOUNTS: ${process.env.ACCOUNTS}`);
-        //     global.logger.debug(`ACCOUNTS: ${JSON.stringify(process.env.ACCOUNTS)}`);
-        // }
 
         // Get instances for each resource and init cache for them
         const [client] = await Promise.all([clientFactory(), initEvents(accounts)]);
