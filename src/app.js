@@ -16,6 +16,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
+const version = require('../package.json').version;
 const { initEvents } = require('./api/codefresh.api');
 
 const { clientFactory, Listener } = require('./kubernetes');
@@ -32,8 +33,19 @@ async function init() {
             global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
         }
 
+        // if (process.env.ACCOUNTS) {
+        //     // global.logger.debug(`ACCOUNTS: ${process.env.ACCOUNTS}`);
+        //     global.logger.debug(`ACCOUNTS: ${JSON.stringify(process.env.ACCOUNTS)}`);
+        // }
+
         // Get instances for each resource and init cache for them
         const [client] = await Promise.all([clientFactory(), initEvents(accounts)]);
+
+        console.log(`Clean: ${process.env.CLEAN}`);
+        if (process.env.CLEAN === 'true') {
+            global.logger.debug(`Exit after cleaning`);
+            process.exit(0);
+        }
 
         // Create listener for all resources and subscribe for cluster events
         const listener = new Listener(client);
@@ -54,8 +66,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser());
 
-app.use('/', indexRouter);
+app.use('/api', indexRouter);
 
-init().then(() => global.logger.info(`Agent has started...`)).catch(() => process.exit(1));
+
+init().then(() => global.logger.info(`Agent ${version} has started...`)).catch(() => process.exit(1));
 
 module.exports = app;

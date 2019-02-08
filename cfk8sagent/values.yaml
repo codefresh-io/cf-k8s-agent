@@ -26,7 +26,11 @@ image:  andriicodefresh/cf-k8s-agent
 # cfApiToken - should be set when the chart is installing
 # clusterId - cluster name as it registered in account
 # useCurrentContext - use current context instead of cluster credentials. False by default.
-cfApiUrl: https://q.codefresh.io/api/k8s-monitor
+cfApiUrl: https://q.codefresh.io/api/k8s-monitor{path}
+clusterId: clusterName
+clusterUrl: ""
+clean: false
+dockerconfigjson: {}
 
 # port container port
 port: 80

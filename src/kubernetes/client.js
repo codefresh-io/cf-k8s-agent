@@ -4,15 +4,18 @@ const { Client, config: kubeConfig } = require('kubernetes-client');
 const config = require('../config');
 
 function _resolveConfig() {
-    if (!config.clusterUrl) {
-        // Run inside cluster
-        return kubeConfig.getInCluster();
-    }
     if (config.useCurrentContext) {
         // Use current context
+        global.logger.debug(`Use current context`);
         return kubeConfig.fromKubeconfig();
     }
+    if (!config.clusterUrl) {
+        // Run inside cluster
+        global.logger.debug(`Run inside cluster`);
+        return kubeConfig.getInCluster();
+    }
     // Use auth from environment
+    global.logger.debug(`Use auth from environment`);
     return {
         url: config.clusterUrl,
         auth: {

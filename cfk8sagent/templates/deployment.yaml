@@ -52,6 +52,10 @@ spec:
             value: {{ .Values.clusterId | quote }}
           - name: CF_API_URL
             value: {{ .Values.cfApiUrl | quote }}
+          - name: CLEAN
+            value: "{{ .Values.clean }}"
+          - name: ACCOUNTS
+            value: '{{ .Values.ACCOUNTS }}'
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
