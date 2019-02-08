@@ -12,7 +12,7 @@ let metadataFilter;
  * @returns {Promise<void>}
  */
 const sendEvents = async (obj) => {
-    let data = obj;
+    let data = { ...obj };
     // global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${data.object.metadata.name}. ${data.type}`);
 
     if (data.kind === 'Status') {
@@ -39,7 +39,7 @@ const sendEvents = async (obj) => {
         json: true,
     };
 
-    global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${data.object['metadata.name']}. ${data.type}`);
+    global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
     global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
     rp(options).catch(global.logger.error);
 };
