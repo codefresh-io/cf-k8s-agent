@@ -10,15 +10,15 @@ let counter;
 
 let eventsPackage = [];
 
-const sendPackage = (events) => {
-    const { length } = events;
+const sendPackage = () => {
+    const { length } = eventsPackage;
     if (!length) return;
 
     const uri = config.apiUrl.replace('{path}', '/events');
     const options = {
         method: 'POST',
         uri,
-        body: events,
+        body: eventsPackage,
         headers: {
             'authorization': config.token,
             'x-cluster-id': config.clusterId,
@@ -30,7 +30,7 @@ const sendPackage = (events) => {
     rp(options)
         .then(() => {
             // events.data = _.drop(events.data, length);
-            events.splice(0, length);
+            eventsPackage.splice(0, length);
         })
         .catch(global.logger.error);
 };
@@ -61,7 +61,7 @@ const sendEvents = (obj) => {
     global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
     eventsPackage.push(data);
     if (eventsPackage.length === 10) {
-        sendPackage(eventsPackage);
+        sendPackage();
     }
 };
 
@@ -112,7 +112,7 @@ async function getMetadata() {
     return rp(options);
 }
 
-setInterval(sendPackage.bind(null, eventsPackage), 2000);
+setInterval(sendPackage, 2000);
 
 module.exports = {
     sendEvents,
