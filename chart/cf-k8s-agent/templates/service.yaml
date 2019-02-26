@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: "{{ template "fullname" . }}-svc"
 spec:
-  type: NodePort
+  type: {{ .Values.serviceType }}
   ports:
-    - port: {{ .Values.servicePort }}
-      targetPort: {{ .Values.targetPort }}
-      nodePort: {{ .Values.nodePort }}
+    - port: {{ .Values.port }}
+      targetPort: {{ .Values.port }}
   selector:
     app: {{ template "fullname" . }}
