@@ -8,7 +8,7 @@ const MetadataFilter = require('../filters/MetadataFilter');
 let metadataFilter;
 let counter;
 
-let eventsPackage = [];
+const eventsPackage = [];
 
 const sendPackage = () => {
     const { length } = eventsPackage;
@@ -18,7 +18,7 @@ const sendPackage = () => {
     const options = {
         method: 'POST',
         uri,
-        body: eventsPackage,
+        body: { ...eventsPackage },
         headers: {
             'authorization': config.token,
             'x-cluster-id': config.clusterId,
@@ -26,13 +26,17 @@ const sendPackage = () => {
         json: true,
     };
 
+    eventsPackage.splice(0, length);
+
     global.logger.debug(`Sending package with ${length} element(s).`);
     rp(options)
-        .then(() => {
+        .then((r) => {
             // events.data = _.drop(events.data, length);
-            eventsPackage.splice(0, length);
+            global.logger.info(`sending result: ${JSON.stringify(r)}`);
         })
-        .catch(global.logger.error);
+        .catch((e) => {
+            global.logger.info(`sending result error: ${e.message}`);
+        });
 };
 
 /**
