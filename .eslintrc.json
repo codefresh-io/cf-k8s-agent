@@ -4,12 +4,12 @@
 // More details: https://codefresh-io.atlassian.net/wiki/display/COD/Code+Style+Guide
 {
   "env": {
-    "node": true
+    "node": true,
+    "mocha": true
   },
-
   "plugins": [
+    "mocha"
   ],
-
   "extends": "airbnb",
   "parserOptions": {
     "ecmaVersion": 2018,
@@ -18,9 +18,11 @@
       "jsx": true
     }
   },
-
   "rules": {
-    "max-len": [1, 130],
+    "max-len": [
+      1,
+      130
+    ],
     "indent": [
       "error",
       4,
@@ -59,11 +61,29 @@
     "guard-for-in": "error",
     "no-console": "off",
     "no-plusplus": "off",
-    "comma-dangle": ["error", "only-multiline"],
-    "quote-props": ["error", "consistent"],
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ],
+    "quote-props": [
+      "error",
+      "consistent"
+    ],
     "class-methods-use-this": "off",
-    "no-use-before-define": ["error", { "functions": false, "classes": true }],
-    "no-restricted-syntax": ["error", "WithStatement", "ForInStatement", "LabeledStatement"],
-    "no-unused-expressions": 0
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": true
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      "WithStatement",
+      "ForInStatement",
+      "LabeledStatement"
+    ],
+    "no-unused-expressions": 0,
+    "mocha/no-exclusive-tests": "error"
   }
 }

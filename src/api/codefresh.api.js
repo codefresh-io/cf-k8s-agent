@@ -6,13 +6,45 @@ const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 
 let metadataFilter;
+let counter;
+
+const eventsPackage = [];
+
+const sendPackage = () => {
+    const { length } = eventsPackage;
+    if (!length) return;
+
+    const uri = config.apiUrl.replace('{path}', '/events');
+    const options = {
+        method: 'POST',
+        uri,
+        body: { ...eventsPackage },
+        headers: {
+            'authorization': config.token,
+            'x-cluster-id': config.clusterId,
+        },
+        json: true,
+    };
+
+    eventsPackage.splice(0, length);
+
+    global.logger.debug(`Sending package with ${length} element(s).`);
+    rp(options)
+        .then((r) => {
+            // events.data = _.drop(events.data, length);
+            global.logger.info(`sending result: ${JSON.stringify(r)}`);
+        })
+        .catch((e) => {
+            global.logger.info(`sending result error: ${e.message}`);
+        });
+};
 
 /**
  * Send cluster event to monitor
  * @param obj - data for sending
  * @returns {Promise<void>}
  */
-const sendEvents = async (obj) => {
+const sendEvents = (obj) => {
     let data = _.cloneDeep(obj);
 
     if (data.kind === 'Status') {
@@ -27,21 +59,14 @@ const sendEvents = async (obj) => {
         };
     }
 
-    const uri = config.apiUrl.replace('{path}', '/events');
-    const options = {
-        method: 'POST',
-        uri,
-        body: data,
-        headers: {
-            'authorization': config.token,
-            'x-cluster-id': config.clusterId,
-        },
-        json: true,
-    };
+    data.counter = counter++;
 
-    global.logger.debug(`Sending event. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
+    global.logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
     global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
-    rp(options).catch(global.logger.error);
+    eventsPackage.push(data);
+    if (eventsPackage.length === 10) {
+        sendPackage();
+    }
 };
 
 /**
@@ -70,6 +95,7 @@ async function initEvents(accounts = []) {
     return Promise.all([getMetadata(), rp(options)])
         .then(([metadata]) => {
             metadataFilter = new MetadataFilter(metadata);
+            counter = 1;
             global.logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
         });
 }
@@ -89,6 +115,8 @@ async function getMetadata() {
     global.logger.debug(`Get metadata from ${uri}.`);
     return rp(options);
 }
+
+setInterval(sendPackage, 2000);
 
 module.exports = {
     sendEvents,

@@ -12,10 +12,10 @@ module.exports = {
     clusterId: process.env.CLUSTER_ID,
 
     // Use current kubernetes context.
-    // If true, you need to set active context before starting agent. cubectl config use-context <contextname>
+    // If true, you need to set active context before starting agent. kubectl config use-context <contextname>
     // If false, cluster credentials will be got from environment. CLUSTER_URL, CLUSTER_TOKEN, CLUSTER_CA
     useCurrentContext: process.env.USE_CURRENT_CONTEXT || false,
 
-    // Interval for restoring stream after error
+    // Interval for restoring stream from k8s cluster after error
     retryInterval: 2000,
 };
