@@ -1,4 +1,4 @@
-# CFUI helm chart
+# Agent helm chart
 
 ## Supported values
 
@@ -46,5 +46,3 @@ default: `servicePort: 80`
 docker config valid string
 default: `dockercfg: {}`
 
-## newrelicLicenseKey
-default: `newrelicLicenseKey: ""`
