@@ -11,11 +11,11 @@ imagePullPolicy: Always
 redeploy: false
 
 # imageTag set the tag of the image
-imageTag: latest
+imageTag: master
 
 # image base name of the image
 # image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
-image:  andriicodefresh/cf-k8s-agent
+image:  r.cfcr.io/codefresh-inc/codefresh/cf-k8s-agent
 
 # env set of evnrionment varialbe to be add to the containers
 #env:
@@ -26,7 +26,7 @@ image:  andriicodefresh/cf-k8s-agent
 # cfApiToken - should be set when the chart is installing
 # clusterId - cluster name as it registered in account
 # useCurrentContext - use current context instead of cluster credentials. False by default.
-cfApiUrl: https://q.codefresh.io/api/k8s-monitor{path}
+cfApiUrl: https://g.codefresh.io/api/k8s-monitor{path}
 clusterId: clusterName
 clusterUrl: ""
 clean: false
