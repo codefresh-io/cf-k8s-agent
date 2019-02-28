@@ -1,0 +1,7 @@
+apiVersion: v1
+name: k8sagent
+version: 0.0.17
+description: Kubernetes agent for monitoring resources
+keywords:
+- kubernetes
+- agent

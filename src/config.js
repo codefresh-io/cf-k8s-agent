@@ -5,7 +5,10 @@ module.exports = {
     clusterUrl: process.env.CLUSTER_URL,
     clusterToken: process.env.CLUSTER_TOKEN,
     clusterCA: process.env.CLUSTER_CA,
-    monitorUrl: process.env.MONITOR_URL,
+
+    // Params for interacting with API
+    token: process.env.API_TOKEN,
+    apiUrl: process.env.API_URL,
     clusterId: process.env.CLUSTER_ID,
     userId: process.env.USER_ID,
 

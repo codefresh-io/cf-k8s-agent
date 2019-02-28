@@ -14,7 +14,7 @@ const sendPackage = () => {
     const { length } = eventsPackage;
     if (!length) return;
 
-    const uri = `${config.monitorUrl}${config.userId}/${config.clusterId}`;
+    const uri = `${config.apiUrl}/${config.userId}/${config.clusterId}`;
     const options = {
         method: 'POST',
         uri,
@@ -72,7 +72,7 @@ const sendEvents = (obj) => {
  * @returns {Promise<void>}
  */
 async function initEvents(accounts = []) {
-    const uri = `${config.monitorUrl}init/${config.userId}/${config.clusterId}`;
+    const uri = `${config.apiUrl}/init/${config.userId}/${config.clusterId}`;
     global.logger.debug(`Before init events. ${uri}`);
     const options = {
         method: 'POST',
@@ -93,7 +93,7 @@ async function initEvents(accounts = []) {
 }
 
 async function getMetadata() {
-    const uri = `${config.monitorUrl}metadata`;
+    const uri = `${config.apiUrl}/metadata`;
     const options = {
         method: 'GET',
         uri,

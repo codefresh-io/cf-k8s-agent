@@ -16,14 +16,13 @@ default: `redeploy: false`
 
 ## imageTag
 set the tag of the image
-default: `imageTag: master`
+default: `imageTag: latest`
 
 ## image
 base name of the image
-default: `image: r.cfcr.io/codefresh-inc/codefresh/cf-ui`
 
 ## affinity
-special spesification
+special specification
 default: `affinity: {}`
 
 ## env

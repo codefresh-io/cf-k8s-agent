@@ -26,19 +26,19 @@ steps:
       set:
       - CF_QUALITY: true
 
-  push_to_cfcr:
-    title: 'Pushing image to cfcr'
+  push_to_dockerhub:
+    title: 'Pushing image to dockerhub'
     stage: push
     type: push
-    image_name: codefresh/cf-codefresh
-    registry: CFCR
+    image_name: ${{IMAGE_NAME}}
+    registry: dockerhub
     candidate: ${{build_step}}
     tags:
     - ${{CF_BRANCH_TAG_NORMALIZED}}
     - ${{CF_REVISION}}
 
-  run_pipeline_template:
-    image: codefresh/cli
-    stage: run
-    commands:
-    - codefresh run ${{TEMPLATE_PIPELINE_NAME}} -b master -v ORIGIN_WORKFLOW_CF_REVISION=${{CF_REVISION}} -v ORIGIN_WORKFLOW_CF_BRANCH_TAG_NORMALIZED=${{CF_BRANCH_TAG_NORMALIZED}} -v ORIGIN_WORKFLOW_CF_BRANCH=${{CF_BRANCH}}  -v ORIGIN_WORKFLOW_CHART_NAME=${{CHART_NAME}} -v ORIGIN_WORKFLOW_REPO_NAME=${{REPO_NAME}} -v ORIGIN_WORKFLOW_SERVICE_NAME=${{SERVICE_NAME}} -v ORIGIN_WORKFLOW_CHART_NAME_UPPER=${{CHART_NAME_UPPER}}
+#  run_pipeline_template:
+#    image: codefresh/cli
+#    stage: run
+#    commands:
+#    - codefresh run ${{TEMPLATE_PIPELINE_NAME}} -b master -v ORIGIN_WORKFLOW_CF_REVISION=${{CF_REVISION}} -v ORIGIN_WORKFLOW_CF_BRANCH_TAG_NORMALIZED=${{CF_BRANCH_TAG_NORMALIZED}} -v ORIGIN_WORKFLOW_CF_BRANCH=${{CF_BRANCH}}  -v ORIGIN_WORKFLOW_CHART_NAME=${{CHART_NAME}} -v ORIGIN_WORKFLOW_REPO_NAME=${{REPO_NAME}} -v ORIGIN_WORKFLOW_SERVICE_NAME=${{SERVICE_NAME}} -v ORIGIN_WORKFLOW_CHART_NAME_UPPER=${{CHART_NAME_UPPER}}
