@@ -17,7 +17,7 @@ Keep other variables as is.
 
 Run commands:
 * `kubectl config use-context <cluster_context>`  
-* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=denyscodefresh/agent --set userId=002762d00000000000000000 --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set userId=002762d00000000000000000 --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`
 
 where \<userId\> - Valid ObjectId.
 
