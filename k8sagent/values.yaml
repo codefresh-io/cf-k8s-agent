@@ -35,4 +35,5 @@ port: 80
 
 # servicePort port of the kubernetes service listen to
 servicePort: 80
-userId: 5c750c935d3fdd6285855f3f
+
+# userId: 002762d00000000000000000
