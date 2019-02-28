@@ -52,6 +52,8 @@ spec:
             value: {{ .Values.clusterId | quote }}
           - name: API_URL
             value: {{ .Values.apiUrl | quote }}
+          - name: USER_ID
+            value: {{ .Values.userId | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS
