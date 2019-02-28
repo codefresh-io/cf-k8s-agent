@@ -46,12 +46,12 @@ spec:
             value: {{ .Values.clusterToken | quote }}
           - name: CLUSTER_CA
             value: {{ .Values.clusterCA | quote }}
-          - name: CF_API_TOKEN
-            value: {{ .Values.cfApiToken | quote }}
+          - name: API_TOKEN
+            value: {{ .Values.apiToken | quote }}
           - name: CLUSTER_ID
             value: {{ .Values.clusterId | quote }}
-          - name: CF_API_URL
-            value: {{ .Values.cfApiUrl | quote }}
+          - name: API_URL
+            value: {{ .Values.apiUrl | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS

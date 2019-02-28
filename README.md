@@ -19,14 +19,14 @@ helm del agent --purge
 
 Use pipeline:  
 [https://g.codefresh.io/pipelines/cf-k8s-agent-install/services](`https://g.codefresh.io/pipelines/cf-k8s-agent-install/services`)  
-Set variable CF_API_TOKEN as token of your account.  
+Set variable API_TOKEN as token of your account.
 Keep other variables as is.
 
 \- OR - 
 
 Run commands:
 * `kubectl config use-context cf-load@codefresh-load`  
-* `helm upgrade agent cfk8sagent --install --force --reset-values --repo http://chartmuseum-dev.codefresh.io/ --version 0.0.12-configurate-chart --set cfApiToken=<apiToken> --set cfApiUrl=https://app-load.codefresh.io/api/k8s-monitor{path} --set clusterId=cf-load@codefresh-load`
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set apiToken=<apiToken> --set apiUrl=https://app-load.codefresh.io/api/k8s-monitor{path} --set clusterId=cf-load@codefresh-load`
 
 where \<apiToken\> - Codefresh API token from your account.
 
@@ -44,9 +44,9 @@ You can use filter 'hello' for hiding other resources.
 
 ### Environment variables of Agent
 Required variables:
-* cfApiToken: Codefresh API token
+* apiToken: Codefresh API token
 * clusterId: cluster name from account's integration
-* cfApiUrl: Codefresh API URL
+* apiUrl: Codefresh API URL
 
 If agent works outside cluster:
 * clusterUrl: 'http://192.168.99.101:8443'

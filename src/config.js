@@ -6,9 +6,9 @@ module.exports = {
     clusterToken: process.env.CLUSTER_TOKEN,
     clusterCA: process.env.CLUSTER_CA,
 
-    // Params for interacting with Codefresh API
-    token: process.env.CF_API_TOKEN,
-    apiUrl: process.env.CF_API_URL,
+    // Params for interacting with API
+    token: process.env.API_TOKEN,
+    apiUrl: process.env.API_URL,
     clusterId: process.env.CLUSTER_ID,
 
     // Use current kubernetes context.
