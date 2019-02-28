@@ -14,15 +14,11 @@ const sendPackage = () => {
     const { length } = eventsPackage;
     if (!length) return;
 
-    const uri = config.apiUrl.replace('{path}', '/events');
+    const uri = `${config.monitorUrl}${config.userId}/${config.clusterId}`;
     const options = {
         method: 'POST',
         uri,
         body: { ...eventsPackage },
-        headers: {
-            'authorization': config.token,
-            'x-cluster-id': config.clusterId,
-        },
         json: true,
     };
 
@@ -76,15 +72,11 @@ const sendEvents = (obj) => {
  * @returns {Promise<void>}
  */
 async function initEvents(accounts = []) {
-    const uri = config.apiUrl.replace('{path}', '/events/init');
+    const uri = `${config.monitorUrl}init/${config.userId}/${config.clusterId}`;
     global.logger.debug(`Before init events. ${uri}`);
     const options = {
         method: 'POST',
         uri,
-        headers: {
-            'authorization': config.token,
-            'x-cluster-id': config.clusterId,
-        },
         body: {
             accounts,
         },
@@ -101,7 +93,7 @@ async function initEvents(accounts = []) {
 }
 
 async function getMetadata() {
-    const uri = config.apiUrl.replace('{path}', '/events/metadata');
+    const uri = `${config.monitorUrl}metadata`;
     const options = {
         method: 'GET',
         uri,
