@@ -1,24 +1,25 @@
 'use strict';
 
-const { createLogger, transports, format } = require('winston');
+const {createLogger, transports, format} = require('winston');
 
-const { combine, timestamp, printf } = format;
+const {combine, timestamp, printf} = format;
 
 const myFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
-
-global.logger = createLogger({
-    level: 'debug',
-    format: combine(timestamp(), myFormat),
-    transports: [new transports.Console()],
-});
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
-const { clearEvents } = require('./api/codefresh.api');
 
-const { clientFactory, Listener } = require('./kubernetes');
+const config = require('./config');
+const {clearEvents} = require('./api/codefresh.api');
+const {clientFactory, Listener} = require('./kubernetes');
+
+global.logger = createLogger({
+    level: config.loggingLevel,
+    format: combine(timestamp(), myFormat),
+    transports: [new transports.Console()],
+});
 
 async function init() {
     try {
@@ -39,7 +40,7 @@ const app = express();
 
 app.use(loggerMiddleware);
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(bodyParser());
 

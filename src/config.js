@@ -11,6 +11,8 @@ module.exports = {
     apiUrl: process.env.CF_API_URL,
     clusterId: process.env.CLUSTER_ID,
 
+    loggingLevel: process.env.LOGGING_LEVEL | 'debug',
+
     // Use current kubernetes context.
     // If true, you need to set active context before starting agent. cubectl config use-context <contextname>
     // If false, cluster credentials will be got from environment. CLUSTER_URL, CLUSTER_TOKEN, CLUSTER_CA
