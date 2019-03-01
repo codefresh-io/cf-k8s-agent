@@ -53,7 +53,7 @@ spec:
           - name: API_URL
             value: {{ .Values.apiUrl | quote }}
           - name: USER_ID
-            value: {{ .Values.userId | quote }}
+            value: {{ .Values.accountId | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS
