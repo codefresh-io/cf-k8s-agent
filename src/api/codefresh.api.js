@@ -4,6 +4,7 @@ const _ = require('lodash');
 const rp = require('request-promise');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
+const statistics = require('../statistics');
 
 let metadataFilter;
 let counter;
@@ -82,6 +83,7 @@ class CodefreshAPI {
         global.logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
         global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
         eventsPackage.push(data);
+        statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
         }
@@ -109,6 +111,7 @@ class CodefreshAPI {
             .then((r) => {
                 // events.data = _.drop(events.data, length);
                 global.logger.info(`sending result: ${JSON.stringify(r)}`);
+                statistics.incPackages();
             })
             .catch((e) => {
                 global.logger.info(`sending result error: ${e.message}`);
