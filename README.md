@@ -17,7 +17,10 @@ Keep other variables as is.
 
 Run commands:
 * `kubectl config use-context <cluster_context>`  
-* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=denyscodefresh/agent --set userId=002762d00000000000000000 --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`
+Using customer`s monitor
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set accountId=002762d00000000000000000 --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`  
+Using Codefresh`s monitor
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set apiToken=<token> --set apiUrl=http://local.codefresh.io/api/k8s-monitor/events --set clusterId=minikube`
 
 where \<userId\> - Valid ObjectId.
 
@@ -36,7 +39,7 @@ While doing steps 2-5 you will see updates on monitor API.
 
 ### Environment variables of Agent
 Required variables:
-* clusterId: cluster name,
+* clusterId: cluster name (as in integrations),
 * apiUrl: API URL,
 * apiToken: Codefresh API token for using monitor service provided by Codefresh  
 or  
