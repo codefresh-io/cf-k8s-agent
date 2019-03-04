@@ -16,11 +16,13 @@ class CodefreshAPI {
     constructor() {
         this.initEvents = this.initEvents.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
+        this.updateHandler = this.updateHandler.bind(this);
 
         this._sendPackage = this._sendPackage.bind(this);
         this._getMetadata = this._getMetadata.bind(this);
         this._getIdentifyData = this._getIdentifyData.bind(this);
         this._buildRequestHeaders = this._buildRequestHeaders.bind(this);
+        this._needUpdate = this._needUpdate.bind(this);
 
         setInterval(this._sendPackage, 2000);
     }
@@ -37,9 +39,7 @@ class CodefreshAPI {
         global.logger.debug(`Before init events. ${uri}`);
         const options = {
             headers: {
-                'x-cluster-id': config.clusterId,
-                'x-account-id': config.accountId,
-                'authorization': config.token,
+                ...this._buildRequestHeaders(),
             },
             method: 'POST',
             uri,
@@ -87,6 +87,30 @@ class CodefreshAPI {
         if (eventsPackage.length === 10) {
             this._sendPackage();
         }
+    }
+
+
+    updateHandler(callback) {
+        setInterval(async () => {
+            const need = await this._needUpdate();
+            if (need) callback();
+        }, 10000);
+    }
+
+    async _needUpdate() {
+        const uri = `${config.apiUrl}/state`;
+        global.logger.debug(`Before init events. ${uri}`);
+        const options = {
+            headers: {
+                ...this._buildRequestHeaders(),
+            },
+            method: 'GET',
+            uri,
+            json: true,
+        };
+
+        const result = await rp(options);
+        return result.needUpdate;
     }
 
     _sendPackage() {

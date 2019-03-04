@@ -6,6 +6,7 @@ const { combine, timestamp, printf } = format;
 
 const myFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
 
+
 global.logger = createLogger({
     level: 'debug',
     format: combine(timestamp(), myFormat),
@@ -17,7 +18,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
 const { version } = require('../package.json');
-const { initEvents } = require('./api/codefresh.api');
+const { initEvents, updateHandler } = require('./api/codefresh.api');
+const config = require('./config');
 
 const { clientFactory, Listener } = require('./kubernetes');
 
@@ -51,6 +53,9 @@ async function init() {
     }
 }
 
+setInterval(init, config.resetInterval);
+updateHandler(init);
+
 const indexRouter = require('./api');
 
 const app = express();
@@ -64,6 +69,8 @@ app.use(bodyParser());
 app.use('/api', indexRouter);
 
 
-init().then(() => global.logger.info(`Agent ${version} has started...`)).catch(() => process.exit(1));
+init()
+    .then(() => global.logger.info(`Agent ${version} has started...`))
+    .catch(() => process.exit(1));
 
 module.exports = app;
