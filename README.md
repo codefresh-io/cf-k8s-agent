@@ -2,65 +2,52 @@
 
 Service for monitoring cluster resources. Agent can be set as inside cluster as outside of it.
 
-Agent starts streams for watching updates cluster resources and sends information about updated resources to Codefresh API.
+Agent starts streams for watching updates cluster resources and sends information about updated resources to Monitor service.
 
-The aim is to provide updates for UI in case of cluster resources have changing.  
+The aim is to have actual state of cluster resources.  
 
-### For installing agent:
+### Installing agent:
 
-Use pipeline:  
+1. Using pipeline:
+  
 [https://g.codefresh.io/pipelines/cf-k8s-agent-install/services](`https://g.codefresh.io/pipelines/cf-k8s-agent-install/services`)  
 Set variable API_TOKEN as token of your account.
 Keep other variables as is.
 
-\- OR - 
+2. Using helm:
 
 Run commands:
 * `kubectl config use-context <cluster_context>`  
-Using customer`s monitor
-* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set accountId=002762d00000000000000000 --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`  
-Using Codefresh`s monitor
-* `helm upgrade agent ./k8sagent --install --force --reset-values --set image=codefresh/agent --set apiToken=<token> --set apiUrl=http://local.codefresh.io/api/k8s-monitor/events --set clusterId=minikube`
 
-where \<userId\> - Valid ObjectId.
+For customer`s monitor
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set accountId=<ObjectId> --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=minikube`  
+where \<accountId\> - Valid ObjectId.
+
+For Codefresh`s monitor
+* `helm upgrade agent ./k8sagent --install --force --reset-values --set apiToken=<token> --set clusterId=minikube`
+
+
+3. Using Codefresh CLI
+
+Run commands:
+* `codefresh auth use-context <name>`
+
+If using customer`s monitor:
+* `codefresh install-agent --cluster minikube --version 0.0.18 --set clusterId=minikube --set apiUrl=http://<monitor host>/api/monitor --set accountId=<ObjectId> `
+--release-name (optional, default: agent) 
+--cluster <name> (name of cluster for Agent installing) 
+--version <version> (optional, default: latest version of agent chart)
+--set apiUrl=<url> (http://<monitor host>/api/monitor)
+--set clusterId=<name> (cluster name for identification)
+--set accountId=<ObjectId> (valid ObjectId for user identification)
+
+If using Codefresh`s monitor:
+* `codefresh install-agent --cluster minikube --version 0.0.18 --set clusterId=minikube --set apiToken=<token>`
+--release-name (default: agent) 
+--cluster <name> (name of cluster for Agent installing) 
+--version <version> (default: latest version of agent chart)
+--set clusterId=<name> (cluster name from integrations)
+--set apiToken=<token> (default: api token from current context)
 
 ### For uninstalling agent run command:
 helm del agent --purge
-
-### For testing:
-
-1) Use `kubectl config use-context minikube` for selecting load.
-2) Install test deployment `kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.10 --port=8080`
-3) Install test service `kubectl expose deployment hello-minikube --type=NodePort`
-4) Remove test service `kubectl delete services hello-minikube`
-5) Remove test deployment `kubectl delete deployment hello-minikube`
-
-While doing steps 2-5 you will see updates on monitor API.
-
-### Environment variables of Agent
-Required variables:
-* clusterId: cluster name (as in integrations),
-* apiUrl: API URL,
-* apiToken: Codefresh API token for using monitor service provided by Codefresh  
-or  
-* userId: ObjectId for identification of user.
-
-If agent works outside cluster:
-* clusterUrl: 'http://192.168.99.101:8443',
-* clusterToken: Authorization Bearer,
-* clusterCA: Certificate of cluster
-or  
-* useCurrentContext: use current context instead of cluster credentials. False by default.
-
-### Using with minikube
-* start minikube with RBAC 
-
-`minikube start --extra-config=apiserver.authorization-mode=RBAC`
-
-* create role binding
-
-`kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --user=system:serviceaccount:default:default`
-
-* check status, get credentials
-
-`minikube dashboard`
