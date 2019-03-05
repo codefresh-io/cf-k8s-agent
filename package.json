@@ -1,6 +1,6 @@
 {
   "name": "cf-k8s-agent",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
