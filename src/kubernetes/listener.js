@@ -5,6 +5,7 @@ const Kefir = require('kefir');
 const resourcesFactory = require('../k8s-resources');
 const { sendEvents } = require('../api/codefresh.api');
 const config = require('../config');
+const statistics = require('../statistics');
 
 /**
  * Class for monitoring cluster resources
@@ -26,6 +27,7 @@ class Listener {
     _closeHandler(type, resource) {
         return () => {
             global.logger.info(`Stream ${type} closed`);
+            statistics.incStreamLoses(type);
             this._restartStream(type, resource);
         };
     }
@@ -43,6 +45,7 @@ class Listener {
             setTimeout(() => {
                 global.logger.info(`Trying to restart stream ${type}`);
                 this._restartStream(type, resource);
+                statistics.addError(err, type, resource);
             }, config.retryInterval);
         };
     }

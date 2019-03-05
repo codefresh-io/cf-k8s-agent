@@ -14,7 +14,7 @@ redeploy: false
 imageTag: latest
 
 # image name, takes from variable
-image:  ""
+image:  "codefresh/agent"
 
 # env set of evnrionment varialbe to be add to the containers
 #env:
@@ -25,7 +25,7 @@ image:  ""
 # apiToken - should be set when the chart is installing
 # clusterId - cluster name as it registered in account
 # useCurrentContext - use current context instead of cluster credentials. False by default.
-apiUrl: https://g.codefresh.io/api/k8s-monitor
+apiUrl: https://g.codefresh.io/api/k8s-monitor/events
 clusterId: clusterName
 clusterUrl: ""
 clean: false
@@ -36,4 +36,4 @@ port: 80
 # servicePort port of the kubernetes service listen to
 servicePort: 80
 
-# userId: 002762d00000000000000000
+# accountId: 002762d00000000000000000

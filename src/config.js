@@ -10,7 +10,7 @@ module.exports = {
     token: process.env.API_TOKEN,
     apiUrl: process.env.API_URL,
     clusterId: process.env.CLUSTER_ID,
-    userId: process.env.USER_ID,
+    accountId: process.env.ACCOUNT_ID,
 
     // Use current kubernetes context.
     // If true, you need to set active context before starting agent. kubectl config use-context <contextname>
@@ -19,4 +19,5 @@ module.exports = {
 
     // Interval for restoring stream from k8s cluster after error
     retryInterval: 2000,
+    resetInterval: 60 * 1000 * 20,
 };
