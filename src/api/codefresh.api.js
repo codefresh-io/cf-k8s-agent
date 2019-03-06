@@ -145,11 +145,13 @@ class CodefreshAPI {
     }
 
     async _getMetadata() {
+        const { headers } = this._getIdentifyOptions();
         const uri = `${config.apiUrl}/metadata`;
         const options = {
             method: 'GET',
             uri,
             json: true,
+            headers,
         };
 
         global.logger.debug(`Get metadata from ${uri}.`);
