@@ -34,9 +34,9 @@ class CodefreshAPI {
      * @returns {Promise<void>}
      */
     async initEvents(accounts = []) {
-        const { endpoint, headers } = this._getIdentifyOptions();
+        const { qs, headers } = this._getIdentifyOptions();
 
-        const uri = `${config.apiUrl}/${endpoint}/init`;
+        const uri = `${config.apiUrl}/init`;
         global.logger.debug(`Before init events. ${uri}`);
         const options = {
             headers,
@@ -45,6 +45,7 @@ class CodefreshAPI {
             body: {
                 accounts,
             },
+            qs,
             json: true,
         };
 
@@ -97,14 +98,15 @@ class CodefreshAPI {
     }
 
     async _needUpdate() {
-        const { endpoint, headers } = this._getIdentifyOptions();
+        const { qs, headers } = this._getIdentifyOptions();
 
-        const uri = `${config.apiUrl}/${endpoint}/state`;
+        const uri = `${config.apiUrl}/state`;
         global.logger.debug(`Before init events. ${uri}`);
         const options = {
             headers,
             method: 'GET',
             uri,
+            qs,
             json: true,
         };
 
@@ -116,14 +118,15 @@ class CodefreshAPI {
         const { length } = eventsPackage;
         if (!length) return;
 
-        const { endpoint, headers } = this._getIdentifyOptions();
+        const { qs, headers } = this._getIdentifyOptions();
 
-        const uri = `${config.apiUrl}/${endpoint}`;
+        const uri = `${config.apiUrl}`;
         const options = {
             method: 'POST',
             uri,
             body: [...eventsPackage],
             headers,
+            qs,
             json: true,
         };
 
@@ -159,12 +162,17 @@ class CodefreshAPI {
                 headers: {
                     'authorization': config.token,
                 },
-                endpoint: config.clusterId,
+                qs: {
+                    clusterId: config.clusterId,
+                },
             };
         }
         return {
             headers: {},
-            endpoint: `${config.accountId}/${config.clusterId}`,
+            qs: {
+                accountId: config.accountId,
+                clusterId: config.clusterId,
+            },
         };
     }
 }
