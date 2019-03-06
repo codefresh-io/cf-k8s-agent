@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+
 const K8SResource = require('./K8SResource');
 
 /**
@@ -7,13 +9,12 @@ const K8SResource = require('./K8SResource');
  * @param client
  * @returns {Promise<{deployment: K8SResource, service: K8SResource, pod: K8SResource}>}
  */
-async function createResources(client) {
-    return {
-        // namespace: new K8SResource('namespace', client.api.v1.watch.namespaces),
-        deployment: new K8SResource('deployment', client.apis.apps.v1.watch.deployments),
-        service: new K8SResource('service', client.api.v1.watch.services),
-        pod: new K8SResource('pod', client.api.v1.watch.pods),
-    };
+async function createResources(client, metadata) {
+    const resources = {};
+    Object.entries(metadata.resources).forEach(([resource, data]) => {
+        resources[resource] = new K8SResource(resource, _.get(client, data.path));
+    });
+    return resources;
 }
 
 module.exports = createResources;

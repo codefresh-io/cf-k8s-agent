@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const Kefir = require('kefir');
 const resourcesFactory = require('../k8s-resources');
-const { sendEvents } = require('../api/codefresh.api');
+const { sendEvents, getMetadata } = require('../api/codefresh.api');
 const config = require('../config');
 const statistics = require('../statistics');
 
@@ -74,7 +74,8 @@ class Listener {
      */
     async subscribe() {
         const _this = this;
-        this.resources = await resourcesFactory(this.client);
+        this.metadata = await getMetadata();
+        this.resources = await resourcesFactory(this.client, this.metadata);
 
         const observables = _.entries(this.resources).map(([type, resource]) => {
             const { stream, jsonStream } = resource.startStream();

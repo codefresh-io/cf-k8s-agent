@@ -19,7 +19,7 @@ class CodefreshAPI {
         this.updateHandler = this.updateHandler.bind(this);
 
         this._sendPackage = this._sendPackage.bind(this);
-        this._getMetadata = this._getMetadata.bind(this);
+        this.getMetadata = this.getMetadata.bind(this);
         this._getIdentifyData = this._getIdentifyData.bind(this);
         this._buildRequestHeaders = this._buildRequestHeaders.bind(this);
         this._needUpdate = this._needUpdate.bind(this);
@@ -50,7 +50,7 @@ class CodefreshAPI {
         };
 
         global.logger.debug(`Init events. Cluster: ${config.clusterId}.`);
-        return Promise.all([this._getMetadata(), rp(options)])
+        return Promise.all([this.getMetadata(), rp(options)])
             .then(([metadata]) => {
                 metadataFilter = new MetadataFilter(metadata);
                 counter = 1;
@@ -99,7 +99,7 @@ class CodefreshAPI {
 
     async _needUpdate() {
         const uri = `${config.apiUrl}/state`;
-        global.logger.debug(`Before init events. ${uri}`);
+        global.logger.debug(`Checking init events. ${uri}`);
         const options = {
             headers: {
                 ...this._buildRequestHeaders(),
@@ -142,7 +142,7 @@ class CodefreshAPI {
             });
     }
 
-    async _getMetadata() {
+    async getMetadata() {
         const uri = `${config.apiUrl}/metadata`;
         const options = {
             method: 'GET',
