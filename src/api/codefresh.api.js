@@ -20,9 +20,8 @@ class CodefreshAPI {
 
         this._sendPackage = this._sendPackage.bind(this);
         this.getMetadata = this.getMetadata.bind(this);
-        this._getIdentifyData = this._getIdentifyData.bind(this);
-        this._buildRequestHeaders = this._buildRequestHeaders.bind(this);
         this._needUpdate = this._needUpdate.bind(this);
+        this._getIdentifyOptions = this._getIdentifyOptions.bind(this);
 
         setInterval(this._sendPackage, 2000);
     }
@@ -35,17 +34,18 @@ class CodefreshAPI {
      * @returns {Promise<void>}
      */
     async initEvents(accounts = []) {
+        const { qs, headers } = this._getIdentifyOptions();
+
         const uri = `${config.apiUrl}/init`;
         global.logger.debug(`Before init events. ${uri}`);
         const options = {
-            headers: {
-                ...this._buildRequestHeaders(),
-            },
+            headers,
             method: 'POST',
             uri,
             body: {
                 accounts,
             },
+            qs,
             json: true,
         };
 
@@ -98,14 +98,15 @@ class CodefreshAPI {
     }
 
     async _needUpdate() {
+        const { qs, headers } = this._getIdentifyOptions();
+
         const uri = `${config.apiUrl}/state`;
         global.logger.debug(`Checking init events. ${uri}`);
         const options = {
-            headers: {
-                ...this._buildRequestHeaders(),
-            },
+            headers,
             method: 'GET',
             uri,
+            qs,
             json: true,
         };
 
@@ -117,14 +118,15 @@ class CodefreshAPI {
         const { length } = eventsPackage;
         if (!length) return;
 
+        const { qs, headers } = this._getIdentifyOptions();
+
         const uri = `${config.apiUrl}`;
         const options = {
             method: 'POST',
             uri,
             body: [...eventsPackage],
-            headers: {
-                ...this._buildRequestHeaders(),
-            },
+            headers,
+            qs,
             json: true,
         };
 
@@ -143,38 +145,38 @@ class CodefreshAPI {
     }
 
     async getMetadata() {
+        const { headers } = this._getIdentifyOptions();
         const uri = `${config.apiUrl}/metadata`;
         const options = {
             method: 'GET',
             uri,
-            headers: {
-                ...this._buildRequestHeaders(),
-            },
             json: true,
+            headers,
         };
 
         global.logger.debug(`Get metadata from ${uri}.`);
         return rp(options);
     }
 
-    _getIdentifyData() {
+    _getIdentifyOptions() {
         if (config.token) {
             return {
-                'authorization': config.token,
+                headers: {
+                    'authorization': config.token,
+                },
+                qs: {
+                    clusterId: config.clusterId,
+                },
             };
         }
         return {
-            'x-account-id': config.accountId,
+            headers: {},
+            qs: {
+                accountId: config.accountId,
+                clusterId: config.clusterId,
+            },
         };
     }
-
-    _buildRequestHeaders() {
-        return {
-            'x-cluster-id': config.clusterId,
-            ...this._getIdentifyData(),
-        };
-    }
-
 }
 
 module.exports = new CodefreshAPI();
