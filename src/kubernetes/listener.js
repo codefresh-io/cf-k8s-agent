@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const Kefir = require('kefir');
+const logger = require('../logger');
 const resourcesFactory = require('../k8s-resources');
 const { sendEvents, getMetadata } = require('../api/codefresh.api');
 const config = require('../config');
@@ -26,7 +27,7 @@ class Listener {
      */
     _closeHandler(type, resource) {
         return () => {
-            global.logger.info(`Stream ${type} closed`);
+            logger.info(`Stream ${type} closed`);
             statistics.incStreamLoses(type);
             this._restartStream(type, resource);
         };
@@ -41,9 +42,9 @@ class Listener {
      */
     _errorHandler(type, resource) {
         return (err) => {
-            global.logger.error(`Error in ${type} stream. ${err}`);
+            logger.error(`Error in ${type} stream. ${err}`);
             setTimeout(() => {
-                global.logger.info(`Trying to restart stream ${type}`);
+                logger.info(`Trying to restart stream ${type}`);
                 this._restartStream(type, resource);
                 statistics.addError(err, type, resource);
             }, config.retryInterval);
@@ -64,7 +65,7 @@ class Listener {
 
         this.mergedStream = this.mergedStream.merge(Kefir.fromEvents(jsonStream, 'data'));
         this.mergedStream.onValue(sendEvents);
-        global.logger.info(`Stream ${type} was recreated`);
+        logger.info(`Stream ${type} was recreated`);
     }
 
     /**
@@ -82,7 +83,7 @@ class Listener {
             stream.on('close', _this._closeHandler(type, resource));
             stream.on('error', _this._errorHandler(type, resource));
 
-            global.logger.info(`Stream ${type} was started`);
+            logger.info(`Stream ${type} was started`);
 
             return Kefir.fromEvents(jsonStream, 'data');
         });

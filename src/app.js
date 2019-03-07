@@ -1,22 +1,10 @@
 'use strict';
 
-const { createLogger, transports, format } = require('winston');
-
-const { combine, timestamp, printf } = format;
-
-const myFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
-
-
-global.logger = createLogger({
-    level: 'debug',
-    format: combine(timestamp(), myFormat),
-    transports: [new transports.Console()],
-});
-
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
+const logger = require('./logger');
 const { version } = require('../package.json');
 const { initEvents, updateHandler } = require('./api/codefresh.api');
 const config = require('./config');
@@ -32,7 +20,7 @@ async function init() {
             accounts = accounts && Array.isArray(accounts) ? accounts : [];
         } catch (error) {
             accounts = null;
-            global.logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
+            logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
         }
 
         // Get instances for each resource and init cache for them
@@ -40,7 +28,7 @@ async function init() {
 
         console.log(`Clean: ${process.env.CLEAN}`);
         if (process.env.CLEAN === 'true') {
-            global.logger.debug(`Exit after cleaning`);
+            logger.debug(`Exit after cleaning`);
             process.exit(0);
         }
 
@@ -48,7 +36,7 @@ async function init() {
         const listener = new Listener(client);
         await listener.subscribe();
     } catch (error) {
-        global.logger.error(`Can't init agent. Reason: ${error}`);
+        logger.error(`Can't init agent. Reason: ${error}`);
         throw error;
     }
 }
@@ -70,7 +58,7 @@ app.use('/api', indexRouter);
 
 
 init()
-    .then(() => global.logger.info(`Agent ${version} has started...`))
+    .then(() => logger.info(`Agent ${version} has started...`))
     .catch(() => process.exit(1));
 
 module.exports = app;

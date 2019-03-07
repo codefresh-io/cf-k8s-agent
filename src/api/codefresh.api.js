@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const rp = require('request-promise');
+const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
@@ -37,7 +38,7 @@ class CodefreshAPI {
         const { qs, headers } = this._getIdentifyOptions();
 
         const uri = `${config.apiUrl}/init`;
-        global.logger.debug(`Before init events. ${uri}`);
+        logger.debug(`Before init events. ${uri}`);
         const options = {
             headers,
             method: 'POST',
@@ -49,12 +50,12 @@ class CodefreshAPI {
             json: true,
         };
 
-        global.logger.debug(`Init events. Cluster: ${config.clusterId}.`);
+        logger.debug(`Init events. Cluster: ${config.clusterId}.`);
         return Promise.all([this.getMetadata(), rp(options)])
             .then(([metadata]) => {
                 metadataFilter = new MetadataFilter(metadata);
                 counter = 1;
-                global.logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
+                logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
             });
     }
 
@@ -67,7 +68,7 @@ class CodefreshAPI {
         let data = _.cloneDeep(obj);
 
         if (data.kind === 'Status') {
-            global.logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
+            logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
             return;
         }
 
@@ -80,8 +81,8 @@ class CodefreshAPI {
 
         data.counter = counter++;
 
-        global.logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
-        global.logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
+        logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
+        logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
         eventsPackage.push(data);
         statistics.incEvents();
         if (eventsPackage.length === 10) {
@@ -101,7 +102,7 @@ class CodefreshAPI {
         const { qs, headers } = this._getIdentifyOptions();
 
         const uri = `${config.apiUrl}/state`;
-        global.logger.debug(`Checking init events. ${uri}`);
+        logger.debug(`Checking init events. ${uri}`);
         const options = {
             headers,
             method: 'GET',
@@ -132,15 +133,15 @@ class CodefreshAPI {
 
         eventsPackage.splice(0, length);
 
-        global.logger.debug(`Sending package with ${length} element(s).`);
+        logger.debug(`Sending package with ${length} element(s).`);
         rp(options)
             .then((r) => {
                 // events.data = _.drop(events.data, length);
-                global.logger.info(`sending result: ${JSON.stringify(r)}`);
+                logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
             })
             .catch((e) => {
-                global.logger.info(`sending result error: ${e.message}`);
+                logger.info(`sending result error: ${e.message}`);
             });
     }
 
@@ -154,7 +155,7 @@ class CodefreshAPI {
             headers,
         };
 
-        global.logger.debug(`Get metadata from ${uri}.`);
+        logger.debug(`Get metadata from ${uri}.`);
         return rp(options);
     }
 

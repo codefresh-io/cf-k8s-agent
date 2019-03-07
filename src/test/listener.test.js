@@ -5,9 +5,9 @@ const Kefir = require('kefir');
 const proxyquire = require('proxyquire');
 const { expect } = require('chai');
 
-global.logger = {
-    info: () => {},
-};
+// const logger = {
+//     info: () => {},
+// };
 
 const client = {};
 _.set(client, 'apis.apps.v1.watch.deployments.getStream', () => streamFactory(50, 'b'));

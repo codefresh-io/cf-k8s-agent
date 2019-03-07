@@ -1,6 +1,7 @@
 'use strict';
 
 const JSONStream = require('json-stream');
+const logger = require('../logger');
 
 /**
  * Class for implementing of cluster resources
@@ -18,11 +19,11 @@ class K8SResource {
      */
     startStream(force = false) {
         if (!force && this.stream) {
-            global.logger.info(`Return existing stream of type "${this.type}"`);
+            logger.info(`Return existing stream of type "${this.type}"`);
             return this;
         }
 
-        global.logger.info(`Start new stream of type "${this.type}"`);
+        logger.info(`Start new stream of type "${this.type}"`);
         this.stream = this.entity.getStream();
 
         return {
