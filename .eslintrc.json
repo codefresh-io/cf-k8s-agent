@@ -5,14 +5,14 @@
 {
   "env": {
     "node": true,
-    "mocha": true
+    "jest": true
   },
   "plugins": [
-    "mocha"
+    "jest"
   ],
   "extends": "airbnb",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2017,
     "sourceType": "script",
     "ecmaFeatures": {
       "jsx": true
@@ -83,7 +83,6 @@
       "ForInStatement",
       "LabeledStatement"
     ],
-    "no-unused-expressions": 0,
-    "mocha/no-exclusive-tests": "error"
+    "no-unused-expressions": 0
   }
 }

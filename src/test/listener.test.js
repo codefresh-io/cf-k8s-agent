@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 const Kefir = require('kefir');
-const proxyquire = require('proxyquire');
-const { expect } = require('chai');
+const CodefreshAPI = require('../api/codefresh.api');
+const metadataMock = require('./metadata.mock');
 
 // const logger = {
 //     info: () => {},
@@ -33,15 +33,17 @@ const expectation = [
 ];
 
 const streamData = [];
+//
+// Kefir.fromEvents = jest.fn();
+// CodefreshAPI.sendEvents = jest.fn(data => streamData.push(data));
+// CodefreshAPI.getMetadata = jest.fn(async () => {
+//     return metadataMock;
+// });
 
-const Listener = proxyquire('../kubernetes/listener', {
-    '../api/codefresh.api': {
-        sendEvents: (data) => { streamData.push(data); },
-    },
-    'kefir': {
-        fromEvents: stream => stream,
-    },
-});
+
+CodefreshAPI.getMetadata().then(console.log);
+
+const Listener = require('../kubernetes/listener');
 
 function streamFactory(interval, prefix) {
     let i = 0;
@@ -49,19 +51,21 @@ function streamFactory(interval, prefix) {
         i++ < 5 ? emitter.emit(`${i * interval}: ${prefix}-${i}`) : emitter.end();
     });
     stream.pipe = () => stream;
-    stream.on = () => {};
+    stream.on = () => {
+    };
     return stream;
 }
 
 describe('streams', () => {
     it('check creating resources and merging streams', (done) => {
         const listener = new Listener(client);
-        listener.subscribe().then(() => {
-            listener.mergedStream.onEnd(() => {
-                expect(streamData).to.have.members(expectation);
-                expect(streamData).to.have.length(expectation.length);
-                done();
+        listener.subscribe()
+            .then(() => {
+                listener.mergedStream.onEnd(() => {
+                    expect(streamData).to.have.members(expectation);
+                    expect(streamData).to.have.length(expectation.length);
+                    done();
+                });
             });
-        });
     });
 });
