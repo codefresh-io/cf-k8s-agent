@@ -14,7 +14,7 @@ redeploy: false
 imageTag: latest
 
 # image name, takes from variable
-image:  "codefresh/agent"
+image:  "codefresh/k8s-agent"
 
 # env set of evnrionment varialbe to be add to the containers
 #env:
