@@ -36,6 +36,7 @@ steps:
     tags:
     - ${{CF_BRANCH_TAG_NORMALIZED}}
     - ${{CF_REVISION}}
+    - latest
 
   run_pipeline_template:
     image: codefresh/cli
