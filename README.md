@@ -7,7 +7,19 @@ Service for monitoring cluster resources. Agent can be set as inside cluster as 
 
 Agent starts streams for watching updates cluster resources and sends information about updated resources to [k8s-monitor](https://github.com/codefresh-io/cf-k8s-monitor) service.
 
-The aim is to have actual state of cluster resources.  
+The aim is to have actual state of cluster resources.
+
+#### Content
+
+* [Installing for standalone using](#installing-for-standalone-using)
+  * [Install via helm](#install-via-helm)
+  * [Uninstalling agent via helm](#uninstalling-agent-via-helm )
+  * [Install via codefresh-cli](#install-via-codefresh-cli)
+* [Installing for using k8s-monitor on Codefresh side](#installing-for-using-k8s-monitor-on-codefresh-side)
+  * [Install via helm for using with codefresh](#install-via-helm-for-using-with-codefresh)
+  * [Install via codefresh-cli for using with codefresh](#install-via-codefresh-cli-for-using-with-codefresh)
+* [Helm environment variables](#helm-environment-variables)
+* [Cli arguments](#codefresh-cli-arguments)
 
 ## Installing for standalone using
 
@@ -25,7 +37,9 @@ For using when all services located on your cluster
 `kubectl config use-context <cluster_context>`  
 
 4) Install **k8s-agent** chart on your cluster from this repo  
-`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`, [more helm environment variables](#helm-environment-variables)  
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`
+
+[More helm environment variables](#helm-environment-variables)  
 
 ### Uninstalling agent via helm 
 For uninstalling agent run command  
@@ -36,13 +50,15 @@ For uninstalling agent run command
 1) If you have one more codefresh auth context, switch to needed with
 `codefresh auth use-context <name>`
 2) Install agent  
-`codefresh install-agent --cluster minikube --version 0.0.18 --set apiUrl=http://k8s-monitor:9016/api/monitor --set accountId=user`, [more cli arguments](#cli-arguments)
+`codefresh install-agent --cluster minikube --version 0.0.18 --set apiUrl=http://k8s-monitor:9016/api/monitor`
+ 
+[More cli arguments](#codefresh-cli-arguments)
 
 ## Installing for using k8s-monitor on Codefresh side
 
 For using when you want to use integration your k8s-monitor with Codefresh 
 
-### Install via helm
+### Install via helm for using with Codefresh
 
 1) Clone repo  
 `git clone git@github.com:codefresh-io/cf-k8s-agent.git`
@@ -54,20 +70,26 @@ For using when you want to use integration your k8s-monitor with Codefresh
 `kubectl config use-context <cluster_context>`  
 
 4) Install **k8s-agent** chart on your cluster from this repo  
-`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`  
-    
-### Install via codefresh-cli
-1) If you have one more codefresh auth context, switch to needed with
-`codefresh auth use-context <name>`
-2) Install agent  
-* `codefresh install-agent --cluster {clusterId} --version 0.0.18`
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`
 
 Where: 
 - `{token}` - API token from Codefresh (you can retrieve this from [Codefresh integration section](https://g.codefresh.io/account-admin/account-conf/tokens))
 - `{clusterId}` - cluster name from k8s integrations
 
+[More helm environment variables](#helm-environment-variables)   
+    
+### Install via codefresh-cli for using with Codefresh
+1) If you have one more codefresh auth context, switch to needed with
+`codefresh auth use-context <name>`
+2) Install agent  
+`codefresh install-agent --cluster {clusterId} --version 0.0.18`
 
-## Cli arguments
+Where: 
+- `{clusterId}` - cluster name from k8s integrations
+
+[More cli arguments](#codefresh-cli-arguments)
+
+## Codefresh-cli arguments
 * `--cluster <name>` (name of cluster for Agent installing)
 * `--release-name <name>` (optional, default: agent)  
 * `--version <version>` (optional, default: latest version of agent chart)
