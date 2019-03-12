@@ -120,6 +120,8 @@ class CodefreshAPI {
         if (!length) return;
 
         const { qs, headers } = this._getIdentifyOptions();
+        logger.debug(qs);
+        logger.debug(headers);
 
         const uri = `${config.apiUrl}`;
         const options = {
