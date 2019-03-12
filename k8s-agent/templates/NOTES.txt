@@ -1,0 +1,10 @@
+-------------------------------------------------------------------------------
+{{- if .Values.apiToken }}
+Now you can navigate to your codefresh account and see realtime state of your cluster
+{{- else }}
+Your agent is ready, navigate to this endpoint to see state of your cluster
+{{ .Values.apiUrl }}?clusterId={{ .Values.clusterId }}&accountId={{ .Values.accountId }}&kinds=deployments
+kinds can be: deployments, services, pods
+change {{ .Values.apiUrl }} on your outside endpoint of monitor
+{{- end }}
+-------------------------------------------------------------------------------

@@ -25,11 +25,11 @@ For using when all services located on your cluster
 `kubectl config use-context <cluster_context>`  
 
 4) Install **k8s-agent** chart on your cluster from this repo  
-`helm upgrade agent ./k8sagent --install --force --reset-values --set accountId=user --set apiUrl=http://k8s-monitor:9016/api/monitor --set clusterId=myCluster`, [more helm environment variables](#helm-environment-variables)  
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`, [more helm environment variables](#helm-environment-variables)  
 
 ### Uninstalling agent via helm 
 For uninstalling agent run command  
-`helm del agent --purge`  
+`helm del k8s-agent --purge`
 
 ### Install via codefresh-cli
 
@@ -54,7 +54,7 @@ For using when you want to use integration your k8s-monitor with Codefresh
 `kubectl config use-context <cluster_context>`  
 
 4) Install **k8s-agent** chart on your cluster from this repo  
-`helm upgrade agent ./k8sagent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`  
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`  
     
 ### Install via codefresh-cli
 1) If you have one more codefresh auth context, switch to needed with
