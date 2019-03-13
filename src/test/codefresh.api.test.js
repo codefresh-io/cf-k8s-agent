@@ -3,9 +3,10 @@
 /* eslint-disable global-require */
 
 
-
-
 describe('testing api', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
     it('metadata', async () => {
         const CodefreshAPI = jest.requireActual('../api/codefresh.api');
         jest.mock('request-promise', () => () => {
@@ -23,13 +24,33 @@ describe('testing api', () => {
         expect(await CodefreshAPI.initEvents())
             .toBe(undefined);
     });
-    it('sendEvents', async () => {
+    it('sendEvents', () => {
         const CodefreshAPI = jest.requireActual('../api/codefresh.api');
         const data = require('./resources.mock');
-        jest.mock('request-promise', () => () => {
+        jest.mock('request-promise', () => async (s) => {
+            expect(s.body)
+                .toHaveLength(10);
             return [require('./resources.mock')];
         });
-        expect(await CodefreshAPI.sendEvents(data))
-            .toBe(undefined);
+        [...new Array(15)].forEach(() => {
+            CodefreshAPI.sendEvents({
+                type: 'ADDED',
+                object: data,
+            });
+        });
     });
+    it.skip('updateHandler', (done) => {
+        jest.unmock('request-promise');
+        const CodefreshAPI = jest.requireActual('../api/codefresh.api');
+
+        jest.mock('request-promise', () => () => {
+            return {
+                needUpdate: true,
+            };
+        });
+
+        CodefreshAPI.updateHandler(() => {
+            done();
+        });
+    }, 30000);
 });
