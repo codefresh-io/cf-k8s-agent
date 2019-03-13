@@ -5,7 +5,7 @@
 
 describe('testing api', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        jest.resetModules();
     });
     it('metadata', async () => {
         const CodefreshAPI = jest.requireActual('../api/codefresh.api');
@@ -25,6 +25,7 @@ describe('testing api', () => {
             .toBe(undefined);
     });
     it('sendEvents', () => {
+        jest.setTimeout(1000);
         const CodefreshAPI = jest.requireActual('../api/codefresh.api');
         const data = require('./resources.mock');
         jest.mock('request-promise', () => async (s) => {
@@ -39,7 +40,7 @@ describe('testing api', () => {
             });
         });
     });
-    it.skip('updateHandler', (done) => {
+    it('updateHandler', (done) => {
         jest.unmock('request-promise');
         const CodefreshAPI = jest.requireActual('../api/codefresh.api');
 
@@ -49,6 +50,7 @@ describe('testing api', () => {
             };
         });
 
+        jest.setTimeout(1000);
         CodefreshAPI.updateHandler(() => {
             done();
         });
