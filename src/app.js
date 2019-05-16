@@ -6,7 +6,7 @@ const bodyParser = require('cookie-parser');
 const loggerMiddleware = require('morgan')('dev');
 const logger = require('./logger');
 const { version } = require('../package.json');
-const { initEvents, updateHandler } = require('./api/codefresh.api');
+const Monitor = require('./api/codefresh.api');
 const config = require('./config');
 
 const { clientFactory, Listener } = require('./kubernetes');
@@ -23,8 +23,11 @@ async function init() {
             logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
         }
 
+        const client = await clientFactory();
+        const monitor = new Monitor(client);
+
         // Get instances for each resource and init cache for them
-        const [client] = await Promise.all([clientFactory(), initEvents(accounts)]);
+        await monitor.initEvents(accounts);
 
         console.log(`Clean: ${process.env.CLEAN}`);
         if (process.env.CLEAN === 'true') {
@@ -33,16 +36,19 @@ async function init() {
         }
 
         // Create listener for all resources and subscribe for cluster events
-        const listener = new Listener(client);
+        const listener = new Listener(client, monitor);
         await listener.subscribe();
+
+        return {
+            client,
+            monitor,
+            listener,
+        };
     } catch (error) {
         logger.error(`Can't init agent. Reason: ${error}`);
         throw error;
     }
 }
-
-setInterval(init, config.resetInterval);
-updateHandler(init);
 
 const indexRouter = require('./api');
 
@@ -56,9 +62,14 @@ app.use(bodyParser());
 
 app.use('/api', indexRouter);
 
-
 init()
-    .then(() => logger.info(`Agent ${version} has started...`))
+    .then(({ monitor }) => {
+        logger.info(`Agent ${version} has started...`);
+        // Unconditional refresh
+        setInterval(init, config.resetInterval);
+        // Refresh by monitor trigger
+        monitor.updateHandler(init);
+    })
     .catch(() => process.exit(1));
 
 module.exports = app;

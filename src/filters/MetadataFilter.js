@@ -19,7 +19,11 @@ class MetadataFilter {
         let val = data;
         const projection = _.get(this, 'metadata.projection');
 
-        if (projection) {
+        if (_.isArray(projection)) {
+            if (!projection.length) {
+                return null;
+            }
+
             val = projection[resource]
                 .reduce((accumulator, item) => {
                     return {

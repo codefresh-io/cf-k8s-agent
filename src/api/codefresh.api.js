@@ -6,6 +6,7 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
+const Helm = require('./helm');
 
 let metadataFilter;
 let counter;
@@ -14,7 +15,10 @@ const eventsPackage = [];
 
 class CodefreshAPI {
 
-    constructor() {
+    constructor(client) {
+        this.client = client;
+        this.helm = new Helm(client);
+
         this.initEvents = this.initEvents.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
@@ -66,7 +70,7 @@ class CodefreshAPI {
      * @param obj - data for sending
      * @returns {Promise<void>}
      */
-    sendEvents(obj) {
+    async sendEvents(obj) {
         let data = _.cloneDeep(obj);
 
         if (data.kind === 'Status') {
@@ -74,10 +78,32 @@ class CodefreshAPI {
             return;
         }
 
+        let filteredMetadata;
+
+        if (obj.object.kind.match(/^configmap$/i)) {
+            const release = await this.helm.getReleaseByConfigMap(obj.object);
+            if (release) {
+                filteredMetadata = metadataFilter.buildResponse(release, 'release');
+                data.object.kind = 'Release';
+                filteredMetadata = {
+                    ...data.object,
+                    release: filteredMetadata,
+                };
+            } else {
+                filteredMetadata = null;
+            }
+        } else {
+            filteredMetadata = metadataFilter.buildResponse(obj.object, obj.object.kind);
+        }
+
+        if (!filteredMetadata) {
+            return;
+        }
+
         if (metadataFilter) {
             data = {
                 ...data,
-                object: metadataFilter.buildResponse(obj.object, obj.object.kind),
+                object: filteredMetadata,
             };
         }
 
@@ -85,7 +111,13 @@ class CodefreshAPI {
 
         logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
         logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
-        eventsPackage.push(data);
+
+        // TODO: Send each release separately in reason of large size. Should rewrite this code
+        if (data.object.kind === 'Release') {
+            this._sendPackage([data]);
+        } else {
+            eventsPackage.push(data);
+        }
         statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
@@ -117,8 +149,8 @@ class CodefreshAPI {
         return result.needUpdate;
     }
 
-    _sendPackage() {
-        const { length } = eventsPackage;
+    _sendPackage(block = eventsPackage) {
+        const { length } = block;
         if (!length) return;
 
         const { qs, headers } = this._getIdentifyOptions();
@@ -129,13 +161,13 @@ class CodefreshAPI {
         const options = {
             method: 'POST',
             uri,
-            body: [...eventsPackage],
+            body: [...block],
             headers,
             qs,
             json: true,
         };
 
-        eventsPackage.splice(0, length);
+        block.splice(0, length);
 
         logger.debug(`Sending package with ${length} element(s).`);
         rp(options)
@@ -184,4 +216,4 @@ class CodefreshAPI {
     }
 }
 
-module.exports = new CodefreshAPI();
+module.exports = CodefreshAPI;
