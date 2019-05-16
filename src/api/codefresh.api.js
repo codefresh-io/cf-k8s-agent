@@ -80,20 +80,25 @@ class CodefreshAPI {
 
         let filteredMetadata;
 
+        filteredMetadata = metadataFilter.buildResponse(obj.object, obj.object.kind);
+
+        // For release override configmap by release
         if (obj.object.kind.match(/^configmap$/i)) {
             const release = await this.helm.getReleaseByConfigMap(obj.object);
             if (release) {
-                filteredMetadata = metadataFilter.buildResponse(release, 'release');
-                data.object.kind = 'Release';
-                filteredMetadata = {
-                    ...data.object,
-                    release: filteredMetadata,
-                };
-            } else {
-                filteredMetadata = null;
+                // Send updates only for latest version
+                const latest = this.helm.updateAndGetLatestRelease(release);
+                if (latest) {
+                    filteredMetadata = metadataFilter.buildResponse(latest, 'release');
+                    data.object.kind = 'Release';
+                    filteredMetadata = {
+                        ...data.object,
+                        release: filteredMetadata,
+                    };
+                } else {
+                    filteredMetadata = null;
+                }
             }
-        } else {
-            filteredMetadata = metadataFilter.buildResponse(obj.object, obj.object.kind);
         }
 
         if (!filteredMetadata) {

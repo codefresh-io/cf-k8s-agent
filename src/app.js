@@ -1,5 +1,7 @@
 'use strict';
 
+const Promise = require('bluebird');
+const _ = require('lodash');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
@@ -34,6 +36,15 @@ async function init() {
             logger.debug(`Exit after cleaning`);
             process.exit(0);
         }
+
+        // Create and init cache of releases
+        const configMaps = await client.api.v1.configmaps.get();
+        await Promise.map(_.get(configMaps, 'body.items'), async (cm) => {
+            const release = await monitor.helm.getReleaseByConfigMap(cm);
+            if (release) {
+                monitor.helm.updateAndGetLatestRelease(release);
+            }
+        });
 
         // Create listener for all resources and subscribe for cluster events
         const listener = new Listener(client, monitor);

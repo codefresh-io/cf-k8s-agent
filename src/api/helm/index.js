@@ -1,6 +1,7 @@
 'use strict';
 
 const ReleaseController = require('./release/release.controller');
+const cache = require('./release/cache');
 
 class Helm {
     constructor(client) {
@@ -12,13 +13,11 @@ class Helm {
         const releaseController = new ReleaseController({
             kubeClient: this.client,
         });
-        try {
-            const release = await releaseController.getReleaseByConfigMap(configmap);
-            return release;
-        } catch (e) {
-            console.error(e);
-        }
-        // get release
+        return releaseController.getReleaseByConfigMap(configmap);
+    }
+
+    updateAndGetLatestRelease(release) {
+        return cache.updateAndGetLatest(release);
     }
 }
 
