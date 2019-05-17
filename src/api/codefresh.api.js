@@ -87,7 +87,7 @@ class CodefreshAPI {
             const release = await this.helm.getReleaseByConfigMap(obj.object);
             if (release) {
                 // Send updates only for latest version
-                const latest = this.helm.updateAndGetLatestRelease(release);
+                const latest = this.helm.updateAndGetLatestRelease(release.getData());
                 if (latest) {
                     filteredMetadata = metadataFilter.buildResponse(latest, 'release');
                     data.object.kind = 'Release';
@@ -95,6 +95,9 @@ class CodefreshAPI {
                         ...data.object,
                         release: filteredMetadata,
                     };
+                    filteredMetadata.release.chartFiles = await this.helm.getChartDescriptorForRevision(release);
+                    filteredMetadata.release.chartManifest = await this.helm.getChartManifestForRevision(release);
+                    filteredMetadata.release.chartValues = await this.helm.getChartValuesForRevision(release);
                 } else {
                     filteredMetadata = null;
                 }

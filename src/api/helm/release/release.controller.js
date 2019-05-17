@@ -96,9 +96,6 @@ class ReleaseController extends Base {
         return revision.init()
             .then(() => {
                 return revision;
-            })
-            .catch(e => {
-                console.error(e);
             });
     }
 
@@ -116,14 +113,23 @@ class ReleaseController extends Base {
             })
             .then((status) => {
                 if (status) {
-                    return this.prepareRelease(configmap)
-                        .then((release) => {
-                            return release.getData();
-                        });
+                    return this.prepareRelease(configmap);
                 }
 
                 return null;
             });
+    }
+
+    getChartManifestForRevision(release) {
+        return release.getRevisionByVersion(release._version).getManifest();
+    }
+
+    getChartValuesForRevision(release) {
+        return release.getRevisionByVersion(release._version).getValues();
+    }
+
+    getChartDescriptorForRevision(release) {
+        return release.getRevisionByVersion(release._version).getChart();
     }
 }
 

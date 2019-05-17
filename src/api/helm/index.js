@@ -6,14 +6,25 @@ const cache = require('./release/cache');
 class Helm {
     constructor(client) {
         this.client = client;
+        this.releaseController = new ReleaseController({
+            kubeClient: this.client,
+        });
     }
 
     async getReleaseByConfigMap(configmap) {
-        // Check if configetReleaseByConfigMapgmap belongs to tiller
-        const releaseController = new ReleaseController({
-            kubeClient: this.client,
-        });
-        return releaseController.getReleaseByConfigMap(configmap);
+        return this.releaseController.getReleaseByConfigMap(configmap);
+    }
+
+    getChartDescriptorForRevision(release) {
+        return this.releaseController.getChartDescriptorForRevision(release);
+    }
+
+    getChartManifestForRevision(release) {
+        return this.releaseController.getChartManifestForRevision(release);
+    }
+
+    getChartValuesForRevision(release) {
+        return this.releaseController.getChartValuesForRevision(release);
     }
 
     updateAndGetLatestRelease(release) {
