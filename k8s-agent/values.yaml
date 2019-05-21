@@ -25,7 +25,7 @@ image:  "codefresh/agent"
 # apiToken - should be set when the chart is installing
 # clusterId - cluster name as it registered in account
 # useCurrentContext - use current context instead of cluster credentials. False by default.
-apiUrl: https://app-load.codefresh.io/api/k8s-monitor/events
+apiUrl: https://g.codefresh.io/api/k8s-monitor/events
 clusterId: clusterName
 clusterUrl: ""
 clean: false

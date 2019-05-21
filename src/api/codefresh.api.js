@@ -56,7 +56,6 @@ class CodefreshAPI {
 
         logger.debug(`Init events. Cluster: ${config.clusterId}.`);
         logger.debug(JSON.stringify(qs));
-        logger.debug(JSON.stringify(headers));
         return Promise.all([this.getMetadata(), rp(options)])
             .then(([metadata]) => {
                 metadataFilter = new MetadataFilter(metadata);
