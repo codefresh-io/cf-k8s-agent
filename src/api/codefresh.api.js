@@ -6,7 +6,7 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
-const Helm = require('./helm');
+const { kubeManager, ConfigMapEntity } = require('../kubernetes');
 
 let metadataFilter;
 let counter;
@@ -15,10 +15,7 @@ const eventsPackage = [];
 
 class CodefreshAPI {
 
-    constructor(client) {
-        this.client = client;
-        this.helm = new Helm(client);
-
+    constructor() {
         this.initEvents = this.initEvents.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
@@ -83,23 +80,28 @@ class CodefreshAPI {
 
         // For release override configmap by release
         if (obj.object.kind.match(/^configmap$/i)) {
-            const release = await this.helm.getReleaseByConfigMap(obj.object);
-            if (release) {
+            const configMap = new ConfigMapEntity(obj.object);
+            const releaseController = kubeManager.getReleaseController('kube-system');
+            let release;
+            const releaseName = configMap.getLabels().NAME;
+            if (releaseName) {
+                release = await releaseController.describe(releaseName);
+            }
+            if (release && +release._version <= +configMap._data.metadata.labels.VERSION) {
                 // Send updates only for latest version
-                const latest = this.helm.updateAndGetLatestRelease(release.getData());
-                if (latest) {
-                    filteredMetadata = metadataFilter.buildResponse(latest, 'release');
-                    data.object.kind = 'Release';
-                    filteredMetadata = {
-                        ...data.object,
-                        release: filteredMetadata,
-                    };
-                    filteredMetadata.release.chartFiles = await this.helm.getChartDescriptorForRevision(release);
-                    filteredMetadata.release.chartManifest = await this.helm.getChartManifestForRevision(release);
-                    filteredMetadata.release.chartValues = await this.helm.getChartValuesForRevision(release);
-                } else {
-                    filteredMetadata = null;
-                }
+                const latest = release.getFullData();
+                filteredMetadata = metadataFilter.buildResponse(latest, 'release');
+                data.object.kind = 'Release';
+                filteredMetadata = {
+                    ...data.object,
+                    release: filteredMetadata,
+                };
+                const { name, version } = release.getFullData();
+                filteredMetadata.release.chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
+                filteredMetadata.release.chartManifest = await releaseController.getChartManifestForRevision(name, version);
+                filteredMetadata.release.chartValues = await releaseController.getChartValuesForRevision(name, version);
+            } else {
+                filteredMetadata = null;
             }
         }
 

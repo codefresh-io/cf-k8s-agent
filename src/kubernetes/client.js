@@ -4,7 +4,7 @@ const { Client, config: kubeConfig } = require('kubernetes-client');
 const logger = require('../logger');
 const config = require('../config');
 
-function _resolveConfig() {
+function resolveConfig() {
     if (config.useCurrentContext) {
         // Use current context
         logger.debug(`Use current context`);
@@ -31,7 +31,7 @@ function _resolveConfig() {
  * @returns {Promise<KubernetesClient.Client>}
  */
 async function clientFactory() {
-    const k8sConfig = _resolveConfig();
+    const k8sConfig = resolveConfig();
 
     const client = new Client({ config: k8sConfig });
     await client.loadSpec();
@@ -40,4 +40,5 @@ async function clientFactory() {
 
 module.exports = {
     clientFactory,
+    resolveConfig,
 };

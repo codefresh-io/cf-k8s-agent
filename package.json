@@ -8,15 +8,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@codefresh-io/kube-integration": "^1.4.11",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "eslint-plugin-jest": "^22.3.0",
     "express": "~4.16.0",
-    "google-protobuf": "^3.8.0-rc.1",
     "jest": "^24.3.1",
-    "js-yaml": "^3.13.1",
     "json-stream": "^1.0.0",
     "kefir": "^3.8.5",
     "kubernetes-client": "^6.6.1",

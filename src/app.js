@@ -1,7 +1,7 @@
 'use strict';
 
-const Promise = require('bluebird');
-const _ = require('lodash');
+// const Promise = require('bluebird');
+// const _ = require('lodash');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
@@ -10,7 +10,6 @@ const logger = require('./logger');
 const { version } = require('../package.json');
 const Monitor = require('./api/codefresh.api');
 const config = require('./config');
-
 const { clientFactory, Listener } = require('./kubernetes');
 
 async function init() {
@@ -26,7 +25,8 @@ async function init() {
         }
 
         const client = await clientFactory();
-        const monitor = new Monitor(client);
+        const monitor = new Monitor();
+        const metadata = await monitor.getMetadata();
 
         // Get instances for each resource and init cache for them
         await monitor.initEvents(accounts);
@@ -37,17 +37,8 @@ async function init() {
             process.exit(0);
         }
 
-        // Create and init cache of releases
-        const configMaps = await client.api.v1.configmaps.get();
-        await Promise.map(_.get(configMaps, 'body.items'), async (cm) => {
-            const release = await monitor.helm.getReleaseByConfigMap(cm);
-            if (release) {
-                monitor.helm.updateAndGetLatestRelease(release);
-            }
-        });
-
         // Create listener for all resources and subscribe for cluster events
-        const listener = new Listener(client, monitor);
+        const listener = new Listener(client, metadata, monitor.sendEvents);
         await listener.subscribe();
 
         return {
