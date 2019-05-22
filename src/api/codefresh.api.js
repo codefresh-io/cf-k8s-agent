@@ -6,7 +6,7 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
-const { kubeManager, ConfigMapEntity } = require('../kubernetes');
+const { prepareRelease } = require('../kubernetes');
 
 let metadataFilter;
 let counter;
@@ -17,6 +17,7 @@ class CodefreshAPI {
 
     constructor() {
         this.initEvents = this.initEvents.bind(this);
+        this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
 
@@ -61,13 +62,19 @@ class CodefreshAPI {
             });
     }
 
+    sendEventsWithLogger(...args) {
+        return this.sendEvents(...args).catch(error => {
+            logger.error(error);
+        });
+    }
+
     /**
      * Send cluster event to monitor
-     * @param obj - data for sending
+     * @param payload - data for sending
      * @returns {Promise<void>}
      */
-    async sendEvents(obj) {
-        let data = _.cloneDeep(obj);
+    async sendEvents(payload) {
+        let data = _.cloneDeep(payload);
 
         if (data.kind === 'Status') {
             logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
@@ -76,32 +83,20 @@ class CodefreshAPI {
 
         let filteredMetadata;
 
-        filteredMetadata = metadataFilter.buildResponse(obj.object, obj.object.kind);
+        filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 
         // For release override configmap by release
-        if (obj.object.kind.match(/^configmap$/i)) {
-            const configMap = new ConfigMapEntity(obj.object);
-            const releaseController = kubeManager.getReleaseController('kube-system');
-            let release;
-            const releaseName = configMap.getLabels().NAME;
-            if (releaseName) {
-                release = await releaseController.describe(releaseName);
-            }
-            if (release && +release._version <= +configMap._data.metadata.labels.VERSION) {
-                // Send updates only for latest version
-                const latest = release.getFullData();
-                filteredMetadata = metadataFilter.buildResponse(latest, 'release');
+        if (payload.object.kind.match(/^configmap$/i)) {
+            const preparedRelease = await prepareRelease(payload.object);
+            if (preparedRelease) {
+                const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
                 data.object.kind = 'Release';
                 filteredMetadata = {
                     ...data.object,
-                    release: filteredMetadata,
+                    release: {
+                        ...filteredFields,
+                    },
                 };
-                const { name, version } = release.getFullData();
-                filteredMetadata.release.chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
-                filteredMetadata.release.chartManifest = await releaseController.getChartManifestForRevision(name, version);
-                filteredMetadata.release.chartValues = await releaseController.getChartValuesForRevision(name, version);
-            } else {
-                filteredMetadata = null;
             }
         }
 
@@ -109,16 +104,15 @@ class CodefreshAPI {
             return;
         }
 
-        if (metadataFilter) {
-            data = {
-                ...data,
-                object: filteredMetadata,
-            };
-        }
+        // Filtered and enriched data
+        data = {
+            ...data,
+            object: filteredMetadata,
+        };
 
         data.counter = counter++;
 
-        logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
+        logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${payload.object.metadata.name}. ${data.type}`);
         logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
 
         // TODO: Send each release separately in reason of large size. Should rewrite this code

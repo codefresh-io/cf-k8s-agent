@@ -38,7 +38,7 @@ async function init() {
         }
 
         // Create listener for all resources and subscribe for cluster events
-        const listener = new Listener(client, metadata, monitor.sendEvents);
+        const listener = new Listener(client, metadata, monitor.sendEventsWithLogger);
         await listener.subscribe();
 
         return {
