@@ -15,6 +15,8 @@ async function prepareRelease(rawConfigMap) {
     const releaseName = _.get(configMap.getLabels(), 'NAME');
     if (releaseName) {
         release = await releaseController.describe(releaseName);
+        const orderedHistory = _.orderBy(release._history, 'version');
+        release._history = _.takeRight(orderedHistory, 20);
     }
     if (release && +release._version <= +configMap.getLabels().VERSION) {
         const releaseData = release.getFullData();

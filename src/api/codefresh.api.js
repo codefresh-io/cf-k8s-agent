@@ -87,17 +87,8 @@ class CodefreshAPI {
 
         // For release override configmap by release
         if (payload.object.kind.match(/^configmap$/i)) {
-            const preparedRelease = await prepareRelease(payload.object);
-            if (preparedRelease) {
-                const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
-                data.object.kind = 'Release';
-                filteredMetadata = {
-                    ...data.object,
-                    release: {
-                        ...filteredFields,
-                    },
-                };
-            }
+            const releaseMetadata = await this.buildReleaseMetadata(payload);
+            filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
         }
 
         if (!filteredMetadata) {
@@ -127,6 +118,28 @@ class CodefreshAPI {
         }
     }
 
+    async buildReleaseMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+                kind: 'Release',
+            };
+        }
+
+        const preparedRelease = await prepareRelease(payload.object);
+        if (preparedRelease) {
+            const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
+            return {
+                ...payload.object,
+                kind: 'Release',
+                release: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
 
     updateHandler(callback) {
         setInterval(async () => {
