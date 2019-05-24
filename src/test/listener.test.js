@@ -71,9 +71,6 @@ describe.skip('streams', () => {
                     expect(streamData.length).toEqual(expectation.length);
                     done();
                 });
-            })
-            .catch(e => {
-                console.log(e);
             });
     });
 });
