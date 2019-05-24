@@ -6,7 +6,6 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
-const { prepareRelease } = require('../kubernetes');
 
 let metadataFilter;
 let counter;
@@ -15,7 +14,9 @@ const eventsPackage = [];
 
 class CodefreshAPI {
 
-    constructor() {
+    constructor(kubernetes) {
+        this.kubernetes = kubernetes;
+
         this.initEvents = this.initEvents.bind(this);
         this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
@@ -126,7 +127,7 @@ class CodefreshAPI {
             };
         }
 
-        const preparedRelease = await prepareRelease(payload.object);
+        const preparedRelease = await this.kubernetes.prepareRelease(payload.object);
         if (preparedRelease) {
             const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
             return {

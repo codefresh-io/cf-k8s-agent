@@ -10,7 +10,9 @@ const logger = require('./logger');
 const { version } = require('../package.json');
 const Monitor = require('./api/codefresh.api');
 const config = require('./config');
-const { clientFactory, Listener } = require('./kubernetes');
+const kubernetes = require('./kubernetes');
+
+const { clientFactory, Listener } = kubernetes;
 
 async function init() {
     try {
@@ -25,7 +27,7 @@ async function init() {
         }
 
         const client = await clientFactory();
-        const monitor = new Monitor();
+        const monitor = new Monitor(kubernetes);
         const metadata = await monitor.getMetadata();
 
         // Get instances for each resource and init cache for them
