@@ -14,8 +14,11 @@ const eventsPackage = [];
 
 class CodefreshAPI {
 
-    constructor() {
+    constructor(kubernetes) {
+        this.kubernetes = kubernetes;
+
         this.initEvents = this.initEvents.bind(this);
+        this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
 
@@ -60,37 +63,84 @@ class CodefreshAPI {
             });
     }
 
+    sendEventsWithLogger(...args) {
+        return this.sendEvents(...args).catch(error => {
+            logger.error(error);
+        });
+    }
+
     /**
      * Send cluster event to monitor
-     * @param obj - data for sending
+     * @param payload - data for sending
      * @returns {Promise<void>}
      */
-    sendEvents(obj) {
-        let data = _.cloneDeep(obj);
+    async sendEvents(payload) {
+        let data = _.cloneDeep(payload);
 
         if (data.kind === 'Status') {
             logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
             return;
         }
 
-        if (metadataFilter) {
-            data = {
-                ...data,
-                object: metadataFilter.buildResponse(obj.object, obj.object.kind),
-            };
+        let filteredMetadata;
+
+        filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
+
+        // For release override configmap by release
+        if (payload.object.kind.match(/^configmap$/i)) {
+            const releaseMetadata = await this.buildReleaseMetadata(payload);
+            filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
         }
+
+        if (!filteredMetadata) {
+            return;
+        }
+
+        // Filtered and enriched data
+        data = {
+            ...data,
+            object: filteredMetadata,
+        };
 
         data.counter = counter++;
 
-        logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${obj.object.metadata.name}. ${data.type}`);
+        logger.debug(`ADD event to package. Cluster: ${config.clusterId}. ${data.object.kind}. ${payload.object.metadata.name}. ${data.type}`);
         logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
-        eventsPackage.push(data);
+
+        // TODO: Send each release separately in reason of large size. Should rewrite this code
+        if (data.object.kind === 'Release') {
+            this._sendPackage([data]);
+        } else {
+            eventsPackage.push(data);
+        }
         statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
         }
     }
 
+    async buildReleaseMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+                kind: 'Release',
+            };
+        }
+
+        const preparedRelease = await this.kubernetes.prepareRelease(payload.object);
+        if (preparedRelease) {
+            const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
+            return {
+                ...payload.object,
+                kind: 'Release',
+                release: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
 
     updateHandler(callback) {
         setInterval(async () => {
@@ -116,8 +166,8 @@ class CodefreshAPI {
         return result.needUpdate;
     }
 
-    _sendPackage() {
-        const { length } = eventsPackage;
+    _sendPackage(block = eventsPackage) {
+        const { length } = block;
         if (!length) return;
 
         const { qs, headers } = this._getIdentifyOptions();
@@ -128,13 +178,13 @@ class CodefreshAPI {
         const options = {
             method: 'POST',
             uri,
-            body: [...eventsPackage],
+            body: [...block],
             headers,
             qs,
             json: true,
         };
 
-        eventsPackage.splice(0, length);
+        block.splice(0, length);
 
         logger.debug(`Sending package with ${length} element(s).`);
         rp(options)
@@ -183,4 +233,4 @@ class CodefreshAPI {
     }
 }
 
-module.exports = new CodefreshAPI();
+module.exports = CodefreshAPI;

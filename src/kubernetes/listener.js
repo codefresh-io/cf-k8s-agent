@@ -4,7 +4,6 @@ const _ = require('lodash');
 const Kefir = require('kefir');
 const logger = require('../logger');
 const resourcesFactory = require('../k8s-resources');
-const { sendEvents, getMetadata } = require('../api/codefresh.api');
 const config = require('../config');
 const statistics = require('../statistics');
 
@@ -12,8 +11,10 @@ const statistics = require('../statistics');
  * Class for monitoring cluster resources
  */
 class Listener {
-    constructor(client) {
+    constructor(client, metadata, sender) {
         this.client = client;
+        this.metadata = metadata;
+        this.sender = sender;
         this.mergedStream = null;
         this.resources = {};
     }
@@ -64,7 +65,7 @@ class Listener {
         stream.on('error', this._errorHandler(type, resource));
 
         this.mergedStream = this.mergedStream.merge(Kefir.fromEvents(jsonStream, 'data'));
-        this.mergedStream.onValue(sendEvents);
+        this.mergedStream.onValue(this.sender);
         logger.info(`Stream ${type} was recreated`);
     }
 
@@ -75,7 +76,7 @@ class Listener {
      */
     async subscribe() {
         const _this = this;
-        this.metadata = await getMetadata();
+        // this.metadata = await this.api.getMetadata();
         this.resources = await resourcesFactory(this.client, this.metadata);
 
         const observables = _.entries(this.resources).map(([type, resource]) => {
@@ -89,7 +90,7 @@ class Listener {
         });
 
         this.mergedStream = Kefir.merge(observables);
-        this.mergedStream.onValue(sendEvents);
+        this.mergedStream.onValue(this.sender);
     }
 }
 

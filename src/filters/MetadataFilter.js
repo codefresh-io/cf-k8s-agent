@@ -17,16 +17,19 @@ class MetadataFilter {
      */
     buildResponse(data, resource) {
         let val = data;
-        const projection = _.get(this, 'metadata.projection');
+        const projection = _.get(this, `metadata.resources.${resource.toLowerCase()}.projection`);
 
-        if (projection) {
-            val = projection[resource]
-                .reduce((accumulator, item) => {
-                    return {
-                        ...accumulator,
-                        [item]: _.get(val, item),
-                    };
-                }, {});
+        if (_.isArray(projection)) {
+            if (!projection.length) {
+                return null;
+            }
+
+            val = projection.reduce((accumulator, item) => {
+                return {
+                    ...accumulator,
+                    [item]: _.get(val, item),
+                };
+            }, {});
         }
 
         return val;
