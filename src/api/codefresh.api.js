@@ -92,6 +92,17 @@ class CodefreshAPI {
             filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
         }
 
+        // For service send full data
+        if (payload.object.kind.match(/^service$/i)) {
+            // const preparedService = await this.kubernetes.prepareService(payload.object);
+            // console.log(preparedService);
+            // // const releaseMetadata = await this.buildReleaseMetadata(payload);
+            // // filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
+
+            const serviceMetadata = await this.buildServiceMetadata(payload);
+            filteredMetadata = serviceMetadata ? serviceMetadata : filteredMetadata;
+        }
+
         if (!filteredMetadata) {
             return;
         }
@@ -134,6 +145,29 @@ class CodefreshAPI {
                 ...payload.object,
                 kind: 'Release',
                 release: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildServiceMetadata(payload) {
+        // if (payload.type === 'DELETED') {
+        //     return {
+        //         ...payload.object,
+        //         kind: 'Release',
+        //     };
+        // }
+
+        const preparedService = await this.kubernetes.prepareService(payload.object);
+        if (preparedService) {
+            // const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedService, 'service') : preparedService;
+            const filteredFields = preparedService;
+            return {
+                ...payload.object,
+                service: {
                     ...filteredFields,
                 },
             };

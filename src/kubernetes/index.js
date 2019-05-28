@@ -30,10 +30,19 @@ async function prepareRelease(rawConfigMap) {
     }
 }
 
+async function prepareService(service) {
+    const namespace = _.get(service, 'metadata.namespace');
+    const name = _.get(service, 'metadata.name');
+    const serviceController = kubeManager.getServiceController(namespace);
+    const prepared = await serviceController.describeFull(name, namespace);
+    return prepared;
+}
+
 module.exports = {
     clientFactory,
     Listener,
     kubeManager,
     ConfigMapEntity,
     prepareRelease,
+    prepareService,
 };
