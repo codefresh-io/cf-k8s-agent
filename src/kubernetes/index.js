@@ -1,12 +1,17 @@
 'use strict';
 
 const _ = require('lodash');
+const Promise = require('bluebird');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
 const { clientFactory, resolveConfig } = require('./client');
 const Listener = require('./listener');
 
 const kubeManager = new KubeManager(resolveConfig());
+
+function formatLabels(labels) {
+    return _.toPairs(labels).map(([key, value]) => `${key}=${value}`).join(',');
+}
 
 async function prepareRelease(rawConfigMap) {
     const configMap = new ConfigMapEntity(rawConfigMap);
@@ -38,6 +43,30 @@ async function prepareService(service) {
     return prepared;
 }
 
+async function preparePod(pod, getImageId) {
+    const labelSelector = formatLabels(_.get(pod, 'metadata.labels', {}));
+    const namespace = _.get(pod, 'metadata.namespace');
+    const podController = kubeManager.getPodController(namespace);
+
+    const prepared = await podController.group({ labelSelector })
+        .map((sp) => {
+            return Promise.map(sp.getImages(), (image) => {
+                const imageID = image.imageID;
+                const name = image.name;
+                return Promise.resolve(getImageId(imageID))
+                    .then((imageId) => {
+                        sp.setImageMetaData(name, 'id', imageId);
+                        return sp;
+                    })
+                    .catchReturn(sp)
+                    .then(() => sp.toJson());
+            });
+        })
+        .then(_.flatten);
+
+    return prepared;
+}
+
 module.exports = {
     clientFactory,
     Listener,
@@ -45,4 +74,5 @@ module.exports = {
     ConfigMapEntity,
     prepareRelease,
     prepareService,
+    preparePod,
 };

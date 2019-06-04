@@ -94,14 +94,16 @@ class CodefreshAPI {
 
         // For service send full data
         if (payload.object.kind.match(/^service$/i)) {
-            // const preparedService = await this.kubernetes.prepareService(payload.object);
-            // console.log(preparedService);
-            // // const releaseMetadata = await this.buildReleaseMetadata(payload);
-            // // filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
-
             const serviceMetadata = await this.buildServiceMetadata(payload);
             filteredMetadata = serviceMetadata ? serviceMetadata : filteredMetadata;
         }
+
+        // For pod get images
+        if (payload.object.kind.match(/^pod$/i)) {
+            const podMetadata = await this.buildPodMetadata(payload);
+            filteredMetadata = podMetadata ? podMetadata : filteredMetadata;
+        }
+
 
         if (!filteredMetadata) {
             return;
@@ -154,12 +156,11 @@ class CodefreshAPI {
     }
 
     async buildServiceMetadata(payload) {
-        // if (payload.type === 'DELETED') {
-        //     return {
-        //         ...payload.object,
-        //         kind: 'Release',
-        //     };
-        // }
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
 
         const preparedService = await this.kubernetes.prepareService(payload.object);
         if (preparedService) {
@@ -168,6 +169,28 @@ class CodefreshAPI {
             return {
                 ...payload.object,
                 service: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildPodMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
+
+        const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
+        if (preparedPod) {
+            // const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedPod, 'pod') : preparedPod;
+            const filteredFields = preparedPod;
+            return {
+                ...payload.object,
+                pod: {
                     ...filteredFields,
                 },
             };
@@ -243,6 +266,24 @@ class CodefreshAPI {
         };
 
         logger.debug(`Get metadata from ${uri}.`);
+        return rp(options);
+    }
+
+    async getImage(imageId) {
+        const uri = `${config.apiUrl}/images`;
+        const options = {
+            method: 'POST',
+            uri,
+            json: true,
+            headers: {
+                'authorization': config.token,
+            },
+            body: {
+                imageId
+            }
+        };
+
+        logger.debug(`Get image from ${uri}.`);
         return rp(options);
     }
 
