@@ -2,6 +2,8 @@
 
 const _ = require('lodash');
 const rp = require('request-promise');
+const http = require('http');
+
 const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
@@ -53,7 +55,7 @@ class CodefreshAPI {
             json: true,
         };
 
-        logger.debug(`Init events. Cluster: ${config.clusterId}.`);
+        logger.info(`Init events. Cluster: ${config.clusterId}.`);
         logger.debug(JSON.stringify(qs));
         return Promise.all([this.getMetadata(), rp(options)])
             .then(([metadata]) => {
@@ -223,36 +225,50 @@ class CodefreshAPI {
         return result.needUpdate;
     }
 
-    _sendPackage(block = eventsPackage) {
+    async _sendPackage(block = eventsPackage) {
+        // const sleep = (milliseconds) => {
+        //     return new Promise(resolve => setTimeout(resolve, milliseconds))
+        // };
+        //
         const { length } = block;
         if (!length) return;
 
         const { qs, headers } = this._getIdentifyOptions();
-        logger.debug(qs);
-        logger.debug(headers);
+        headers['Content-Type'] = 'text/plain';
+        // headers['Content-Length'] = '';
+        headers['Transfer-Encoding'] = 'chunked';
+        headers['X-Accel-Buffering'] = 'no';
+
+        logger.debug(JSON.stringify(qs));
+        logger.debug(JSON.stringify(headers));
 
         const uri = `${config.apiUrl}`;
-        const options = {
-            method: 'POST',
-            uri,
-            body: [...block],
-            headers,
-            qs,
-            json: true,
-        };
 
+        let str = [...block];
+        // str[0].payloadLarge = 'Tex'.repeat(1024*100*30/2);
+        str = JSON.stringify(str);
         block.splice(0, length);
 
-        logger.debug(`Sending package with ${length} element(s).`);
-        rp(options)
-            .then((r) => {
-                // events.data = _.drop(events.data, length);
-                logger.info(`sending result: ${JSON.stringify(r)}`);
-                statistics.incPackages();
-            })
-            .catch((e) => {
-                logger.info(`sending result error: ${e.message}`);
-            });
+        logger.info(`Sending package with ${length} element(s) and length ${str.length} symbols`);
+
+        const query = _.toPairs(qs).map(([key, val]) => `${key}=${val}`).join('&');
+        const clientRequest = http.request(
+            `${uri}${query ? '?'+query : ''}`,
+            {
+                method: 'POST',
+                headers,
+            },
+            () => logger.info('Package is sent'),
+        );
+
+        // let i = 0;
+        // while (i < str.length) {
+        //     const size = 10000000;
+        //     clientRequest.write(str.substring(i, i + size));
+        //     i += size;
+        //     logger.debug(`pushed ${i}`);
+        // }
+        clientRequest.end(str);
     }
 
     async getMetadata() {
