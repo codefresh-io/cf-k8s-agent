@@ -226,18 +226,12 @@ class CodefreshAPI {
     }
 
     async _sendPackage(block = eventsPackage) {
-        // const sleep = (milliseconds) => {
-        //     return new Promise(resolve => setTimeout(resolve, milliseconds))
-        // };
-        //
         const { length } = block;
         if (!length) return;
 
         const { qs, headers } = this._getIdentifyOptions();
         headers['Content-Type'] = 'text/plain';
-        // headers['Content-Length'] = '';
         headers['Transfer-Encoding'] = 'chunked';
-        headers['X-Accel-Buffering'] = 'no';
 
         logger.debug(JSON.stringify(qs));
         logger.debug(JSON.stringify(headers));
@@ -245,7 +239,6 @@ class CodefreshAPI {
         const uri = `${config.apiUrl}`;
 
         let str = [...block];
-        // str[0].payloadLarge = 'Tex'.repeat(1024*100*30/2);
         str = JSON.stringify(str);
         block.splice(0, length);
 
@@ -261,13 +254,6 @@ class CodefreshAPI {
             () => logger.info('Package is sent'),
         );
 
-        // let i = 0;
-        // while (i < str.length) {
-        //     const size = 10000000;
-        //     clientRequest.write(str.substring(i, i + size));
-        //     i += size;
-        //     logger.debug(`pushed ${i}`);
-        // }
         clientRequest.end(str);
     }
 
