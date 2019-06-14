@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled -}}
+{{- $serviceName := include "fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" . }}-ingress
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  domain:
+    - host: '{{ .Values.ingress.domain | default .Values.global.appUrl }}'
+      http:
+        paths:
+        - path: {{ .Values.ingress.path | quote }}
+          backend:
+            serviceName: {{ .Values.serviceName }}
+            servicePort: {{ .Values.servicePort }}
+  tls:
+    - hosts:
+      - '{{ .Values.ingress.domain | default .Values.global.appUrl }}'
+      {{- if .Values.ingress.webTlsSecretName }}
+      secretName: {{ .Release.Name }}-codefresh-{{ .Values.ingress.webTlsSecretName }}
+      {{- else }}
+      secretName: {{ .Release.Name }}-codefresh-star-selfsigned
+      {{- end }}
+{{- end -}}
