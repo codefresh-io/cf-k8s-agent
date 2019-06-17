@@ -4,6 +4,7 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
+const DeploymentEntity = require('@codefresh-io/kube-integration/lib/kube-native/deployment/deploy');
 const { clientFactory, resolveConfig } = require('./client');
 const Listener = require('./listener');
 
@@ -43,6 +44,14 @@ async function prepareService(service) {
     return prepared;
 }
 
+async function prepareDeployment(rawDeployment) {
+    const namespace = _.get(rawDeployment, 'metadata.namespace');
+    const name = _.get(rawDeployment, 'metadata.name');
+    const deploymentController = kubeManager.getDeploymentController(namespace);
+    const deployment = await deploymentController.describe(name);
+    return { data: JSON.stringify(deployment.getFullData()) };
+}
+
 async function preparePod(pod, getImageId) {
     const labelSelector = formatLabels(_.get(pod, 'metadata.labels', {}));
     const namespace = _.get(pod, 'metadata.namespace');
@@ -74,5 +83,6 @@ module.exports = {
     ConfigMapEntity,
     prepareRelease,
     prepareService,
+    prepareDeployment,
     preparePod,
 };

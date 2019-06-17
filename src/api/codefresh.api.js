@@ -104,6 +104,12 @@ class CodefreshAPI {
             filteredMetadata = podMetadata ? podMetadata : filteredMetadata;
         }
 
+        // For deployment
+        if (payload.object.kind.match(/^deployment$/i)) {
+            const deploymentMetadata = await this.buildDeploymentMetadata(payload);
+            filteredMetadata = deploymentMetadata ? deploymentMetadata : filteredMetadata;
+        }
+
 
         if (!filteredMetadata) {
             return;
@@ -164,11 +170,31 @@ class CodefreshAPI {
 
         const preparedService = await this.kubernetes.prepareService(payload.object);
         if (preparedService) {
-            // const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedService, 'service') : preparedService;
             const filteredFields = preparedService;
             return {
                 ...payload.object,
                 service: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildDeploymentMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
+
+        const preparedDeployment = await this.kubernetes.prepareDeployment(payload.object);
+        if (preparedDeployment) {
+            const filteredFields = preparedDeployment;
+            return {
+                ...payload.object,
+                deployment: {
                     ...filteredFields,
                 },
             };
