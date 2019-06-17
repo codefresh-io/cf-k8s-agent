@@ -41,7 +41,7 @@ async function prepareService(service) {
     const name = _.get(service, 'metadata.name');
     const serviceController = kubeManager.getServiceController(namespace);
     const prepared = await serviceController.describeFull(name, namespace);
-    return prepared;
+    return { data: JSON.stringify(prepared) };
 }
 
 async function prepareDeployment(rawDeployment) {
