@@ -81,7 +81,9 @@ Where:
 ### Install via codefresh-cli for using with Codefresh
 1) If you have one more codefresh auth context, switch to needed with
 `codefresh auth use-context <name>`
-2) Install agent  
+2) If you have not context for http://chartmuseum.codefresh.io, create it
+`codefresh create context helm-repository http cf_museum --url http://chartmuseum.codefresh.io`
+3) Install agent  
 `codefresh install-agent --cluster {clusterId} --version 0.0.18`
 
 Where: 

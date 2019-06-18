@@ -92,6 +92,25 @@ class CodefreshAPI {
             filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
         }
 
+        // For service send full data
+        if (payload.object.kind.match(/^service$/i)) {
+            const serviceMetadata = await this.buildServiceMetadata(payload);
+            filteredMetadata = serviceMetadata ? serviceMetadata : filteredMetadata;
+        }
+
+        // For pod get images
+        if (payload.object.kind.match(/^pod$/i)) {
+            const podMetadata = await this.buildPodMetadata(payload);
+            filteredMetadata = podMetadata ? podMetadata : filteredMetadata;
+        }
+
+        // For deployment
+        if (payload.object.kind.match(/^deployment$/i)) {
+            const deploymentMetadata = await this.buildDeploymentMetadata(payload);
+            filteredMetadata = deploymentMetadata ? deploymentMetadata : filteredMetadata;
+        }
+
+
         if (!filteredMetadata) {
             return;
         }
@@ -134,6 +153,69 @@ class CodefreshAPI {
                 ...payload.object,
                 kind: 'Release',
                 release: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildServiceMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
+
+        const preparedService = await this.kubernetes.prepareService(payload.object);
+        if (preparedService) {
+            const filteredFields = preparedService;
+            return {
+                ...payload.object,
+                service: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildDeploymentMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
+
+        const preparedDeployment = await this.kubernetes.prepareDeployment(payload.object);
+        if (preparedDeployment) {
+            const filteredFields = preparedDeployment;
+            return {
+                ...payload.object,
+                deployment: {
+                    ...filteredFields,
+                },
+            };
+        }
+
+        return null;
+    }
+
+    async buildPodMetadata(payload) {
+        if (payload.type === 'DELETED') {
+            return {
+                ...payload.object,
+            };
+        }
+
+        const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
+        if (preparedPod) {
+            const filteredFields = preparedPod;
+            return {
+                ...payload.object,
+                pod: {
                     ...filteredFields,
                 },
             };
@@ -189,7 +271,6 @@ class CodefreshAPI {
         logger.debug(`Sending package with ${length} element(s).`);
         rp(options)
             .then((r) => {
-                // events.data = _.drop(events.data, length);
                 logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
             })
@@ -209,6 +290,24 @@ class CodefreshAPI {
         };
 
         logger.debug(`Get metadata from ${uri}.`);
+        return rp(options);
+    }
+
+    async getImage(imageId) {
+        const uri = `${config.apiUrl}/images`;
+        const options = {
+            method: 'POST',
+            uri,
+            json: true,
+            headers: {
+                'authorization': config.token,
+            },
+            body: {
+                imageId
+            }
+        };
+
+        logger.debug(`Get image from ${uri}.`);
         return rp(options);
     }
 
