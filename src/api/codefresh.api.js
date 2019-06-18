@@ -129,6 +129,7 @@ class CodefreshAPI {
 
         // TODO: Send each release separately in reason of large size. Should rewrite this code
         if (data.object.kind === 'Release') {
+            delete data.object.data;
             logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
             this._sendPackage([data]);
         } else {
