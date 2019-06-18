@@ -11,7 +11,7 @@ imagePullPolicy: Always
 redeploy: false
 
 # imageTag set the tag of the image
-imageTag: v2
+imageTag: v4
 
 # image name, takes from variable
 image:  "codefresh/agent"

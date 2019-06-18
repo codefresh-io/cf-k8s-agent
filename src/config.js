@@ -22,5 +22,5 @@ module.exports = {
     resetInterval: 60 * 1000 * 20,
 
     port: 9020,
-    logLevel: 'debug',
+    logLevel: 'info',
 };

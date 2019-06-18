@@ -75,6 +75,9 @@ class CodefreshAPI {
      * @returns {Promise<void>}
      */
     async sendEvents(payload) {
+
+        logger.info('Trigger send events');
+
         let data = _.cloneDeep(payload);
 
         if (data.kind === 'Status') {
@@ -82,9 +85,7 @@ class CodefreshAPI {
             return;
         }
 
-        let filteredMetadata;
-
-        filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
+        let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 
         // For release override configmap by release
         if (payload.object.kind.match(/^configmap$/i)) {
@@ -128,6 +129,8 @@ class CodefreshAPI {
 
         // TODO: Send each release separately in reason of large size. Should rewrite this code
         if (data.object.kind === 'Release') {
+            delete data.object.data;
+            logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
             this._sendPackage([data]);
         } else {
             eventsPackage.push(data);
@@ -135,6 +138,9 @@ class CodefreshAPI {
         statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
+        }
+        else {
+            logger.info(`Skip packages sending - size ${eventsPackage.length}`);
         }
     }
 
@@ -157,7 +163,7 @@ class CodefreshAPI {
                 },
             };
         }
-
+        logger.info(`Skip build release ,  entity ${JSON.stringify(payload)}`);
         return null;
     }
 
