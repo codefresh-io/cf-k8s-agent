@@ -27,7 +27,9 @@ async function prepareRelease(rawConfigMap) {
     if (release && +release._version <= +configMap.getLabels().VERSION) {
         const releaseData = release.getFullData();
         const { name, version } = releaseData;
-        const chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
+        const chartFilesAll = await releaseController.getChartDescriptorForRevision(name, version);
+        const chartFiles = chartFilesAll.length > 10 ? [] : chartFilesAll;
+
         const chartManifest = await releaseController.getChartManifestForRevision(name, version);
         const chartValues = await releaseController.getChartValuesForRevision(name, version);
         return { ...releaseData, chartFiles, chartManifest, chartValues };
