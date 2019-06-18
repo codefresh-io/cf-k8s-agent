@@ -212,7 +212,6 @@ class CodefreshAPI {
 
         const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
         if (preparedPod) {
-            // const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedPod, 'pod') : preparedPod;
             const filteredFields = preparedPod;
             return {
                 ...payload.object,
@@ -272,7 +271,6 @@ class CodefreshAPI {
         logger.debug(`Sending package with ${length} element(s).`);
         rp(options)
             .then((r) => {
-                // events.data = _.drop(events.data, length);
                 logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
             })

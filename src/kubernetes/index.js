@@ -59,8 +59,7 @@ async function preparePod(pod, getImageId) {
 
     const prepared = await podController.group({ labelSelector })
         .map((sp) => {
-            return Promise.map(sp.getImages(), (image) => {
-                const { imageID, name } = image;
+            return Promise.map(sp.getImages(), ({ imageID, name }) => {
                 return Promise.resolve(getImageId(imageID))
                     .then((imageId) => {
                         sp.setImageMetaData(name, 'id', imageId);
