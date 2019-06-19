@@ -176,11 +176,10 @@ class CodefreshAPI {
 
         const preparedService = await this.kubernetes.prepareService(payload.object);
         if (preparedService) {
-            const filteredFields = preparedService;
             return {
                 ...payload.object,
                 service: {
-                    ...filteredFields,
+                    ...preparedService,
                 },
             };
         }
@@ -197,11 +196,10 @@ class CodefreshAPI {
 
         const preparedDeployment = await this.kubernetes.prepareDeployment(payload.object);
         if (preparedDeployment) {
-            const filteredFields = preparedDeployment;
             return {
                 ...payload.object,
                 deployment: {
-                    ...filteredFields,
+                    ...preparedDeployment,
                 },
             };
         }
@@ -218,11 +216,10 @@ class CodefreshAPI {
 
         const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
         if (preparedPod) {
-            const filteredFields = preparedPod;
             return {
                 ...payload.object,
                 pod: {
-                    ...filteredFields,
+                    ...preparedPod,
                 },
             };
         }
