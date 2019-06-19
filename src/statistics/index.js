@@ -1,5 +1,8 @@
 'use strict';
 
+const _ = require('lodash');
+const { version } = require('../../package.json');
+
 class Statistics {
     constructor() {
         this.startTime = new Date();
@@ -9,10 +12,15 @@ class Statistics {
         this.incEvents = this.incEvents.bind(this);
         this.incPackages = this.incPackages.bind(this);
         this.incStreamLoses = this.incStreamLoses.bind(this);
+        this.reset = this.reset.bind(this);
         this.addError = this.addError.bind(this);
 
         this.streamLosses = {};
         this.streamErrors = [];
+        this.lastStreamRestart = {};
+        this.lastUpdateSent = {};
+        this.lastUpdateTriggered = {};
+        this.entityCounts = {};
     }
 
     /**
@@ -26,6 +34,12 @@ class Statistics {
             eventsSended: this.eventsSended,
             streamLosses: this.streamLosses,
             streamErrors: this.streamErrors,
+            lastStreamRestart: this.lastStreamRestart,
+            lastUpdateSent: this.lastUpdateSent,
+            lastUpdateTriggered: this.lastUpdateTriggered,
+            entityCounts: this.entityCounts,
+            lastUpdate: _.max(_.values(this.lastUpdateSent)),
+            version,
         };
     }
 
@@ -41,6 +55,11 @@ class Statistics {
      */
     incEvents() {
         this.eventsSended += 1;
+    }
+
+    apply(data) {
+        this.lastUpdateTriggered[data.object.kind] = new Date();
+        this.entityCounts[data.object.kind] = (this.entityCounts[data.object.kind] || 0) + 1;
     }
 
     /**
@@ -65,6 +84,18 @@ class Statistics {
             date: new Date(),
             resource,
         });
+    }
+
+    reset() {
+        this.startTime = new Date();
+        this.packagesSended = 0;
+        this.eventsSended = 0;
+        this.streamLosses = {};
+        this.streamErrors = [];
+        this.lastStreamRestart = {};
+        this.lastUpdateSent = {};
+        this.lastUpdateTriggered = {};
+        this.entityCounts = {};
     }
 
 }

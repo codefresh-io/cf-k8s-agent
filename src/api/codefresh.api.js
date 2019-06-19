@@ -20,6 +20,7 @@ class CodefreshAPI {
         this.initEvents = this.initEvents.bind(this);
         this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
+        this.sendStatistics = this.sendStatistics.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
 
         this._sendPackage = this._sendPackage.bind(this);
@@ -135,6 +136,7 @@ class CodefreshAPI {
         } else {
             eventsPackage.push(data);
         }
+        statistics.apply(data);
         statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
@@ -297,6 +299,28 @@ class CodefreshAPI {
 
         logger.debug(`Get metadata from ${uri}.`);
         return rp(options);
+    }
+
+    async sendStatistics() {
+        const { headers, qs } = this._getIdentifyOptions();
+
+        const uri = `${config.apiUrl}/statistics`;
+        const body = statistics.result;
+        const options = {
+            method: 'POST',
+            uri,
+            qs,
+            body,
+            json: true,
+            headers,
+        };
+
+        logger.debug(`Sending statistics. ${JSON.stringify(body)}`);
+        return rp(options)
+            .then(statistics.reset)
+            .catch((e) => {
+                logger.error(`sending statistics error: ${e.message}`);
+            });
     }
 
     async getImage(imageId) {

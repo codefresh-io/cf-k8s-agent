@@ -71,6 +71,8 @@ init()
         logger.info(`Agent ${version} has started...`);
         // Unconditional refresh
         setInterval(init, config.resetInterval);
+        // Send statistics
+        setInterval(monitor.sendStatistics, config.statisticsInterval);
         // Refresh by monitor trigger
         monitor.updateHandler(init);
     })
