@@ -58,17 +58,7 @@ async function preparePod(pod, getImageId) {
     const podController = kubeManager.getPodController(namespace);
 
     const prepared = await podController.group({ labelSelector })
-        .map((sp) => {
-            return Promise.map(sp.getImages(), ({ imageID, name }) => {
-                return Promise.resolve(getImageId(imageID))
-                    .then((imageId) => {
-                        sp.setImageMetaData(name, 'id', imageId);
-                        return sp;
-                    })
-                    .catchReturn(sp)
-                    .then(() => sp.toJson());
-            });
-        })
+        .map((sp) => sp.toJson())
         .then(_.flatten);
 
     return prepared;
