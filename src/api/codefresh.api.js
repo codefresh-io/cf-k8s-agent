@@ -20,11 +20,13 @@ class CodefreshAPI {
         this.initEvents = this.initEvents.bind(this);
         this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
+        this.sendStatistics = this.sendStatistics.bind(this);
         this.updateHandler = this.updateHandler.bind(this);
 
         this._sendPackage = this._sendPackage.bind(this);
         this.getMetadata = this.getMetadata.bind(this);
         this._needUpdate = this._needUpdate.bind(this);
+        this._request = this._request.bind(this);
         this._getIdentifyOptions = this._getIdentifyOptions.bind(this);
 
         setInterval(this._sendPackage, 2000);
@@ -38,24 +40,14 @@ class CodefreshAPI {
      * @returns {Promise<void>}
      */
     async initEvents(accounts = []) {
-        const { qs, headers } = this._getIdentifyOptions();
-
-        const uri = `${config.apiUrl}/init`;
+        const uri = '/init';
         logger.debug(`Before init events. ${uri}`);
-        const options = {
-            headers,
-            method: 'POST',
-            uri,
-            body: {
-                accounts,
-            },
-            qs,
-            json: true,
-        };
+        logger.debug(`Init events. Cluster: ${config.clusterId}. Account: ${config.accountId}`);
 
-        logger.debug(`Init events. Cluster: ${config.clusterId}.`);
-        logger.debug(JSON.stringify(qs));
-        return Promise.all([this.getMetadata(), rp(options)])
+        return Promise.all([
+            this.getMetadata(),
+            this._request({ method: 'POST', uri, body: { accounts }}),
+        ])
             .then(([metadata]) => {
                 metadataFilter = new MetadataFilter(metadata);
                 counter = 1;
@@ -64,9 +56,7 @@ class CodefreshAPI {
     }
 
     sendEventsWithLogger(...args) {
-        return this.sendEvents(...args).catch(error => {
-            logger.error(error);
-        });
+        return this.sendEvents(...args).catch(logger.error);
     }
 
     /**
@@ -135,6 +125,7 @@ class CodefreshAPI {
         } else {
             eventsPackage.push(data);
         }
+        statistics.apply(data);
         statistics.incEvents();
         if (eventsPackage.length === 10) {
             this._sendPackage();
@@ -235,19 +226,9 @@ class CodefreshAPI {
     }
 
     async _needUpdate() {
-        const { qs, headers } = this._getIdentifyOptions();
-
-        const uri = `${config.apiUrl}/state`;
+        const uri = '/state';
         logger.debug(`Checking init events. ${uri}`);
-        const options = {
-            headers,
-            method: 'GET',
-            uri,
-            qs,
-            json: true,
-        };
-
-        const result = await rp(options);
+        const result = await this._request({ uri });
         return result.needUpdate;
     }
 
@@ -255,63 +236,36 @@ class CodefreshAPI {
         const { length } = block;
         if (!length) return;
 
-        const { qs, headers } = this._getIdentifyOptions();
-        logger.debug(qs);
-        logger.debug(headers);
-
-        const uri = `${config.apiUrl}`;
-        const options = {
-            method: 'POST',
-            uri,
-            body: [...block],
-            headers,
-            qs,
-            json: true,
-        };
-
+        const body = [...block];
         block.splice(0, length);
 
         logger.debug(`Sending package with ${length} element(s).`);
-        rp(options)
+        this._request({ method: 'POST', uri: '', body })
             .then((r) => {
                 logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
-            })
-            .catch((e) => {
-                logger.info(`sending result error: ${e.message}`);
             });
     }
 
     async getMetadata() {
-        const { headers } = this._getIdentifyOptions();
-        const uri = `${config.apiUrl}/metadata`;
-        const options = {
-            method: 'GET',
-            uri,
-            json: true,
-            headers,
-        };
-
+        const uri = '/metadata';
         logger.debug(`Get metadata from ${uri}.`);
-        return rp(options);
+        return this._request({ uri });
+    }
+
+    async sendStatistics() {
+        const uri = '/statistics';
+        const body = statistics.result;
+
+        logger.debug(`Sending statistics. ${JSON.stringify(body)}`);
+        return this._request({ method: 'POST', uri, body })
+            .then(statistics.reset);
     }
 
     async getImage(imageId) {
-        const uri = `${config.apiUrl}/images`;
-        const options = {
-            method: 'POST',
-            uri,
-            json: true,
-            headers: {
-                'authorization': config.token,
-            },
-            body: {
-                imageId
-            }
-        };
-
+        const uri = '/images';
         logger.debug(`Get image from ${uri}.`);
-        return rp(options);
+        return this._request({ method: 'POST', uri, body: { imageId } });
     }
 
     _getIdentifyOptions() {
@@ -332,6 +286,20 @@ class CodefreshAPI {
                 clusterId: config.clusterId,
             },
         };
+    }
+
+    _request(options) {
+        const identify = this._getIdentifyOptions();
+        const headers = _.merge(identify.headers, options.headers);
+        const qs = _.merge(identify.qs, options.qs);
+
+        const uri = `${config.apiUrl}${options.uri}`;
+        const opts = _.merge({ json: true }, options, { headers, qs, uri });
+        return rp(opts)
+            .catch((e) => {
+                logger.error(`Request error: ${e.statusCode} - ${e.message}`);
+                return Promise.reject(e);
+            });
     }
 }
 
