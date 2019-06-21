@@ -34,6 +34,22 @@ describe('testing api', () => {
             .toBe(undefined);
     });
 
+    it('checkState', async () => {
+        const callback = jest.fn();
+        rp.mockImplementationOnce(async () => ({ needUpdate: true }));
+        const CodefreshAPI = require('../api/codefresh.api');
+        const codefreshAPI = new CodefreshAPI();
+        expect(await codefreshAPI.checkState(callback))
+            .toBe(undefined);
+        expect(callback).toHaveBeenCalled();
+
+        callback.mockClear();
+        rp.mockImplementationOnce(async () => ({ needUpdate: false }));
+        expect(await codefreshAPI.checkState(callback))
+            .toBe(undefined);
+        expect(callback).not.toHaveBeenCalled();
+    });
+
     it('sendStatistics', async () => {
         rp.mockImplementation(() => Promise.resolve());
         const CodefreshAPI = require('../api/codefresh.api');

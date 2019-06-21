@@ -21,6 +21,7 @@ module.exports = {
     retryInterval: 2000,
     resetInterval: 60 * 1000 * 20,
     statisticsInterval: 60 * 1000 * 60, // 60 min
+    stateInterval: 60 * 1000, // 1 min
 
     port: 9020,
     logLevel: 'info',
