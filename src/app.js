@@ -12,6 +12,11 @@ const Monitor = require('./api/codefresh.api');
 const config = require('./config');
 const kubernetes = require('./kubernetes');
 
+// intervals
+let resetInterval;
+let statisticsInterval;
+let stateInterval;
+
 const { clientFactory, Listener } = kubernetes;
 
 async function init() {
@@ -70,11 +75,17 @@ init()
     .then(({ monitor }) => {
         logger.info(`Agent ${version} has started...`);
         // Unconditional refresh
-        setInterval(init, config.resetInterval);
+        if (!resetInterval) {
+            resetInterval = setInterval(init, config.resetInterval);
+        }
         // Send statistics
-        setInterval(monitor.sendStatistics, config.statisticsInterval);
-        // Refresh by monitor trigger
-        monitor.updateHandler(init);
+        if (!statisticsInterval) {
+            statisticsInterval = setInterval(monitor.sendStatistics, config.statisticsInterval);
+        }
+        // React on state got from monitor
+        if (!stateInterval) {
+            stateInterval = setInterval(monitor.checkState.bind(monitor, init), config.stateInterval);
+        }
     })
     .catch(() => process.exit(1));
 

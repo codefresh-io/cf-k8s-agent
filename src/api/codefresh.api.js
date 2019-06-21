@@ -21,11 +21,10 @@ class CodefreshAPI {
         this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
         this.sendEvents = this.sendEvents.bind(this);
         this.sendStatistics = this.sendStatistics.bind(this);
-        this.updateHandler = this.updateHandler.bind(this);
+        this.checkState = this.checkState.bind(this);
 
         this._sendPackage = this._sendPackage.bind(this);
         this.getMetadata = this.getMetadata.bind(this);
-        this._needUpdate = this._needUpdate.bind(this);
         this._request = this._request.bind(this);
         this._getIdentifyOptions = this._getIdentifyOptions.bind(this);
 
@@ -218,18 +217,23 @@ class CodefreshAPI {
         return null;
     }
 
-    updateHandler(callback) {
-        setInterval(async () => {
-            const need = await this._needUpdate();
-            if (need) callback();
-        }, 10000);
-    }
-
-    async _needUpdate() {
+    async checkState(callback) {
         const uri = '/state';
         logger.debug(`Checking init events. ${uri}`);
-        const result = await this._request({ uri });
-        return result.needUpdate;
+        try {
+            const result = await this._request({ uri });
+
+            if (result.needRestart) {
+                logger.info(`Agent exits by monitor command`);
+                process.exit();
+            }
+
+            if (result.needUpdate) {
+                callback();
+            }
+        } catch(error) {
+            logger.error(`Error while checking state: ${error.message}`);
+        }
     }
 
     _sendPackage(block = eventsPackage) {
