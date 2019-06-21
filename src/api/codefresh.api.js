@@ -65,8 +65,6 @@ class CodefreshAPI {
      */
     async sendEvents(payload) {
 
-        logger.info('Trigger send events');
-
         let data = _.cloneDeep(payload);
 
         if (data.kind === 'Status') {
