@@ -20,6 +20,7 @@ spec:
       app: {{ template "fullname" . }}
   template:
     metadata:
+      name: agent-pod
       {{- if .Values.redeploy }}
       annotations:
         forceRedeployUniqId: {{ now | quote }}
@@ -31,6 +32,7 @@ spec:
         heritage: {{ .Release.Service  | quote }}
         version: {{ .Values.imageTag | quote }}
     spec:
+      serviceAccountName: agent-sa
       containers:
       - name: {{ template "fullname" . }}
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"

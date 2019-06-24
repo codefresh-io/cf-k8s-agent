@@ -4,7 +4,7 @@ metadata:
   name: agent-binding
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: agent-sa
   namespace: default
 roleRef:
   kind: ClusterRole
