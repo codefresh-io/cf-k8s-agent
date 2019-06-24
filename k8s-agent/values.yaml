@@ -38,3 +38,5 @@ servicePort: 80
 
 accountId: user
 apiToken: ""
+
+rbacEnabled: true
