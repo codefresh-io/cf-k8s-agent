@@ -19,7 +19,7 @@ module.exports = {
 
     // Interval for restoring stream from k8s cluster after error
     retryInterval: 2000,
-    resetInterval: 60 * 1000 * 20,
+    resetInterval: 60 * 1000 * 120,
     statisticsInterval: 60 * 1000 * 60, // 60 min
     stateInterval: 60 * 1000, // 1 min
 
