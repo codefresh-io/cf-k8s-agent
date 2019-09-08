@@ -10,7 +10,7 @@ const statistics = require('../statistics');
 let metadataFilter;
 let counter;
 
-const eventsPackage = [];
+let eventsPackage = [];
 
 class CodefreshAPI {
 
@@ -118,14 +118,14 @@ class CodefreshAPI {
         if (data.object.kind === 'Release') {
             delete data.object.data;
             logger.debug(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
-            this._sendPackage([data]);
+            await this._sendPackage([data]);
         } else {
             eventsPackage.push(data);
         }
         statistics.apply(data);
         statistics.incEvents();
         if (eventsPackage.length === 10) {
-            this._sendPackage();
+            await this._sendPackage();
         }
         else {
             logger.info(`Skip packages sending - size ${eventsPackage.length}`);
@@ -241,11 +241,15 @@ class CodefreshAPI {
         const body = [...block];
         block.splice(0, length);
 
-        logger.debug(`Sending package with ${length} element(s).`);
+        logger.info(`Sending package with ${length} element(s).`);
         this._request({ method: 'POST', uri: '', body })
             .then((r) => {
                 logger.debug(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
+            })
+            .then(() => {
+                logger.info(`clean events package in memory `);
+                eventsPackage = [];
             });
     }
 
