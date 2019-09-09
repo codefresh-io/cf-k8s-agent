@@ -74,10 +74,10 @@ app.use('/api', indexRouter);
 init()
     .then(({ monitor }) => {
         logger.info(`Agent ${version} has started...`);
-        // Unconditional refresh
-        if (!resetInterval) {
-            resetInterval = setInterval(init, config.resetInterval);
-        }
+        // // Unconditional refresh
+        // if (!resetInterval) {
+        //     resetInterval = setInterval(init, config.resetInterval);
+        // }
         // Send statistics
         if (!statisticsInterval) {
             statisticsInterval = setInterval(monitor.sendStatistics, config.statisticsInterval);
