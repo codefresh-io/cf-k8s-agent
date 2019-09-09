@@ -28,7 +28,7 @@ class CodefreshAPI {
         this._request = this._request.bind(this);
         this._getIdentifyOptions = this._getIdentifyOptions.bind(this);
 
-        setInterval(this._sendPackage, 2000);
+        setInterval(this._sendPackage, 120 * 1000);
     }
 
 
@@ -117,7 +117,7 @@ class CodefreshAPI {
         // TODO: Send each release separately in reason of large size. Should rewrite this code
         if (data.object.kind === 'Release') {
             delete data.object.data;
-            logger.debug(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
+            logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
             await this._sendPackage([data]);
         } else {
             eventsPackage.push(data);
@@ -236,7 +236,7 @@ class CodefreshAPI {
 
     _sendPackage(block = eventsPackage) {
         const { length } = block;
-        if (!length) return;
+        if (!length || length === 0) return;
 
         const body = [...block];
         block.splice(0, length);
