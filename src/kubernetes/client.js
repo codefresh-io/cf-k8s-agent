@@ -23,6 +23,7 @@ function resolveConfig() {
             bearer: config.clusterToken,
         },
         ca: config.clusterCA,
+        insecureSkipTlsVerify: true
     };
 }
 
