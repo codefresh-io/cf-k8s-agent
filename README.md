@@ -103,3 +103,39 @@ You can use this variables for cli and helm install. Use as **--set key=value** 
 * `apiUrl` - (default: `https://g.codefresh.io/api/k8s-monitor/events`) agent use this endpoint for all work with k8s-monitor 
 * `port` - (default: `80`)
 * `servicePort` - (default: `80`)
+
+## Installing (proxy) using Helm
+Using these variables you can install the agent to a management cluster so that the agent is not running on the targeted cluster.
+
+For example you may have a management cluster (running the k8s-agent) that can connect via private network route to production (data source).
+
+You will then need to change your kube-context to production.
+
+Now create a service account using Kubernetes RBAC and the YAML manifest `k8s-agent-role-binding.yaml`
+
+`$ kubectl apply -f k8s-agent-codefresh-role-binding.yaml`
+
+This will create a minimal viewer role which will be used to connect to production k8s api.
+
+Run the following commands to get the required data for the Helm Chart install.
+
+`clusterUrl` - `$ export CURRENT_CONTEXT=$(kubectl config current-context) && export CURRENT_CLUSTER=$(kubectl config view -o go-template="{{\$curr_context := \"$CURRENT_CONTEXT\" }}{{range .contexts}}{{if eq .name \$curr_context}}{{.context.cluster}}{{end}}{{end}}") && echo $(kubectl config view -o go-template="{{\$cluster_context := \"$CURRENT_CLUSTER\"}}{{range .clusters}}{{if eq .name \$cluster_context}}{{.cluster.server}}{{end}}{{end}}")`
+`clusterCA` - `$ echo $(kubectl get secret -n kube-system -o go-template='{{index .data "ca.crt" }}' $(kubectl get sa codefresh-user -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}"))`
+`clusterToken` - `$ echo $(kubectl get secret -o go-template='{{index .data "token" }}' $(kubectl get sa k8s-agent-codefresh -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}") -n kube-system | base64 -D)`
+This is a decoded token.  Please remove `| base64 -D` if you want a value to use in `k8s-agent-secrets.yaml`
+
+Finally run the install with the additional `--set` parameters.
+
+`$ helm upgrade <release_name> ./k8s-agent --install --force --reset-values --namespace=<namespace for agent install> --set apiToken=<codefresh api token> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set clusterCA=<production ca cert> --set clusterToken=<kubernetes sa token>`
+
+## Installing using K8s Secrets
+
+Alternatively, you can add this flag to the Helm Chart `values.yaml` to pull the Host, CA Cert, SA Token and Codefresh API Token from K8s Secrets.
+
+Use file `k8s-agent-secrets.yaml`, add required data and apply the file to generate the secrets required and set `use-k8s-secrets: true`.
+
+`$ kubectl apply -f k8s-agent-secrets.yaml -n <namespace>`
+
+then install using command below
+
+`$ helm upgrade <release name> ./k8s-agent --install --force --reset-values --namespace=<namespace> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set use-k8s-secrets=true`
