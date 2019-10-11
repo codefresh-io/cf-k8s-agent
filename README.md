@@ -138,4 +138,4 @@ Use file `k8s-agent-secrets.yaml`, add required data and apply the file to gener
 
 then install using command below
 
-`$ helm upgrade <release name> ./k8s-agent --install --force --reset-values --namespace=<namespace> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set use-k8s-secrets=true`
+`$ helm upgrade <release name> ./k8s-agent --install --force --reset-values --namespace=<namespace> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set usek8ssecrets=true`
