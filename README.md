@@ -122,7 +122,6 @@ Run the following commands to get the required data for the Helm Chart install.
 `clusterUrl` - `$ export CURRENT_CONTEXT=$(kubectl config current-context) && export CURRENT_CLUSTER=$(kubectl config view -o go-template="{{\$curr_context := \"$CURRENT_CONTEXT\" }}{{range .contexts}}{{if eq .name \$curr_context}}{{.context.cluster}}{{end}}{{end}}") && echo $(kubectl config view -o go-template="{{\$cluster_context := \"$CURRENT_CLUSTER\"}}{{range .clusters}}{{if eq .name \$cluster_context}}{{.cluster.server}}{{end}}{{end}}")`
 `clusterCA` - `$ echo $(kubectl get secret -n kube-system -o go-template='{{index .data "ca.crt" }}' $(kubectl get sa codefresh-user -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}"))`
 `clusterToken` - `$ echo $(kubectl get secret -o go-template='{{index .data "token" }}' $(kubectl get sa k8s-agent-codefresh -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}") -n kube-system | base64 -D)`
-This is a decoded token.  Please remove `| base64 -D` if you want a value to use in `k8s-agent-secrets.yaml`
 
 Finally run the install with the additional `--set` parameters.
 
@@ -138,4 +137,4 @@ Use file `k8s-agent-secrets.yaml`, add required data and apply the file to gener
 
 then install using command below
 
-`$ helm upgrade <release name> ./k8s-agent --install --force --reset-values --namespace=<namespace> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set usek8ssecrets=true`
+`$ helm upgrade <release name> ./k8s-agent --install --force --reset-values --namespace=<namespace> --set clusterId=<see above> --set clusterUrl=<kubernetes api url> --set useK8sSecrets=true`
