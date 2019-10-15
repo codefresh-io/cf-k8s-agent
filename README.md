@@ -120,7 +120,9 @@ This will create a minimal viewer role which will be used to connect to producti
 Run the following commands to get the required data for the Helm Chart install.
 
 `clusterUrl` - `$ export CURRENT_CONTEXT=$(kubectl config current-context) && export CURRENT_CLUSTER=$(kubectl config view -o go-template="{{\$curr_context := \"$CURRENT_CONTEXT\" }}{{range .contexts}}{{if eq .name \$curr_context}}{{.context.cluster}}{{end}}{{end}}") && echo $(kubectl config view -o go-template="{{\$cluster_context := \"$CURRENT_CLUSTER\"}}{{range .clusters}}{{if eq .name \$cluster_context}}{{.cluster.server}}{{end}}{{end}}")`
+
 `clusterCA` - `$ echo $(kubectl get secret -n kube-system -o go-template='{{index .data "ca.crt" }}' $(kubectl get sa codefresh-user -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}"))`
+
 `clusterToken` - `$ echo $(kubectl get secret -o go-template='{{index .data "token" }}' $(kubectl get sa k8s-agent-codefresh -n kube-system -o go-template="{{range .secrets}}{{.name}}{{end}}") -n kube-system | base64 -D)`
 
 Finally run the install with the additional `--set` parameters.
