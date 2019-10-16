@@ -40,3 +40,7 @@ accountId: user
 apiToken: ""
 
 rbacEnabled: true
+
+# Set to true to keep secrets from being exposed in Helm
+# See k8s-agent-secrets.yaml and edit to set secret values there
+useK8sSecrets: false

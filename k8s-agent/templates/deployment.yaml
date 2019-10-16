@@ -45,12 +45,30 @@ spec:
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL
             value: {{ .Values.clusterUrl | quote }}
+          {{- if .Values.useK8sSecrets }}
+          - name: CLUSTER_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: k8s-agent-secrets
+                key: sa_token
+          - name: CLUSTER_CA
+            valueFrom:
+              secretKeyRef:
+                name: k8s-agent-secrets
+                key: ca_cert
+          - name: API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: k8s-agent-secrets
+                key: cf_api_token
+          {{- else }}
           - name: CLUSTER_TOKEN
             value: {{ .Values.clusterToken | quote }}
           - name: CLUSTER_CA
             value: {{ .Values.clusterCA | quote }}
           - name: API_TOKEN
             value: {{ .Values.apiToken | quote }}
+          {{- end }}
           - name: CLUSTER_ID
             value: {{ .Values.clusterId | quote }}
           - name: API_URL
