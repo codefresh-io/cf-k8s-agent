@@ -113,7 +113,7 @@ You will then need to change your kube-context to production.
 
 Now create a service account using Kubernetes RBAC and the YAML manifest `k8s-agent-role-binding.yaml`
 
-`$ kubectl apply -f k8s-agent-codefresh-role-binding.yaml`
+`$ kubectl apply -f k8s-agent-role-binding.yaml`
 
 This will create a minimal viewer role which will be used to connect to production k8s api.
 
