@@ -11,6 +11,7 @@
     "@codefresh-io/kube-integration": "1.6.0",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
+    "cf-monitor": "^0.0.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "eslint-plugin-jest": "^22.3.0",

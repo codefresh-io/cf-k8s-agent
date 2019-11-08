@@ -40,3 +40,5 @@ accountId: user
 apiToken: ""
 
 rbacEnabled: true
+
+newRelicLicenseKey: ""

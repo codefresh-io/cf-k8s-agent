@@ -61,6 +61,8 @@ spec:
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS
             value: '{{ .Values.ACCOUNTS }}'
+          - name: NEWRELIC_LICENSE_KEY
+            value: "{{ .Values.newRelicLicenseKey }}"
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}

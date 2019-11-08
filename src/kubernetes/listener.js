@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const Kefir = require('kefir');
+const newRelicMonitor = require('cf-monitor');
 const logger = require('../logger');
 const resourcesFactory = require('../k8s-resources');
 const config = require('../config');
@@ -43,6 +44,7 @@ class Listener {
      */
     _errorHandler(type, resource) {
         return (err) => {
+            newRelicMonitor.noticeError(err);
             logger.error(`Error in ${type} stream. ${err}`);
             setTimeout(() => {
                 logger.info(`Trying to restart stream ${type}`);
