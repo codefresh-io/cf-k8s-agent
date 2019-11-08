@@ -1,5 +1,7 @@
 'use strict';
 
+const packageJson = require('../package');
+
 module.exports = {
     // Cluster credentials. Are used when agent started outside of cluster and useCurrentContext=false
     clusterUrl: process.env.CLUSTER_URL,
@@ -22,6 +24,13 @@ module.exports = {
     resetInterval: 60 * 1000 * 120,
     statisticsInterval: 60 * 1000 * 60, // 60 min
     stateInterval: 60 * 1000, // 1 min
+
+    newrelic: {
+        license_key: process.env.NEWRELIC_LICENSE_KEY
+    },
+
+    name: packageJson.name,
+    env: process.env.NODE_ENV || 'kubernetes',
 
     port: 9020,
     logLevel: 'info',

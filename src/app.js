@@ -5,6 +5,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
+const newRelicMonitor = require('cf-monitor');
 const loggerMiddleware = require('morgan')('dev');
 const logger = require('./logger');
 const { version } = require('../package.json');
@@ -29,6 +30,7 @@ async function init() {
         } catch (error) {
             accounts = null;
             logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
+            newRelicMonitor.noticeError(error);
         }
 
         const client = await clientFactory();
@@ -55,6 +57,7 @@ async function init() {
         };
     } catch (error) {
         logger.error(`Can't init agent. Reason: ${error}`);
+        newRelicMonitor.noticeError(error);
         throw error;
     }
 }

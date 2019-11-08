@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const rp = require('request-promise');
+const newRelicMonitor = require('cf-monitor');
 const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
@@ -55,7 +56,10 @@ class CodefreshAPI {
     }
 
     sendEventsWithLogger(...args) {
-        return this.sendEvents(...args).catch(logger.error);
+        return this.sendEvents(...args).catch((error) => {
+            logger.error(error);
+            newRelicMonitor.noticeError(error);
+        });
     }
 
     /**
@@ -230,6 +234,7 @@ class CodefreshAPI {
                 callback();
             }
         } catch(error) {
+            newRelicMonitor.noticeError(error);
             logger.error(`Error while checking state: ${error.message}`);
         }
     }
@@ -304,6 +309,7 @@ class CodefreshAPI {
         return rp(opts)
             .catch((e) => {
                 logger.error(`Request error: ${e.statusCode} - ${e.message}`);
+                newRelicMonitor.noticeError(e);
                 return Promise.reject(e);
             });
     }
