@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@codefresh-io/kube-integration": "1.6.0",
+    "better-queue": "^3.8.10",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",

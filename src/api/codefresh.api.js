@@ -6,6 +6,7 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
+const queue = require('better-queue');
 
 let metadataFilter;
 let counter;
@@ -14,7 +15,7 @@ let eventsPackage = [];
 
 class CodefreshAPI {
 
-    constructor(kubernetes) {
+    constructor(kubernetes, opts) {
         this.kubernetes = kubernetes;
 
         this.initEvents = this.initEvents.bind(this);
@@ -27,7 +28,10 @@ class CodefreshAPI {
         this.getMetadata = this.getMetadata.bind(this);
         this._request = this._request.bind(this);
         this._getIdentifyOptions = this._getIdentifyOptions.bind(this);
-
+        this.queue = new queue({
+            process: processEvent,
+            batchSize: _.get(opt, concurrent)
+        })
         setInterval(this._sendPackage, 120 * 1000);
     }
 
@@ -65,12 +69,18 @@ class CodefreshAPI {
      */
     async sendEvents(payload) {
 
-        let data = _.cloneDeep(payload);
 
-        if (data.kind === 'Status') {
-            logger.debug(`Status: ${data.status}. Message: ${data.message}.`);
+        if (payload.kind === 'Status') {
+            logger.debug(`Status: ${payload.status}. Message: ${payload.message}.`);
             return;
         }
+
+        this.queue.push(payload);
+    }
+
+    async processEvent(payload) {
+
+        let data = _.cloneDeep(payload);
 
         let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 

@@ -23,6 +23,8 @@ module.exports = {
     statisticsInterval: 60 * 1000 * 60, // 60 min
     stateInterval: 60 * 1000, // 1 min
 
+    k8sConcurrentCalls: process.env.K8S_CONCURRENT_CALLS,
+
     port: 9020,
     logLevel: 'info',
 };
