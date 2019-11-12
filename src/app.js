@@ -32,9 +32,11 @@ async function init() {
             logger.error(`Can't parse binded accounts. Only main account will be updating. Reason: ${error}`);
             newRelicMonitor.noticeError(error);
         }
-
+        const opts = {
+            concurrent: config.k8sConcurrentCalls
+        };
         const client = await clientFactory();
-        const monitor = new Monitor(kubernetes);
+        const monitor = new Monitor(kubernetes, opts);
         const metadata = await monitor.getMetadata();
 
         // Get instances for each resource and init cache for them
