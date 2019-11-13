@@ -34,4 +34,5 @@ module.exports = {
 
     port: 9020,
     logLevel: 'info',
+    forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false
 };
