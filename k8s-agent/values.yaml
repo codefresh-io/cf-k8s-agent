@@ -42,3 +42,5 @@ apiToken: ""
 rbacEnabled: true
 
 newRelicLicenseKey: ""
+
+heapSize: 4096
