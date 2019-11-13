@@ -63,6 +63,8 @@ spec:
             value: '{{ .Values.ACCOUNTS }}'
           - name: NEWRELIC_LICENSE_KEY
             value: "{{ .Values.newRelicLicenseKey }}"
+          - name: NODE_OPTIONS
+            value: "--max_old_space_size={{ .Values.heapSize }}"
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
