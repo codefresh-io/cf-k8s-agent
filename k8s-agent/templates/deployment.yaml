@@ -65,6 +65,8 @@ spec:
             value: "{{ .Values.newRelicLicenseKey }}"
           - name: NODE_OPTIONS
             value: "--max_old_space_size={{ .Values.heapSize }}"
+          - name: FORCE_DISABLE_HELM_RELEASES
+            value: "{{ .Values.forceDisableHelmReleases }}"
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
