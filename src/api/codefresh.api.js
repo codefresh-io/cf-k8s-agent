@@ -86,19 +86,19 @@ class CodefreshAPI {
 
         // For service send full data
         if (payload.object.kind.match(/^service$/i)) {
-            const serviceMetadata = await this.buildServiceMetadata(payload);
+            const serviceMetadata = await this.buildServiceMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = serviceMetadata ? serviceMetadata : filteredMetadata;
         }
 
         // For pod get images
         if (payload.object.kind.match(/^pod$/i)) {
-            const podMetadata = await this.buildPodMetadata(payload);
+            const podMetadata = await this.buildPodMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = podMetadata ? podMetadata : filteredMetadata;
         }
 
         // For deployment
         if (payload.object.kind.match(/^deployment$/i)) {
-            const deploymentMetadata = await this.buildDeploymentMetadata(payload);
+            const deploymentMetadata = await this.buildDeploymentMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = deploymentMetadata ? deploymentMetadata : filteredMetadata;
         }
 
@@ -159,11 +159,15 @@ class CodefreshAPI {
         return null;
     }
 
-    async buildServiceMetadata(payload) {
+    async buildServiceMetadata(payload, disableDetailed = false) {
         if (payload.type === 'DELETED') {
             return {
                 ...payload.object,
             };
+        }
+
+        if (disableDetailed) {
+            return payload.object;
         }
 
         const preparedService = await this.kubernetes.prepareService(payload.object);
@@ -179,11 +183,15 @@ class CodefreshAPI {
         return null;
     }
 
-    async buildDeploymentMetadata(payload) {
+    async buildDeploymentMetadata(payload, disableDetailed = false) {
         if (payload.type === 'DELETED') {
             return {
                 ...payload.object,
             };
+        }
+
+        if (disableDetailed) {
+            return payload.object;
         }
 
         const preparedDeployment = await this.kubernetes.prepareDeployment(payload.object);
@@ -199,11 +207,15 @@ class CodefreshAPI {
         return null;
     }
 
-    async buildPodMetadata(payload) {
+    async buildPodMetadata(payload, disableDetailed = false) {
         if (payload.type === 'DELETED') {
             return {
                 ...payload.object,
             };
+        }
+
+        if (disableDetailed) {
+            return payload.object;
         }
 
         const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
