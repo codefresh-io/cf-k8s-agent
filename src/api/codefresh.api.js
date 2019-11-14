@@ -79,7 +79,7 @@ class CodefreshAPI {
         let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 
         // For release override configmap by release
-        if (payload.object.kind.match(/^configmap$/i) && !config.forceDisableHelmReleases) {
+        if (payload.object.kind.match(/^configmap$/i)) {
             const releaseMetadata = await this.buildReleaseMetadata(payload);
             filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
         }
