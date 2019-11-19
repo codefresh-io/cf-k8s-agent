@@ -40,11 +40,13 @@ class EventsPuller {
                         return releaseMetadataFactory.create(item, codefreshApi.getMetadataFilter()).catch(e => console.log(e));
                     }));
 
+                    const filtered = extendedItems.filter(item => item && item.object && item.object.release);
+
                     await codefreshApi.clearInfo({
                         kind: 'Release'
                     });
 
-                    const chunks = _.chunk(extendedItems, 1);
+                    const chunks = _.chunk(filtered, 1);
                     return Promise.all(chunks.map((chunk) => {
                         return codefreshApi.sendPackageWithoutLock([{
                             object: chunk[0],

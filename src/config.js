@@ -9,10 +9,9 @@ module.exports = {
     clusterCA: process.env.CLUSTER_CA,
 
     // Params for interacting with API
-    token: '5d94c151baf0a2898aabc0e3.1742ac2268cddd7cecb078eb920b0927',
-    //token: '5dd30fc61ae4cb89ceb737e9.b47eef87ae691847db8f2a13e0b18190',
-    apiUrl: 'https://g.codefresh.io/api/k8s-monitor/events',
-    clusterId: 'cl-4',
+    token: process.env.API_TOKEN,
+    apiUrl: process.env.API_URL,
+    clusterId: process.env.CLUSTER_ID,
     accountId: process.env.ACCOUNT_ID,
 
     // Use current kubernetes context.
@@ -34,7 +33,8 @@ module.exports = {
     env: process.env.NODE_ENV || 'kubernetes',
 
     port: 9020,
-    logLevel: 'debug',
-    forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || true,
-    pullTimeout: 60 * 1000
+    logLevel: 'info',
+    forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false,
+    pullTimeout: 60 * 1000,
+    enablePull: true
 };
