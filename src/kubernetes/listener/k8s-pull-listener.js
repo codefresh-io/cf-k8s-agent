@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const config = require('../../config');
 const resourcesFactory = require('../../k8s-resources');
+const releaseMetadataFactory = require('../../factory/release.metadata.factory');
 
 /**
  * Class for monitoring cluster resources
@@ -34,8 +35,24 @@ class EventsPuller {
                 const normalizedKind = kind.replace('List', '');
 
                 if (normalizedKind === 'ConfigMap') {
-                    // skip for now
-                    return Promise.resolve();
+                    const extendedItems = await Promise.all(items.map((item) => {
+                        item.kind = 'Release';
+                        return releaseMetadataFactory.create(item, codefreshApi.getMetadataFilter()).catch(e => console.log(e));
+                    }));
+
+                    await codefreshApi.clearInfo({
+                        kind: 'Release'
+                    });
+
+                    const chunks = _.chunk(extendedItems, 1);
+                    return Promise.all(chunks.map((chunk) => {
+                        return codefreshApi._sendPackage([{
+                            item: {
+                                body: chunk[0]
+                            },
+                            kind: 'Release'
+                        }]);
+                    }));
                 }
 
                 const normalizedItems = items.map((item) => {
@@ -62,7 +79,6 @@ class EventsPuller {
             await handle();
 
             setInterval(() => {
-                console.log('CALL TIMEOUT');
                 handle();
             }, config.pullTimeout);
 

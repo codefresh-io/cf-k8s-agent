@@ -55,6 +55,10 @@ class CodefreshAPI {
             });
     }
 
+    getMetadataFilter() {
+        return metadataFilter;
+    }
+
     sendEventsWithLogger(...args) {
         return this.sendEvents(...args).catch((error) => {
             logger.error(error);
