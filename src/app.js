@@ -9,7 +9,7 @@ const newRelicMonitor = require('cf-monitor');
 const loggerMiddleware = require('morgan')('dev');
 const logger = require('./logger');
 const { version } = require('../package.json');
-const Monitor = require('./api/codefresh.api');
+const codefreshAPI = require('./api/codefresh.api');
 const config = require('./config');
 const kubernetes = require('./kubernetes');
 
@@ -18,7 +18,7 @@ let resetInterval;
 let statisticsInterval;
 let stateInterval;
 
-const { clientFactory, Listener } = kubernetes;
+const { clientFactory, ListenerFactory } = kubernetes;
 
 async function init() {
     try {
@@ -34,11 +34,10 @@ async function init() {
         }
 
         const client = await clientFactory();
-        const monitor = new Monitor(kubernetes);
-        const metadata = await monitor.getMetadata();
+        const metadata = await codefreshAPI.getMetadata();
 
         // Get instances for each resource and init cache for them
-        await monitor.initEvents(accounts);
+        await codefreshAPI.initEvents(accounts);
 
         console.log(`Clean: ${process.env.CLEAN}`);
         if (process.env.CLEAN === 'true') {
@@ -47,12 +46,12 @@ async function init() {
         }
 
         // Create listener for all resources and subscribe for cluster events
-        const listener = new Listener(client, metadata, monitor.sendEventsWithLogger);
+        const listener = ListenerFactory.create(client, metadata, codefreshAPI.sendEventsWithLogger);
         await listener.subscribe();
 
         return {
             client,
-            monitor,
+            monitor: codefreshAPI,
             listener,
         };
     } catch (error) {

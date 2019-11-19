@@ -7,16 +7,16 @@ const logger = require('../logger');
 const config = require('../config');
 const MetadataFilter = require('../filters/MetadataFilter');
 const statistics = require('../statistics');
+const storage = require('../storage');
+const kubernetes = require('../kubernetes');
 
 let metadataFilter;
 let counter;
 
-let eventsPackage = [];
-
 class CodefreshAPI {
 
-    constructor(kubernetes) {
-        this.kubernetes = kubernetes;
+    constructor() {
+        this.lock = false;
 
         this.initEvents = this.initEvents.bind(this);
         this.sendEventsWithLogger = this.sendEventsWithLogger.bind(this);
@@ -86,19 +86,19 @@ class CodefreshAPI {
 
         // For service send full data
         if (payload.object.kind.match(/^service$/i)) {
-            const serviceMetadata = await this.buildServiceMetadata(payload, config.forceDisableHelmReleases);
+            const serviceMetadata = await this.buildMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = serviceMetadata ? serviceMetadata : filteredMetadata;
         }
 
         // For pod get images
         if (payload.object.kind.match(/^pod$/i)) {
-            const podMetadata = await this.buildPodMetadata(payload, config.forceDisableHelmReleases);
+            const podMetadata = await this.buildMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = podMetadata ? podMetadata : filteredMetadata;
         }
 
         // For deployment
         if (payload.object.kind.match(/^deployment$/i)) {
-            const deploymentMetadata = await this.buildDeploymentMetadata(payload, config.forceDisableHelmReleases);
+            const deploymentMetadata = await this.buildMetadata(payload, config.forceDisableHelmReleases);
             filteredMetadata = deploymentMetadata ? deploymentMetadata : filteredMetadata;
         }
 
@@ -119,20 +119,20 @@ class CodefreshAPI {
         logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
 
         // TODO: Send each release separately in reason of large size. Should rewrite this code
-        if (data.object.kind === 'Release') {
-            delete data.object.data;
-            logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
-            await this._sendPackage([data]);
-        } else {
-            eventsPackage.push(data);
-        }
+        // if (data.object.kind === 'Release') {
+        //     delete data.object.data;
+        //     logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
+        //     await this._sendPackage([data]);
+        // } else {
+        storage.push(data);
+        // }
         statistics.apply(data);
         statistics.incEvents();
-        if (eventsPackage.length === 10) {
+        if (storage.size() >= 10) {
             await this._sendPackage();
         }
         else {
-            logger.info(`Skip packages sending - size ${eventsPackage.length}`);
+            logger.info(`Skip packages sending - size ${storage.size()}`);
         }
     }
 
@@ -144,7 +144,7 @@ class CodefreshAPI {
             };
         }
 
-        const preparedRelease = await this.kubernetes.prepareRelease(payload.object);
+        const preparedRelease = await kubernetes.prepareRelease(payload.object);
         if (preparedRelease) {
             const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
             return {
@@ -159,76 +159,13 @@ class CodefreshAPI {
         return null;
     }
 
-    async buildServiceMetadata(payload, disableDetailed = false) {
+    async buildMetadata(payload) {
         if (payload.type === 'DELETED') {
             return {
                 ...payload.object,
             };
         }
-
-        if (disableDetailed) {
-            return payload.object;
-        }
-
-        const preparedService = await this.kubernetes.prepareService(payload.object);
-        if (preparedService) {
-            return {
-                ...payload.object,
-                service: {
-                    ...preparedService,
-                },
-            };
-        }
-
-        return null;
-    }
-
-    async buildDeploymentMetadata(payload, disableDetailed = false) {
-        if (payload.type === 'DELETED') {
-            return {
-                ...payload.object,
-            };
-        }
-
-        if (disableDetailed) {
-            return payload.object;
-        }
-
-        const preparedDeployment = await this.kubernetes.prepareDeployment(payload.object);
-        if (preparedDeployment) {
-            return {
-                ...payload.object,
-                deployment: {
-                    ...preparedDeployment,
-                },
-            };
-        }
-
-        return null;
-    }
-
-    async buildPodMetadata(payload, disableDetailed = false) {
-        if (payload.type === 'DELETED') {
-            return {
-                ...payload.object,
-            };
-        }
-
-        if (disableDetailed) {
-            return payload.object;
-        }
-
-        const preparedPod = await this.kubernetes.preparePod(payload.object, this.getImage.bind(this));
-        if (preparedPod) {
-            return {
-                ...payload.object,
-                pod: {
-                    ...preparedPod,
-                },
-            };
-        }
-
-        return null;
+        return payload.object;
     }
 
     async checkState(callback) {
@@ -251,23 +188,42 @@ class CodefreshAPI {
         }
     }
 
-    _sendPackage(block = eventsPackage) {
-        const { length } = block;
-        if (!length || length === 0) return;
+    _sendPackage() {
+        if(this.lock) {
+            logger.info('Cant send because of lock');
+            return;
+        }
+        this.lock = true;
+        const payload = storage.get();
 
-        const body = [...block];
-        block.splice(0, length);
+        storage.clear();
 
-        logger.info(`Sending package with ${length} element(s).`);
-        this._request({ method: 'POST', uri: '', body })
+        logger.info(`Sending package with ${payload.length} element(s).`);
+        this._request({ method: 'POST', uri: '', body: payload })
             .then((r) => {
                 logger.debug(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
             })
             .then(() => {
-                logger.info(`clean events package in memory `);
-                eventsPackage = [];
+                this.lock = false;
+            }).catch(e => {
+                logger.error(`Cant send because ${e}`);
+                storage.pushMany(payload);
+                this.lock = false;
             });
+    }
+
+    sendAllInfo(payload) {
+        logger.info(`Sending package with ${payload.items.length} element(s).`);
+        this._request({ method: 'POST', uri: '/handle', body: payload })
+            .then((r) => {
+                logger.debug(`sending result: ${JSON.stringify(r)}`);
+                statistics.incPackages();
+            });
+    }
+
+    clearInfo(payload) {
+        this._request({ method: 'POST', uri: '/clear', body: payload });
     }
 
     async getMetadata() {
@@ -283,12 +239,6 @@ class CodefreshAPI {
         logger.debug(`Sending statistics. ${JSON.stringify(body)}`);
         return this._request({ method: 'POST', uri, body })
             .then(statistics.reset);
-    }
-
-    async getImage(imageId) {
-        const uri = '/images';
-        logger.debug(`Get image from ${uri}.`);
-        return this._request({ method: 'POST', uri, body: { imageId } });
     }
 
     _getIdentifyOptions() {
@@ -327,4 +277,4 @@ class CodefreshAPI {
     }
 }
 
-module.exports = CodefreshAPI;
+module.exports = new CodefreshAPI();

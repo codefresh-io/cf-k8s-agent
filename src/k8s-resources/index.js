@@ -12,7 +12,7 @@ const K8SResource = require('./K8SResource');
 async function createResources(client, metadata) {
     const resources = {};
     Object.entries(metadata.resources).forEach(([resource, data]) => {
-        resources[resource] = new K8SResource(resource, _.get(client, data.path));
+        resources[resource] = new K8SResource(resource, data.path, client);
     });
     return resources;
 }

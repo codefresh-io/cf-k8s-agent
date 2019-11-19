@@ -6,7 +6,7 @@ const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
 const DeploymentEntity = require('@codefresh-io/kube-integration/lib/kube-native/deployment/deploy');
 const { clientFactory, resolveConfig } = require('./client');
-const Listener = require('./listener');
+const ListenerFactory = require('./listener');
 
 const kubeManager = new KubeManager(resolveConfig());
 
@@ -66,7 +66,7 @@ async function preparePod(pod, getImageId) {
 
 module.exports = {
     clientFactory,
-    Listener,
+    ListenerFactory,
     kubeManager,
     ConfigMapEntity,
     prepareRelease,
