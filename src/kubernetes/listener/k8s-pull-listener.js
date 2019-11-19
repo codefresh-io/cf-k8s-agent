@@ -46,10 +46,10 @@ class EventsPuller {
 
                     const chunks = _.chunk(extendedItems, 1);
                     return Promise.all(chunks.map((chunk) => {
-                        return codefreshApi._sendPackage([{
-                            item: {
-                                body: chunk[0]
-                            },
+                        return codefreshApi.sendPackageWithoutLock([{
+                            object: chunk[0],
+                            type: 'ADDED',
+                            counter: 1,
                             kind: 'Release'
                         }]);
                     }));

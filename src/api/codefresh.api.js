@@ -217,6 +217,15 @@ class CodefreshAPI {
             });
     }
 
+    sendPackageWithoutLock(payload) {
+        logger.info(`Sending package with ${payload.length} element(s).`);
+        this._request({ method: 'POST', uri: '', body: payload })
+            .then((r) => {
+                logger.debug(`sending result: ${JSON.stringify(r)}`);
+                statistics.incPackages();
+            });
+    }
+
     sendAllInfo(payload) {
         logger.info(`Sending package with ${payload.items.length} element(s).`);
         this._request({ method: 'POST', uri: '/handle', body: payload })

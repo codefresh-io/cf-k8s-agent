@@ -4,7 +4,7 @@ const PullListener = require('./k8s-pull-listener');
 class ListenerFactory {
 
     static create(client, metadata, sender) {
-        return new PullListener(client, metadata, sender);
+        return new StreamListener(client, metadata, sender);
     }
 
 }
