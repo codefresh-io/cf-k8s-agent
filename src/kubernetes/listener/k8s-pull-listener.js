@@ -48,7 +48,7 @@ class EventsPuller {
 
                     const chunks = _.chunk(filtered, 1);
                     return Promise.all(chunks.map((chunk) => {
-                        console.log(`Send chunk ${chunk[0]}`);
+                        console.log(`Send chunk ${JSON.stringify(chunk[0])}`);
                         return codefreshApi.sendPackageWithoutLock([{
                             object: chunk[0],
                             type: 'ADDED',

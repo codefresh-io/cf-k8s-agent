@@ -12,7 +12,7 @@ redeploy: false
 
 # imageTag set the tag of the image
 #imageTag: pulling-mode
-imageTag: pulling-mode
+imageTag: non-stream-mode
 
 # image name, takes from variable
 image:  "codefresh/agent"
