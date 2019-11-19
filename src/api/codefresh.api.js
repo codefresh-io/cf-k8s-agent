@@ -123,13 +123,13 @@ class CodefreshAPI {
         logger.debug(`-------------------->: ${JSON.stringify(data.object)} :<-------------------`);
 
         // TODO: Send each release separately in reason of large size. Should rewrite this code
-        // if (data.object.kind === 'Release') {
-        //     delete data.object.data;
-        //     logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
-        //     await this._sendPackage([data]);
-        // } else {
-        storage.push(data);
-        // }
+        if (data.object.kind === 'Release') {
+            delete data.object.data;
+            logger.info(`Send HELM release - ${data.object.metadata.name} - Payload size: ${JSON.stringify(data).length} - payload ${JSON.stringify(data)}`);
+            await this._sendPackage([data]);
+        } else {
+            storage.push(data);
+        }
         statistics.apply(data);
         statistics.incEvents();
         if (storage.size() >= 10) {
@@ -225,16 +225,6 @@ class CodefreshAPI {
                 statistics.incPackages();
             });
     }
-
-    sendAllInfo(payload) {
-        logger.info(`Sending package with ${payload.items.length} element(s).`);
-        this._request({ method: 'POST', uri: '/handle', body: payload })
-            .then((r) => {
-                logger.debug(`sending result: ${JSON.stringify(r)}`);
-                statistics.incPackages();
-            });
-    }
-
     clearInfo(payload) {
         this._request({ method: 'POST', uri: '/clear', body: payload });
     }
