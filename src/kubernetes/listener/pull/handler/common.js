@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const Promise = require('bluebird');
+const logger = require('../../../../logger');
 
 class CommonHandler {
 
@@ -18,14 +20,16 @@ class CommonHandler {
             };
         });
 
+        logger.info(`Prepare to send ${normalizedItems.length} ${kind}s`);
+
         await codefreshApi.clearInfo({
             kind
         });
 
         const chunks = _.chunk(normalizedItems, 20);
-        return Promise.all(chunks.map((chunk) => {
+        return Promise.map(chunks.map((chunk) => {
             return codefreshApi.sendPackageWithoutLock(chunk);
-        }));
+        }), (job) => { return job; }, { concurrency: 5 });
     }
 
 }
