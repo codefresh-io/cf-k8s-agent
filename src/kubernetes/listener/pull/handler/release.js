@@ -29,7 +29,7 @@ class ReleaseHandler {
                 counter: 1,
                 kind: 'Release'
             }]);
-        }), (job) => { return job(); }, { concurrency: 5 });
+        }), (job) => { return job; }, { concurrency: 5 });
 
     }
 
