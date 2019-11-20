@@ -42,6 +42,11 @@ class EventsPuller {
                 return commonHandler.handle(normalizedKind, items);
             }
 
+            if (config.disableHelm && resource.type === 'configmap') {
+                logger.info('Skip process release events');
+                return null;
+            }
+
             const defaultInterval = _.get(config, 'intervals.common',  60 * 1000);
             const interval = _.get(config, `intervals.${resource.type}`, defaultInterval);
 

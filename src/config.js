@@ -43,5 +43,6 @@ module.exports = {
         service: process.env.SERVICE_INTERVAL ||  60 * 1000,
         common: 60 * 1000
     },
-    enablePull: true
+    enablePull: true,
+    disableHelm: process.env.DISABLE_HELM || true
 };

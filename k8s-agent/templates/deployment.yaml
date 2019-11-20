@@ -67,6 +67,8 @@ spec:
             value: {{ .Values.apiUrl | quote }}
           - name: ACCOUNT_ID
             value: {{ .Values.accountId | quote }}
+          - name: DISABLE_HELM
+            value: {{ .Values.disableHelm | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS
