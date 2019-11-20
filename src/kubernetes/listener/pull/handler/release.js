@@ -24,7 +24,7 @@ class ReleaseHandler {
         const chunks = _.chunk(filtered, 1);
         return Promise.map(chunks.map((chunk) => {
             return codefreshApi.sendPackageWithoutLock([{
-                object: chunk[0].object,
+                object: _.head(chunk).object,
                 type: 'ADDED',
                 counter: 1,
                 kind: 'Release'
