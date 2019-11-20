@@ -44,3 +44,9 @@ rbacEnabled: true
 newRelicLicenseKey: ""
 
 heapSize: 4096
+
+namespaceInterval: 60000
+podInterval: 300000
+deployInterval: 60000
+releaseInterval: 600000
+serviceInterval: 60000

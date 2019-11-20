@@ -41,6 +41,16 @@ spec:
         env:
           - name: SERVICE_NAME
             value: {{ template "name" . }}
+          - name: NAMESPACE_INTERVAL
+            value: {{ .Values.namespaceInterval | quote }}
+          - name: POD_INTERVAL
+            value: {{ .Values.podInterval | quote }}
+          - name: DEPLOY_INTERVAL
+            value: {{ .Values.deployInterval | quote }}
+          - name: RELEASE_INTERVAL
+            value: {{ .Values.releaseInterval | quote }}
+          - name: SERVICE_INTERVAL
+            value: {{ .Values.serviceInterval | quote }}
           - name: PORT
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL

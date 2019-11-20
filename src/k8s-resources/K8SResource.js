@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const JSONStream = require('json-stream');
 const logger = require('../logger');
 
@@ -7,9 +8,15 @@ const logger = require('../logger');
  * Class for implementing of cluster resources
  */
 class K8SResource {
-    constructor(type, entity) {
+    constructor(type, path, client) {
         this.type = type;
-        this.entity = entity;
+        this.entity = _.get(client, path);
+        this.path = path;
+        this.client = client;
+    }
+
+    get() {
+        return _.get(this.client, this.path.replace('.watch', '')).get();
     }
 
     /**

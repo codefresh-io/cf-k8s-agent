@@ -34,5 +34,14 @@ module.exports = {
 
     port: 9020,
     logLevel: 'info',
-    forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false
+    forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false,
+    intervals: {
+        namespace: process.env.NAMESPACE_INTERVAL || 60 * 1000,
+        pod: process.env.POD_INTERVAL || 5 * 60 * 1000,
+        deploy: process.env.DEPLOY_INTERVAL || 60 * 1000,
+        configmap: process.env.RELEASE_INTERVAL || 10 * 60 * 1000,
+        service: process.env.SERVICE_INTERVAL ||  60 * 1000,
+        common: 60 * 1000
+    },
+    enablePull: true
 };
