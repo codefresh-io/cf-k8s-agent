@@ -45,8 +45,8 @@ spec:
             value: {{ .Values.namespaceInterval | quote }}
           - name: POD_INTERVAL
             value: {{ .Values.podInterval | quote }}
-          - name: DEPLOY_INTERVAL
-            value: {{ .Values.deployInterval | quote }}
+          - name: DEPLOYMENT_INTERVAL
+            value: {{ .Values.deploymentInterval | quote }}
           - name: RELEASE_INTERVAL
             value: {{ .Values.releaseInterval | quote }}
           - name: SERVICE_INTERVAL

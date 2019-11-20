@@ -47,7 +47,7 @@ heapSize: 4096
 
 namespaceInterval: 300000
 podInterval: 300000
-deployInterval: 300000
+deploymentInterval: 300000
 releaseInterval: 600000
 serviceInterval: 300000
 
