@@ -42,8 +42,6 @@ class EventsPuller {
                 return commonHandler.handle(normalizedKind, items);
             }
 
-            await handle();
-
             const defaultInterval = _.get(config, 'intervals.common',  60 * 1000);
             const interval = _.get(config, `intervals.${resource.type}`, defaultInterval);
 
