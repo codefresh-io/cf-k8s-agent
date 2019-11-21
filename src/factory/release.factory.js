@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const logger = require('../logger');
 
-class ReleaseMetadataFactory {
+class ReleaseFactory {
 
     async buildReleaseMetadata(payload, metadataFilter) {
         const kubernetes = require('../kubernetes');
@@ -43,4 +43,4 @@ class ReleaseMetadataFactory {
 
 }
 
-module.exports = new ReleaseMetadataFactory();
+module.exports = new ReleaseFactory();

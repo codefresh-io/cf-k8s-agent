@@ -13,8 +13,9 @@ const codefreshAPI = require('./api/codefresh.api');
 const config = require('./config');
 const kubernetes = require('./kubernetes');
 
+const metadataHolder = require('./filters/metadata.holder');
+
 // intervals
-let resetInterval;
 let statisticsInterval;
 let stateInterval;
 
@@ -37,7 +38,8 @@ async function init() {
         const metadata = await codefreshAPI.getMetadata();
 
         // Get instances for each resource and init cache for them
-        await codefreshAPI.initEvents(accounts);
+        const metadataFilter = await codefreshAPI.initEvents(accounts);
+        metadataHolder.put(metadataFilter);
 
         console.log(`Clean: ${process.env.CLEAN}`);
         if (process.env.CLEAN === 'true') {
@@ -76,10 +78,6 @@ app.use('/api', indexRouter);
 init()
     .then(({ monitor }) => {
         logger.info(`Agent ${version} has started...`);
-        // // Unconditional refresh
-        // if (!resetInterval) {
-        //     resetInterval = setInterval(init, config.resetInterval);
-        // }
         // Send statistics
         if (!statisticsInterval) {
             statisticsInterval = setInterval(monitor.sendStatistics, config.statisticsInterval);

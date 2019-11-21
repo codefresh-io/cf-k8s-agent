@@ -3,7 +3,7 @@
 const Promise = require('bluebird');
 const _ = require('lodash');
 
-const releaseMetadataFactory = require('../../../../factory/release.metadata.factory');
+const releaseMetadataFactory = require('../../../../factory/release.factory');
 const logger = require('../../../../logger');
 
 class ReleaseHandler {
