@@ -19,6 +19,7 @@
     }
   },
   "rules": {
+    "use-strict": 0,
     "max-len": [
       1,
       130

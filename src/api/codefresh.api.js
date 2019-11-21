@@ -5,12 +5,14 @@ const rp = require('request-promise');
 const newRelicMonitor = require('cf-monitor');
 const logger = require('../logger');
 const config = require('../config');
-const MetadataFilter = require('../filters/MetadataFilter');
+const Promise = require('bluebird');
+
 const statistics = require('../statistics');
 const storage = require('../storage');
 const kubernetes = require('../kubernetes');
 
-let metadataFilter;
+const zlib = require('zlib');
+
 let counter;
 
 class CodefreshAPI {
@@ -49,14 +51,10 @@ class CodefreshAPI {
             this._request({ method: 'POST', uri, body: { accounts }}),
         ])
             .then(([metadata]) => {
-                metadataFilter = new MetadataFilter(metadata);
                 counter = 1;
                 logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
+                return metadata;
             });
-    }
-
-    getMetadataFilter() {
-        return metadataFilter;
     }
 
     sendEventsWithLogger(...args) {
@@ -217,9 +215,12 @@ class CodefreshAPI {
             });
     }
 
-    sendPackageWithoutLock(payload) {
+    async sendPackageWithoutLock(payload) {
         logger.info(`Sending package with ${payload.length} element(s).`);
-        this._request({ method: 'POST', uri: '', body: payload })
+
+        const optimizedPayload = await Promise.fromCallback(cb => zlib.deflate(JSON.stringify(payload), cb));
+
+        this._request({ method: 'POST', uri: '', body: { payload: optimizedPayload, gzip: true } })
             .then((r) => {
                 logger.debug(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
