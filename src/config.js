@@ -44,5 +44,5 @@ module.exports = {
         common: 60 * 1000
     },
     enablePull: true,
-    disableHelm: process.env.DISABLE_HELM || true
+    disableHelm: process.env.DISABLE_HELM || false
 };
