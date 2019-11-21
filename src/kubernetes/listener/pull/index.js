@@ -44,7 +44,7 @@ class EventsPuller {
                 return commonHandler.handle(normalizedKind, items);
             }
 
-            if (config.disableHelm && resource.type === 'configmap') {
+            if (config.disableHelm === 'true' && resource.type === 'configmap') {
                 logger.info('Skip process release events');
                 return null;
             }
