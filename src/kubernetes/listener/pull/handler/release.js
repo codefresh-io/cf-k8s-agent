@@ -1,10 +1,10 @@
 'use strict';
 
-const Promise = require('bluebird');
 const _ = require('lodash');
 
 const releaseMetadataFactory = require('../../../../factory/release.factory');
 const logger = require('../../../../logger');
+const metadataHolder = require('../../../../filters/metadata.holder');
 
 class ReleaseHandler {
 
@@ -21,7 +21,7 @@ class ReleaseHandler {
 
         for (const item of items) {
             item.kind = 'Release';
-            const release = await releaseMetadataFactory.create(item, codefreshApi.getMetadataFilter())
+            const release = await releaseMetadataFactory.create(item, metadataHolder.get())
                 .catch(e => logger.error(e));
             if (_.get(release, 'object.release')) {
                 const rs = await codefreshApi.sendPackageWithoutLock([{
