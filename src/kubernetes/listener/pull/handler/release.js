@@ -23,7 +23,7 @@ class ReleaseHandler {
                 const release = await releaseMetadataFactory.create(item, metadataHolder.get())
                     .catch(e => logger.error(e));
                 if (_.get(release, 'object.release')) {
-                    logger.info(`Send release ${release.object}`);
+                    logger.info(`Send release ${JSON.stringify(release.object)}`);
                     await codefreshApi.sendPackageWithoutLock([{
                         object: release.object,
                         type: 'ADDED',
