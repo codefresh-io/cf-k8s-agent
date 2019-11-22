@@ -1,8 +1,12 @@
 'use strict';
 
-const metadataHolder = require('./metadata.holder');
+const _ = require('lodash');
+
+const metadataHolder = require('../../../filters/metadata.holder');
 const storage = require('../../../storage');
 const statistics = require('../../../statistics');
+const logger = require('../../../logger');
+const config = require('../../../config');
 
 const codefreshApi = require('../../../api/codefresh.api');
 
@@ -11,6 +15,11 @@ let counter = 1;
 
 
 class Handler {
+
+    constructor() {
+        this.buildMetadata = this.buildMetadata.bind(this);
+        this.sendEvents = this.sendEvents.bind(this);
+    }
 
 
     /**
@@ -30,7 +39,7 @@ class Handler {
 
         let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 
-        const metadata = await this.buildMetadata(payload, config.forceDisableHelmReleases);
+        const metadata = await this.buildMetadata(payload);
         filteredMetadata = metadata ? metadata : filteredMetadata;
 
         if (!filteredMetadata) {
@@ -51,7 +60,7 @@ class Handler {
         storage.push(data);
         statistics.apply(data);
         statistics.incEvents();
-        if (storage.size() >= 10) {
+        if (storage.size() >= 50) {
             await codefreshApi._sendPackage();
         }
         else {

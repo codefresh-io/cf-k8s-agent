@@ -769,11 +769,6 @@ async-limiter@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.0.tgz#78faed8c3d074ab81f22b4e985d79e8738f720f8"
 
-async-mutex@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/async-mutex/-/async-mutex-0.1.4.tgz#a47d1eebf584f7dcdd760e3642dc2c58613bef5c"
-  integrity sha512-zVWTmAnxxHaeB2B1te84oecI8zTDJ/8G49aVBblRX6be0oq6pAybNcUSxwfgVOmOjSCvN4aYZAqwtyNI8e1YGw==
-
 async@2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.0.tgz#61a29abb6fcc026fea77e56d1c6ec53a795951f4"

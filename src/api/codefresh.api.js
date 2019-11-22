@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const rp = require('request-promise');
-const asyncMutex = require('async-mutex').Mutex;
 const newRelicMonitor = require('cf-monitor');
 const logger = require('../logger');
 const config = require('../config');
@@ -11,15 +10,11 @@ const Promise = require('bluebird');
 const statistics = require('../statistics');
 const storage = require('../storage');
 
-
 const zlib = require('zlib');
-
 
 class CodefreshAPI {
 
     constructor() {
-
-        setInterval(this._sendPackage, 120 * 1000);
     }
 
 
@@ -71,25 +66,22 @@ class CodefreshAPI {
         }
     }
 
-    _sendPackage() {
-        const release = asyncMutex.acquire();
+    async _sendPackage() {
         const payload = storage.get();
         storage.clear();
         logger.info(`Sending package with ${payload.length} element(s).`);
         this._request({ method: 'POST', uri: '', body: payload })
             .then((r) => {
-                release();
-                logger.debug(`sending result: ${JSON.stringify(r)}`);
+                logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
             }).catch((e) => {
-                release();
                 logger.error(`Cant send because ${e}`);
                 newRelicMonitor.noticeError(e);
             });
     }
 
     async sendPackageWithoutLock(payload) {
-        logger.info(`Sending package with ${payload.length} element(s).`);
+        logger.info(`Sending package with ${payload.length} element(s). (without lock)`);
 
         const stringifiedPayload = JSON.stringify(payload);
         const optimizedPayload = await Promise.fromCallback(cb => zlib.deflate(stringifiedPayload, cb));

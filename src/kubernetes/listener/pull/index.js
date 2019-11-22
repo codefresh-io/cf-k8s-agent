@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const config = require('../../../config');
-const resourcesFactory = require('../../../k8s-resources');
 const logger = require('../../../logger');
 
 const releaseHandler = require('./handler/release');
@@ -12,10 +11,9 @@ const commonHandler = require('./handler/common');
  * Class for monitoring cluster resources
  */
 class EventsPuller {
-    constructor(client, metadata) {
+    constructor(client, resources) {
         this.client = client;
-        this.metadata = metadata;
-        this.resources = {};
+        this.resources = resources;
     }
 
     /**
@@ -24,8 +22,6 @@ class EventsPuller {
      * @returns {Promise<void>}
      */
     async subscribe() {
-        this.resources = await resourcesFactory(this.client, this.metadata);
-
         _.entries(this.resources).map(async ([tp, resource]) => {
 
             async function handle() {
