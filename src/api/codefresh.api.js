@@ -70,7 +70,11 @@ class CodefreshAPI {
         const payload = storage.get();
         storage.clear();
         logger.info(`Sending package with ${payload.length} element(s).`);
-        this._request({ method: 'POST', uri: '', body: payload })
+
+        const stringifiedPayload = JSON.stringify(payload);
+        const optimizedPayload = await Promise.fromCallback(cb => zlib.deflate(stringifiedPayload, cb));
+
+        this._request({ method: 'POST', uri: '', body: { payload: optimizedPayload, gzip: true }  })
             .then((r) => {
                 logger.info(`sending result: ${JSON.stringify(r)}`);
                 statistics.incPackages();
