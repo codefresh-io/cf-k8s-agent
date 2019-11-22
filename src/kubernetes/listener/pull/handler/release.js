@@ -17,24 +17,27 @@ class ReleaseHandler {
             kind: 'Release'
         });
 
-        const result = [];
-
         for (const item of items) {
             item.kind = 'Release';
-            const release = await releaseMetadataFactory.create(item, metadataHolder.get())
-                .catch(e => logger.error(e));
-            if (_.get(release, 'object.release')) {
-                const rs = await codefreshApi.sendPackageWithoutLock([{
-                    object: release.object,
-                    type: 'ADDED',
-                    counter: 1,
-                    kind: 'Release'
-                }]);
-                result.push(rs);
+            try {
+                const release = await releaseMetadataFactory.create(item, metadataHolder.get())
+                    .catch(e => logger.error(e));
+                if (_.get(release, 'object.release')) {
+                    logger.info(`Send release ${release.object}`);
+                    await codefreshApi.sendPackageWithoutLock([{
+                        object: release.object,
+                        type: 'ADDED',
+                        counter: 1,
+                        kind: 'Release'
+                    }]);
+                }
+            } catch (e) {
+                logger.error(e.stack);
             }
+
         }
 
-        return result;
+        return Promise.resolve();
     }
 
 }

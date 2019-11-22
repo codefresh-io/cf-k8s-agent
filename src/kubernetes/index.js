@@ -9,6 +9,8 @@ const { clientFactory, resolveConfig } = require('./client');
 const ListenerFactory = require('./listener');
 
 const kubeManager = new KubeManager(resolveConfig());
+const releaseController = kubeManager.getReleaseController('kube-system');
+
 
 function formatLabels(labels) {
     return _.toPairs(labels).map(([key, value]) => `${key}=${value}`).join(',');
@@ -16,7 +18,6 @@ function formatLabels(labels) {
 
 async function prepareRelease(rawConfigMap) {
     const configMap = new ConfigMapEntity(rawConfigMap);
-    const releaseController = kubeManager.getReleaseController('kube-system');
     let release;
     const releaseName = _.get(configMap.getLabels(), 'NAME');
     if (releaseName) {
