@@ -3,10 +3,13 @@
 const _ = require('lodash');
 const Kefir = require('kefir');
 const newRelicMonitor = require('cf-monitor');
-const logger = require('../../logger');
-const resourcesFactory = require('../../k8s-resources');
-const config = require('../../config');
-const statistics = require('../../statistics');
+const logger = require('../../../logger');
+const resourcesFactory = require('../../../k8s-resources');
+const config = require('../../../config');
+const statistics = require('../../../statistics');
+
+
+
 
 /**
  * Class for monitoring cluster resources

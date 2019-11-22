@@ -1,5 +1,5 @@
 const config = require('../../config');
-const StreamListener = require('./k8s-stream-listener');
+const StreamListener = require('./stream/k8s-stream-listener');
 const PullListener = require('./pull');
 
 class ListenerFactory {
