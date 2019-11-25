@@ -14,7 +14,7 @@ class ReleaseHandler {
         });
     }
 
-    async handle(kind, items) {
+    async handle(kind, items, semaphore) {
         const codefreshApi = require('../../../../api/codefresh.api');
 
         logger.info(`Prepare to send ${items.length} ${kind}s`);
@@ -46,7 +46,7 @@ class ReleaseHandler {
             }
 
         }
-
+        semaphore.leave();
         return Promise.resolve();
     }
 

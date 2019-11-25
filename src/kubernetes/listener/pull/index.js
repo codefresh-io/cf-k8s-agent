@@ -1,6 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
+const semaphore = require('semaphore')(1);
+
 const config = require('../../../config');
 const logger = require('../../../logger');
 
@@ -32,7 +34,14 @@ class EventsPuller {
                 const normalizedKind = kind.replace('List', '');
 
                 if (normalizedKind === 'ConfigMap') {
-                    return releaseHandler.handle(normalizedKind, items);
+                    return semaphore.take(() => {
+                        try {
+                            return releaseHandler.handle(normalizedKind, items);
+                        } catch (e) {
+                            semaphore.leave();
+                            return Promise.resolve();
+                        }
+                    });
                 }
 
                 return commonHandler.handle(normalizedKind, items);
