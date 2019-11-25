@@ -9,7 +9,7 @@ const metadataHolder = require('../../../../filters/metadata.holder');
 class ReleaseHandler {
 
     _optimizeReleases(release) {
-        _.get(release, 'chartFiles', []).forEach((file) => {
+        _.get(release, 'release.chartFiles', []).forEach((file) => {
             _.unset(file, 'data');
         });
     }
