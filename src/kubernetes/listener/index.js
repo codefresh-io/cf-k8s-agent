@@ -8,7 +8,7 @@ class ListenerFactory {
 
     static async create(client, metadata) {
         const { deployment, service, namespace, pod, configmap } = await resourcesFactory(client, metadata);
-        return [new PullListener(client, { configmap }), new StreamListener(client, { deployment, service, namespace, pod })];
+        return [new PullListener(client, { configmap, pod }), new StreamListener(client, { deployment, service, namespace })];
     }
 
 }
