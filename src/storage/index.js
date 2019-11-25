@@ -17,15 +17,15 @@ class Storage {
     }
 
     get() {
-        return _.cloneDeep(this.events);
+        return _.cloneDeep(this.queue.entries);
     }
 
     size() {
-        return this.events.length;
+        return this.queue.size();
     }
 
     clear() {
-        this.events = [];
+        this.queue.clear();
     }
 
 }

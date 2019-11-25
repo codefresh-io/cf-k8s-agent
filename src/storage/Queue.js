@@ -22,6 +22,10 @@ class Queue {
         return this.entries.length;
     }
 
+    clear() {
+        this.entries = [];
+    }
+
 }
 
 module.exports = Queue;
