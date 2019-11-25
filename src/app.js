@@ -48,13 +48,14 @@ async function init() {
         }
 
         // Create listener for all resources and subscribe for cluster events
-        const listener = ListenerFactory.create(client, metadata, codefreshAPI.sendEventsWithLogger);
-        await listener.subscribe();
+        const listeners = await ListenerFactory.create(client, metadata);
+        await Promise.all(listeners.map((listener) => {
+            return listener.subscribe();
+        }));
 
         return {
             client,
-            monitor: codefreshAPI,
-            listener,
+            monitor: codefreshAPI
         };
     } catch (error) {
         logger.error(`Can't init agent. Reason: ${error}`);

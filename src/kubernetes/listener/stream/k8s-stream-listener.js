@@ -3,21 +3,19 @@
 const _ = require('lodash');
 const Kefir = require('kefir');
 const newRelicMonitor = require('cf-monitor');
-const logger = require('../../logger');
-const resourcesFactory = require('../../k8s-resources');
-const config = require('../../config');
-const statistics = require('../../statistics');
+const logger = require('../../../logger');
+const config = require('../../../config');
+const statistics = require('../../../statistics');
+const handler = require('./handler');
 
 /**
  * Class for monitoring cluster resources
  */
 class Listener {
-    constructor(client, metadata, sender) {
+    constructor(client, resources) {
         this.client = client;
-        this.metadata = metadata;
-        this.sender = sender;
+        this.resources = resources;
         this.mergedStream = null;
-        this.resources = {};
     }
 
     /**
@@ -78,7 +76,6 @@ class Listener {
      */
     async subscribe() {
         const _this = this;
-        this.resources = await resourcesFactory(this.client, this.metadata);
 
         const observables = _.entries(this.resources).map(([type, resource]) => {
             const { stream, jsonStream } = resource.startStream();
@@ -91,7 +88,7 @@ class Listener {
         });
 
         this.mergedStream = Kefir.merge(observables);
-        this.mergedStream.onValue(this.sender);
+        this.mergedStream.onValue(handler.sendEvents);
     }
 }
 
