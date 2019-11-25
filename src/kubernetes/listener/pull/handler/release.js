@@ -10,7 +10,7 @@ class ReleaseHandler {
 
     _optimizeReleases(release) {
         _.get(release, 'release.chartFiles', []).forEach((file) => {
-            _.unset(file, 'data');
+            delete file.data;
         });
     }
 
