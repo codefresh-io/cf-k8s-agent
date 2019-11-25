@@ -36,7 +36,7 @@ class EventsPuller {
                 if (normalizedKind === 'ConfigMap') {
                     return semaphore.take(() => {
                         try {
-                            return releaseHandler.handle(normalizedKind, items);
+                            return releaseHandler.handle(normalizedKind, items, semaphore);
                         } catch (e) {
                             semaphore.leave();
                             return Promise.resolve();
