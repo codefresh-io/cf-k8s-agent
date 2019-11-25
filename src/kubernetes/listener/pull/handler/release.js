@@ -12,6 +12,7 @@ class ReleaseHandler {
         _.get(release, 'release.chartFiles', []).forEach((file) => {
             delete file.data;
         });
+        delete release.release.chartManifest;
     }
 
     async handle(kind, items, semaphore) {
