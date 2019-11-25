@@ -10,11 +10,12 @@ class ReleaseHandler {
 
     _optimizeReleases(release) {
         _.get(release, 'release.chartFiles', []).forEach((file) => {
-            _.unset(file, 'data');
+            delete file.data;
         });
+        delete release.release.chartManifest;
     }
 
-    async handle(kind, items) {
+    async handle(kind, items, semaphore) {
         const codefreshApi = require('../../../../api/codefresh.api');
 
         logger.info(`Prepare to send ${items.length} ${kind}s`);
@@ -46,7 +47,7 @@ class ReleaseHandler {
             }
 
         }
-
+        semaphore.leave();
         return Promise.resolve();
     }
 
