@@ -1,17 +1,19 @@
+'use strict';
+
 const _ = require('lodash');
+
+const Queue = require('./Queue');
+
+const CAPACITY = 1000;
 
 class Storage {
 
     constructor() {
-        this.events = [];
+        this.queue = new Queue(CAPACITY);
     }
 
-    push(event){
-        this.events.push(event);
-    }
-
-    pushMany(events){
-        this.events.push(...events);
+    push(event) {
+        this.queue.enqueue(event);
     }
 
     get() {
@@ -25,8 +27,7 @@ class Storage {
     clear() {
         this.events = [];
     }
-
-
+    
 }
 
 module.exports = new Storage();
