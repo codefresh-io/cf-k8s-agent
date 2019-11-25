@@ -8,6 +8,12 @@ const metadataHolder = require('../../../../filters/metadata.holder');
 
 class ReleaseHandler {
 
+    _optimizeReleases(release) {
+        _.get(release, 'chartFiles', []).forEach((file) => {
+            _.unset(file, 'data');
+        });
+    }
+
     async handle(kind, items) {
         const codefreshApi = require('../../../../api/codefresh.api');
 
@@ -23,7 +29,11 @@ class ReleaseHandler {
                 const release = await releaseMetadataFactory.create(item, metadataHolder.get())
                     .catch(e => logger.error(e));
                 if (_.get(release, 'object.release')) {
+
+                    this._optimizeReleases(release.object);
+
                     logger.info(`Send release ${JSON.stringify(release.object)}`);
+
                     await codefreshApi.sendPackageWithoutLock([{
                         object: release.object,
                         type: 'ADDED',
