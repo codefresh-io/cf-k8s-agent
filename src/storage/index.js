@@ -27,7 +27,7 @@ class Storage {
     clear() {
         this.events = [];
     }
-    
+
 }
 
 module.exports = new Storage();
