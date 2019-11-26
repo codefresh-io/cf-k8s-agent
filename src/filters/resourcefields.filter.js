@@ -3,7 +3,7 @@
 const metadataHolder = require('./metadata.holder');
 
 
-class ResourceFilter {
+class ResourceFieldsFilter {
 
     filter(item) {
         const metadataFilter = metadataHolder.get();
@@ -11,4 +11,4 @@ class ResourceFilter {
     }
 
 }
-module.exports = new ResourceFilter();
+module.exports = new ResourceFieldsFilter();
