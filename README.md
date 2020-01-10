@@ -61,7 +61,7 @@ For using when you want to use integration your k8s-monitor with Codefresh
 ### Install via helm for using with Codefresh
 
 1) Clone repo  
-`git clone git@github.com:codefresh-io/cf-k8s-agent.git`
+`git clone https://github.com/codefresh-io/cf-k8s-agent.git`
 
 2) Go to dir with project  
 `cd ./cf-k8s-agent` 
