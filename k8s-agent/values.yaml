@@ -52,3 +52,5 @@ releaseInterval: 600000
 serviceInterval: 300000
 
 disableHelm: false
+
+helm3: false
