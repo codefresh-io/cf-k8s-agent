@@ -2,6 +2,7 @@
 
 const { resolveConfig } = require('../client');
 
+const _ = require('lodash');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 

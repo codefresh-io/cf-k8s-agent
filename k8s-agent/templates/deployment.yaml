@@ -69,6 +69,8 @@ spec:
             value: {{ .Values.accountId | quote }}
           - name: DISABLE_HELM
             value: {{ .Values.disableHelm | quote }}
+          - name: HELM3
+            value: {{ .Values.helm3 | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: ACCOUNTS
