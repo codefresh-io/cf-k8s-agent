@@ -39,6 +39,7 @@ For using when all services located on your cluster
 4) Install **k8s-agent** chart on your cluster from this repo  
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`
 
+
 [More helm environment variables](#helm-environment-variables)  
 
 ### Uninstalling agent via helm 
@@ -71,6 +72,9 @@ For using when you want to use integration your k8s-monitor with Codefresh
 
 4) Install **k8s-agent** chart on your cluster from this repo  
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`
+
+5) Install **k8s-agent** chart on your cluster from this repo with helm3 support
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId} --set helm3=true --set imageTag=helm3`
 
 Where: 
 - `{token}` - API token from Codefresh (you can retrieve this from [Codefresh integration section](https://g.codefresh.io/account-admin/account-conf/tokens))
