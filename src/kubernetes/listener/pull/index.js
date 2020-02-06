@@ -33,7 +33,7 @@ class EventsPuller {
 
                 const normalizedKind = kind.replace('List', '');
 
-                if (normalizedKind === 'ConfigMap') {
+                if (normalizedKind === 'ConfigMap' || normalizedKind === 'Secret') {
                     return semaphore.take(() => {
                         try {
                             return releaseHandler.handle(normalizedKind, items, semaphore);

@@ -12,18 +12,26 @@ const resourceCache = require('../resource.cache');
 class CommonHandler {
 
     async handle(kind, items) {
+        const kubernetes = require('../../../index');
 
         logger.info(`Receive items ${items.length} ${kind}s`);
 
         const itemsForProcess = [];
 
-        items.forEach((item) => {
+        for (let item of items) {
             const uid = _.get(item, 'metadata.uid');
             if (!resourceCache.includes(uid, kind)) {
+
+                if (kind === 'Service') {
+                    const { globalStatus, spec } = await kubernetes.prepareService(item);
+                    item.globalStatus = globalStatus;
+                    item.spec = spec;
+                }
+
                 resourceCache.put(uid, kind);
                 itemsForProcess.push(item);
             }
-        });
+        }
 
         resourceCache.flush(kind);
 
@@ -35,6 +43,7 @@ class CommonHandler {
                 metadata: item.metadata,
                 spec: item.spec,
                 status: item.status,
+                globalStatus: item.globalStatus,
                 kind
             });
             return {

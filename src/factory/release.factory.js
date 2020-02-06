@@ -1,12 +1,18 @@
 
 const _ = require('lodash');
 const logger = require('../logger');
+const helm3Factory = require('../kubernetes/helm/helm3.factory');
+const helm2Factory = require('../kubernetes/helm/helm2.factory');
+const config = require('../config');
 
 class ReleaseFactory {
 
+    _helmFactory() {
+        return config.helm3? helm3Factory: helm2Factory;
+    }
+
     async buildReleaseMetadata(payload, metadataFilter) {
-        const kubernetes = require('../kubernetes');
-        const preparedRelease = await kubernetes.prepareRelease(payload);
+        const preparedRelease = await this._helmFactory().create(payload);
         if (preparedRelease) {
             const filteredFields = metadataFilter ? metadataFilter.buildResponse(preparedRelease, 'release') : preparedRelease;
             return {
