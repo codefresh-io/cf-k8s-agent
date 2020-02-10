@@ -18,10 +18,15 @@ class Helm3Factory {
         const releaseName = _.get(configMap.getLabels(), 'name');
         if (releaseName) {
             release = await releaseController.describe(releaseName);
-            const orderedHistory = _.orderBy(release._history, 'version');
-            release._history = _.takeRight(orderedHistory, 20);
+
         }
-        if (release && +release._version <= +configMap.getLabels().version) {
+        if(!release) {
+            //TODO: need verify when it happens
+            return null;
+        }
+        const orderedHistory = _.orderBy(release._history, 'version');
+        release._history = _.takeRight(orderedHistory, 20);
+        if (+release._version <= +configMap.getLabels().version) {
             const releaseData = release.getFullData();
             const { name, version } = releaseData;
             const chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
