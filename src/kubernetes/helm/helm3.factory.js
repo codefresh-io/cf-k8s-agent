@@ -31,7 +31,7 @@ class Helm3Factory {
         }
         const orderedHistory = _.orderBy(release._history, 'version');
         release._history = _.takeRight(orderedHistory, 20);
-        if (+release._version <= +configMap.getLabels().version) {
+        if (+release._version <= +secret.getLabels().version) {
             const releaseData = release.getFullData();
             const { name, version } = releaseData;
             const chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
