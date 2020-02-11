@@ -8,19 +8,24 @@ const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 
 const kubeManager = new KubeManager(resolveConfig());
 
-const releaseController = kubeManager.getReleaseHelm3Controller();
 
 class Helm3Factory {
 
     async create(rawSecret) {
-        const configMap = new SecretEntity(rawSecret);
+        let releaseController;
+        const namespace = _.get(rawSecret, 'metadata.namespace');
+        const secret = new SecretEntity(rawSecret);
         let release;
-        const releaseName = _.get(configMap.getLabels(), 'name');
+        const releaseName = _.get(secret.getLabels(), 'name');
         if (releaseName) {
+            releaseController = kubeManager.getReleaseHelm3Controller(namespace);
             release = await releaseController.describe(releaseName);
-
         }
         if(!release) {
+            if(releaseName) {
+                logger.info(`Wasnt able describe release, name ${_.get(rawSecret, 'metadata.name')} in namespace  ${namespace}`)
+            }
+
             //TODO: need verify when it happens
             return null;
         }
