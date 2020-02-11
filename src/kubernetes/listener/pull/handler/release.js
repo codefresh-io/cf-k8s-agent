@@ -5,6 +5,7 @@ const _ = require('lodash');
 const releaseMetadataFactory = require('../../../../factory/release.factory');
 const logger = require('../../../../logger');
 const metadataHolder = require('../../../../filters/metadata.holder');
+const config = require('../../../../config');
 
 class ReleaseHandler {
 
@@ -31,7 +32,10 @@ class ReleaseHandler {
                     .catch(e => logger.error(e));
                 if (_.get(release, 'object.release')) {
 
-                    this._optimizeReleases(release.object);
+                    if (config.optimizeRelease) {
+                        this._optimizeReleases(release.object);
+                    }
+
 
                     logger.info(`Send release ${JSON.stringify(release.object)}`);
 

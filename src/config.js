@@ -41,10 +41,13 @@ module.exports = {
         deployment: process.env.DEPLOYMENT_INTERVAL || 60 * 1000,
         configmap: process.env.RELEASE_INTERVAL || 10 * 60 * 1000,
         service: process.env.SERVICE_INTERVAL ||  60 * 1000,
+        secret: process.env.SECRET_INTERVAL ||  60 * 1000,
         common: 60 * 1000
     },
     enablePull: true,
     disableHelm: process.env.DISABLE_HELM || false,
     helm3: process.env.HELM3 || false,
+
+    optimizeRelease: process.env.OPTIMIZE_RELEASE || false
 
 };
