@@ -46,8 +46,6 @@ class ReleaseHandler {
         }
 
         for (const latestRelease of _.values(releaseMerger.releases)) {
-            logger.info(`Send release ${JSON.stringify(latestRelease)}`);
-
             await codefreshApi.sendPackageWithoutLock([{
                 object: latestRelease,
                 type: 'ADDED',
