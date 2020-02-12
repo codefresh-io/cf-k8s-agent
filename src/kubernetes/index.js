@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 const { clientFactory, resolveConfig } = require('./client');
@@ -27,16 +25,14 @@ async function prepareDeployment(rawDeployment) {
     return { data: JSON.stringify(deployment.getFullData()) };
 }
 
-async function preparePod(pod, getImageId) {
+function preparePod(pod) {
     const labelSelector = formatLabels(_.get(pod, 'metadata.labels', {}));
     const namespace = _.get(pod, 'metadata.namespace');
     const podController = kubeManager.getPodController(namespace);
 
-    const prepared = await podController.group({ labelSelector })
-        .map((sp) => sp.toJson())
+    return podController.group({ labelSelector })
+        .map((sp) => { return sp.toJson(); })
         .then(_.flatten);
-
-    return prepared;
 }
 
 module.exports = {

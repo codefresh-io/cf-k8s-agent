@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const JSONStream = require('json-stream');
 const logger = require('../logger');

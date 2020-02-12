@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const Promise = require('bluebird');
 const logger = require('../../../../logger');
@@ -18,7 +16,7 @@ class CommonHandler {
 
         const itemsForProcess = [];
 
-        for (let item of items) {
+        for (const item of items) {
             const uid = _.get(item, 'metadata.uid');
             if (!resourceCache.includes(uid, kind)) {
 

@@ -8,7 +8,7 @@ const config = require('../config');
 class ReleaseFactory {
 
     _helmFactory() {
-        return config.helm3? helm3Factory: helm2Factory;
+        return config.helm3 ? helm3Factory : helm2Factory;
     }
 
     async buildReleaseMetadata(payload, metadataFilter) {
@@ -33,8 +33,9 @@ class ReleaseFactory {
         let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload, payload.kind) : payload;
 
         const releaseMetadata = await this.buildReleaseMetadata(payload);
-        filteredMetadata = releaseMetadata ? releaseMetadata : filteredMetadata;
-
+        if (releaseMetadata) {
+            filteredMetadata = releaseMetadata;
+        }
 
         data = {
             ...data,

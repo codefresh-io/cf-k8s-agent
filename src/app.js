@@ -1,7 +1,3 @@
-'use strict';
-
-// const Promise = require('bluebird');
-// const _ = require('lodash');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');

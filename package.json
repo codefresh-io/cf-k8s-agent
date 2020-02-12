@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./src/index.js",
     "test": "jest --coverage --detectOpenHandles --silent",
-    "lint": "eslint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@codefresh-io/kube-integration": "1.13.6",

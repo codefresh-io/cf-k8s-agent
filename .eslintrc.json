@@ -15,7 +15,10 @@
     "ecmaVersion": 2017,
     "sourceType": "script",
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "spread": true,
+      "experimentalObjectRestSpread": true,
+      "impliedStrict": true
     }
   },
   "rules": {

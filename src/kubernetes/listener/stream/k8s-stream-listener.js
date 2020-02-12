@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const Kefir = require('kefir');
 const newRelicMonitor = require('cf-monitor');

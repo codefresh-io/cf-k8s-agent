@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const semaphore = require('semaphore')(1);
 
@@ -27,6 +25,8 @@ class EventsPuller {
         _.entries(this.resources).map(async ([tp, resource]) => {
 
             async function handle() {
+                logger.info(`Start handle ${tp}`);
+                
                 const result = await resource.get();
 
                 const { kind, items } = result.body;

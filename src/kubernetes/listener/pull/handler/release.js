@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 
 const releaseMetadataFactory = require('../../../../factory/release.factory');

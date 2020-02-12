@@ -1,10 +1,9 @@
-'use strict';
-
-const { resolveConfig } = require('../client');
-
 const _ = require('lodash');
 const SecretEntity = require('@codefresh-io/kube-integration/lib/kube-native/secret/secret');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
+
+const { resolveConfig } = require('../client');
+const logger = require('../../logger');
 
 const kubeManager = new KubeManager(resolveConfig());
 
@@ -21,12 +20,12 @@ class Helm3Factory {
             releaseController = kubeManager.getReleaseHelm3Controller(namespace);
             release = await releaseController.describe(releaseName);
         }
-        if(!release) {
-            if(releaseName) {
-                logger.info(`Wasnt able describe release, name ${_.get(rawSecret, 'metadata.name')} in namespace  ${namespace}`)
+        if (!release) {
+            if (releaseName) {
+                logger.info(`Wasnt able describe release, name ${_.get(rawSecret, 'metadata.name')} in namespace  ${namespace}`);
             }
 
-            //TODO: need verify when it happens
+            // if not found release in namespace
             return null;
         }
         const orderedHistory = _.orderBy(release._history, 'version');
@@ -37,7 +36,9 @@ class Helm3Factory {
             const chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
             const chartManifest = await releaseController.getChartManifestForRevision(name, version);
             const chartValues = await releaseController.getChartValuesForRevision(name, version);
-            return { ...releaseData, chartFiles, chartManifest, chartValues };
+            return {
+                ...releaseData, chartFiles, chartManifest, chartValues
+            };
         }
         return null;
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const { Client, config: kubeConfig } = require('kubernetes-client');
 const logger = require('../logger');
 const config = require('../config');
