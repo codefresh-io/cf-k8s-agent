@@ -46,11 +46,11 @@ newRelicLicenseKey: ""
 heapSize: 4096
 
 namespaceInterval: 60000
-podInterval: 60000
-deploymentInterval: 60000
+podInterval: 120000
+deploymentInterval: 120000
 releaseInterval: 600000
-serviceInterval: 60000
-secretInterval: 60000
+serviceInterval: 120000
+secretInterval: 120000
 
 disableHelm: false
 
