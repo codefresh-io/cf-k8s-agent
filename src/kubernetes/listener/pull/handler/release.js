@@ -7,6 +7,8 @@ const logger = require('../../../../logger');
 const metadataHolder = require('../../../../filters/metadata.holder');
 const config = require('../../../../config');
 
+const releaseMerger = require('../../../helm/merger');
+
 class ReleaseHandler {
 
     _optimizeReleases(release) {
@@ -36,21 +38,24 @@ class ReleaseHandler {
                         this._optimizeReleases(release.object);
                     }
 
-
-                    logger.info(`Send release ${JSON.stringify(release.object)}`);
-
-                    await codefreshApi.sendPackageWithoutLock([{
-                        object: release.object,
-                        type: 'ADDED',
-                        counter: 1,
-                        kind: 'Release'
-                    }]);
+                    releaseMerger.updateAndGetLatest(release.object);
                 }
             } catch (e) {
                 logger.error(e.stack);
             }
-
         }
+
+        for (const latestRelease of _.values(releaseMerger.releases)) {
+            logger.info(`Send release ${JSON.stringify(latestRelease)}`);
+
+            await codefreshApi.sendPackageWithoutLock([{
+                object: latestRelease,
+                type: 'ADDED',
+                counter: 1,
+                kind: 'Release'
+            }]);
+        }
+        releaseMerger.clear();
         semaphore.leave();
         return Promise.resolve();
     }
