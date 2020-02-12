@@ -51,6 +51,8 @@ spec:
             value: {{ .Values.releaseInterval | quote }}
           - name: SERVICE_INTERVAL
             value: {{ .Values.serviceInterval | quote }}
+          - name: SECRET_INTERVAL
+              value: {{ .Values.secretInterval | quote }}
           - name: PORT
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL
