@@ -10,12 +10,13 @@ const config = require('./config');
 const kubernetes = require('./kubernetes');
 
 const metadataHolder = require('./filters/metadata.holder');
+const ListenerFactory = require('./kubernetes/listener');
 
 // intervals
 let statisticsInterval;
 let stateInterval;
 
-const { clientFactory, ListenerFactory } = kubernetes;
+const { clientFactory } = kubernetes;
 
 async function init() {
     try {

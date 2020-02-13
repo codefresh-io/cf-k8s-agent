@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 const { clientFactory, resolveConfig } = require('./client');
-const ListenerFactory = require('./listener');
 
 const kubeManager = new KubeManager(resolveConfig());
 
@@ -14,7 +13,6 @@ function prepareService(service) {
 
 module.exports = {
     clientFactory,
-    ListenerFactory,
     kubeManager,
     prepareService
 };
