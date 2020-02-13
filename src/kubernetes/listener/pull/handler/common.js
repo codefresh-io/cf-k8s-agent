@@ -20,7 +20,6 @@ class CommonHandler {
             if (!resourceCache.includes(uid, kind)) {
 
                 if (kind === 'Service') {
-                    logger.info(`Process service ${item.metadata.name} and get detailed info`);
                     const { globalStatus, spec } = await kubernetes.prepareService(item);
                     item.globalStatus = globalStatus;
                     item.spec = spec;
