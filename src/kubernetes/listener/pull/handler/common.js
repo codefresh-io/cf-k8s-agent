@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const Promise = require('bluebird');
 const logger = require('../../../../logger');
@@ -7,22 +5,19 @@ const logger = require('../../../../logger');
 const resourceFilter =  require('../../../../filters/resourcefields.filter');
 const codefreshApi = require('../../../../api/codefresh.api');
 
-const config  = require('../../../../config');
-
 const resourceCache = require('../resource.cache');
+
+const kubernetes = require('../../../index');
 
 class CommonHandler {
 
     async handle(kind, items) {
-        const kubernetes = require('../../../index');
 
         logger.info(`Receive items ${items.length} ${kind}s`);
 
-        const itemsForProcess = [];
-
-        for (let item of items) {
+        const itemsForProcess = await Promise.each(items, async (item) => {
             const uid = _.get(item, 'metadata.uid');
-            if (!config.enableCache || !resourceCache.includes(uid, kind)) {
+            if (!resourceCache.includes(uid, kind)) {
 
                 if (kind === 'Service') {
                     logger.info(`Process service ${item.metadata.name} and get detailed info`);
@@ -32,9 +27,10 @@ class CommonHandler {
                 }
 
                 resourceCache.put(uid, kind);
-                itemsForProcess.push(item);
+                return item;
             }
-        }
+            return null;
+        });
 
         resourceCache.flush(kind);
 

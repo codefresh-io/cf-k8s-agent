@@ -1,5 +1,3 @@
-'use strict';
-
 const MetadataFilter = require('./MetadataFilter');
 
 class MetadataHolder {

@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 
 const metadataHolder = require('../../../filters/metadata.holder');
@@ -40,7 +38,9 @@ class Handler {
         let filteredMetadata = metadataFilter ? metadataFilter.buildResponse(payload.object, payload.object.kind) : payload.object;
 
         const metadata = await this.buildMetadata(payload);
-        filteredMetadata = metadata ? metadata : filteredMetadata;
+        if (metadata) {
+            filteredMetadata = metadata;
+        }
 
         if (!filteredMetadata) {
             return;
@@ -62,8 +62,7 @@ class Handler {
         statistics.incEvents();
         if (storage.size() >= 50) {
             await codefreshApi._sendPackage();
-        }
-        else {
+        } else {
             logger.info(`Skip packages sending - size ${storage.size()}`);
         }
     }

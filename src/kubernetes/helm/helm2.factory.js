@@ -1,10 +1,8 @@
-'use strict';
-
-const { resolveConfig } = require('../client');
-
 const _ = require('lodash');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
+
+const { resolveConfig } = require('../client');
 
 const kubeManager = new KubeManager(resolveConfig());
 
@@ -28,7 +26,9 @@ class Helm2Factory {
             const chartFiles = await releaseController.getChartDescriptorForRevision(name, version);
             const chartManifest = await releaseController.getChartManifestForRevision(name, version);
             const chartValues = await releaseController.getChartValuesForRevision(name, version);
-            return { ...releaseData, chartFiles, chartManifest, chartValues };
+            return {
+                ...releaseData, chartFiles, chartManifest, chartValues
+            };
         } else {
             return null;
         }

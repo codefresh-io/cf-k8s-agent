@@ -1,22 +1,16 @@
-'use strict';
-
 const _ = require('lodash');
 const rp = require('request-promise');
 const newRelicMonitor = require('cf-monitor');
+const Promise = require('bluebird');
+const zlib = require('zlib');
+
 const logger = require('../logger');
 const config = require('../config');
-const Promise = require('bluebird');
-
 const statistics = require('../statistics');
 const storage = require('../storage');
 
-const zlib = require('zlib');
 
 class CodefreshAPI {
-
-    constructor() {
-    }
-
 
     /**
      * Init cluster events in monitor. Should be used when agent starts.
@@ -31,7 +25,7 @@ class CodefreshAPI {
 
         return Promise.all([
             this.getMetadata(),
-            this._request({ method: 'POST', uri, body: { accounts }}),
+            this._request({ method: 'POST', uri, body: { accounts } }),
         ])
             .then(([metadata]) => {
                 logger.debug(`Metadata -------: ${JSON.stringify(metadata)}`);
@@ -60,7 +54,7 @@ class CodefreshAPI {
             if (result.needUpdate) {
                 callback();
             }
-        } catch(error) {
+        } catch (error) {
             newRelicMonitor.noticeError(error);
             logger.error(`Error while checking state: ${error.message}`);
         }
@@ -92,8 +86,6 @@ class CodefreshAPI {
 
         logger.info(`Non gzipped payload size : ${Buffer.from(stringifiedPayload).length}`);
         logger.info(`Gzipped payload size : ${optimizedPayload.length}`);
-
-
 
         this._request({ method: 'POST', uri: '', body: { payload: optimizedPayload, gzip: true } })
             .then((r) => {

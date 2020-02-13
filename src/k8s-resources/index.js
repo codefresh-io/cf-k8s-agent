@@ -1,7 +1,3 @@
-'use strict';
-
-const _ = require('lodash');
-
 const K8SResource = require('./K8SResource');
 
 /**

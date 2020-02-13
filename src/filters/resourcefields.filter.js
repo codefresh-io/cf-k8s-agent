@@ -1,7 +1,4 @@
-'use strict';
-
 const metadataHolder = require('./metadata.holder');
-
 
 class ResourceFieldsFilter {
 

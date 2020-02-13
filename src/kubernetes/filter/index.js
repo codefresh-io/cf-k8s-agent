@@ -1,5 +1,3 @@
-'use strict';
-
 class Filter {
 
     filter(kind, items) {
