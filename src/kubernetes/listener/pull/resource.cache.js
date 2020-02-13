@@ -5,14 +5,12 @@ class ResourceCache {
     constructor() {
         this.lastState = {
             Pod: [],
-            Service: [],
             Namespace: [],
             Deployment: []
         };
 
         this.currentState = {
             Pod: [],
-            Service: [],
             Namespace: [],
             Deployment: []
         };

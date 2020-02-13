@@ -10,7 +10,6 @@ const kubeManager = new KubeManager(resolveConfig());
 async function prepareService(service) {
     const namespace = _.get(service, 'metadata.namespace');
     const name = _.get(service, 'metadata.name');
-    logger.info(`Process service ${name} and get detailed info in ${namespace}`);
     const serviceController = kubeManager.getServiceController(namespace);
     try {
         return await serviceController.describeFull(name, namespace);
