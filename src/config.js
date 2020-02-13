@@ -43,6 +43,7 @@ module.exports = {
         common: 60 * 1000
     },
     enablePull: true,
+    enableCache: false,
     disableHelm: process.env.DISABLE_HELM || false,
     helm3: process.env.HELM3 || false,
 

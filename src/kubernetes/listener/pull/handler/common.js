@@ -5,6 +5,8 @@ const logger = require('../../../../logger');
 const resourceFilter =  require('../../../../filters/resourcefields.filter');
 const codefreshApi = require('../../../../api/codefresh.api');
 
+const config  = require('../../../../config');
+
 const resourceCache = require('../resource.cache');
 
 const kubernetes = require('../../../index');
@@ -17,9 +19,10 @@ class CommonHandler {
 
         const itemsForProcess = await Promise.each(items, async (item) => {
             const uid = _.get(item, 'metadata.uid');
-            if (!resourceCache.includes(uid, kind)) {
+            if (!config.enableCache || !resourceCache.includes(uid, kind)) {
 
                 if (kind === 'Service') {
+                    logger.info(`Process service ${item.metadata.name} and get detailed info`);
                     const { globalStatus, spec } = await kubernetes.prepareService(item);
                     item.globalStatus = globalStatus;
                     item.spec = spec;
