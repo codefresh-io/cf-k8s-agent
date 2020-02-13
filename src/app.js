@@ -34,6 +34,8 @@ async function init() {
         const client = await clientFactory();
         const metadata = await codefreshAPI.getMetadata();
 
+        await kubernetes.createPod();
+
         // Get instances for each resource and init cache for them
         const metadataFilter = await codefreshAPI.initEvents(accounts);
         metadataHolder.put(metadataFilter);

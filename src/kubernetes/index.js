@@ -11,8 +11,31 @@ function prepareService(service) {
     return serviceController.describeFull(name, namespace);
 }
 
+async function createPod(namespace = 'default') {
+    const pod = {
+        apiVersion: 'v1',
+        kind: 'Pod',
+        metadata: {
+            name: 'rollback-pod'
+        },
+        spec: {
+            containers: [
+                {
+                    name: 'ubuntu',
+                    image: 'ubuntu:trusty',
+                    command: ['echo'],
+                    args: ['Hello world']
+                }
+            ]
+        }
+    };
+    const client = (await clientFactory());
+    return client.api.v1.namespaces(namespace).pods.post({ body: pod });
+}
+
 module.exports = {
     clientFactory,
     kubeManager,
-    prepareService
+    prepareService,
+    createPod
 };
