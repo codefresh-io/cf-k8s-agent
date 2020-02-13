@@ -1,11 +1,12 @@
 const _ = require('lodash');
+const Promise = require('bluebird');
 
 const releaseMetadataFactory = require('../../../../factory/release.factory');
 const logger = require('../../../../logger');
 const metadataHolder = require('../../../../filters/metadata.holder');
 const config = require('../../../../config');
-
 const releaseMerger = require('../../../helm/merger');
+const codefreshApi = require('../../../../api/codefresh.api');
 
 class ReleaseHandler {
 
@@ -17,7 +18,6 @@ class ReleaseHandler {
     }
 
     async handle(kind, items, semaphore) {
-        const codefreshApi = require('../../../../api/codefresh.api');
 
         logger.info(`Prepare to send ${items.length} ${kind}s`);
 
@@ -25,7 +25,7 @@ class ReleaseHandler {
             kind: 'Release'
         });
 
-        for (const item of items) {
+        await Promise.each(items, async (item) => {
             item.kind = 'Release';
             try {
                 const release = await releaseMetadataFactory.create(item, metadataHolder.get())
@@ -41,9 +41,9 @@ class ReleaseHandler {
             } catch (e) {
                 logger.error(e.stack);
             }
-        }
+        });
 
-        for (const latestRelease of _.values(releaseMerger.releases)) {
+        await Promise.each(_.values(releaseMerger.releases), async (latestRelease) => {
             logger.info(`Send release ${JSON.stringify(latestRelease)}`);
 
             await codefreshApi.sendPackageWithoutLock([{
@@ -52,7 +52,8 @@ class ReleaseHandler {
                 counter: 1,
                 kind: 'Release'
             }]);
-        }
+        });
+
         releaseMerger.clear();
         semaphore.leave();
         return Promise.resolve();

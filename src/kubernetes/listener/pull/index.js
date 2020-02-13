@@ -26,7 +26,6 @@ class EventsPuller {
 
             async function handle() {
                 logger.info(`Start handle ${tp}`);
-                
                 const result = await resource.get();
 
                 const { kind, items } = result.body;
@@ -60,6 +59,8 @@ class EventsPuller {
             setInterval(() => {
                 handle();
             }, interval);
+
+            return null;
 
         });
     }

@@ -5,11 +5,6 @@ const ListenerFactory = require('./listener');
 
 const kubeManager = new KubeManager(resolveConfig());
 
-
-function formatLabels(labels) {
-    return _.toPairs(labels).map(([key, value]) => `${key}=${value}`).join(',');
-}
-
 function prepareService(service) {
     const namespace = _.get(service, 'metadata.namespace');
     const name = _.get(service, 'metadata.name');
@@ -17,29 +12,9 @@ function prepareService(service) {
     return serviceController.describeFull(name, namespace);
 }
 
-async function prepareDeployment(rawDeployment) {
-    const namespace = _.get(rawDeployment, 'metadata.namespace');
-    const name = _.get(rawDeployment, 'metadata.name');
-    const deploymentController = kubeManager.getDeploymentController(namespace);
-    const deployment = await deploymentController.describe(name);
-    return { data: JSON.stringify(deployment.getFullData()) };
-}
-
-function preparePod(pod) {
-    const labelSelector = formatLabels(_.get(pod, 'metadata.labels', {}));
-    const namespace = _.get(pod, 'metadata.namespace');
-    const podController = kubeManager.getPodController(namespace);
-
-    return podController.group({ labelSelector })
-        .map((sp) => { return sp.toJson(); })
-        .then(_.flatten);
-}
-
 module.exports = {
     clientFactory,
     ListenerFactory,
     kubeManager,
-    prepareService,
-    prepareDeployment,
-    preparePod,
+    prepareService
 };

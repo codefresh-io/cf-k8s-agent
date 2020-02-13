@@ -7,16 +7,15 @@ const codefreshApi = require('../../../../api/codefresh.api');
 
 const resourceCache = require('../resource.cache');
 
+const kubernetes = require('../../../index');
+
 class CommonHandler {
 
     async handle(kind, items) {
-        const kubernetes = require('../../../index');
 
         logger.info(`Receive items ${items.length} ${kind}s`);
 
-        const itemsForProcess = [];
-
-        for (const item of items) {
+        const itemsForProcess = await Promise.each(items, async (item) => {
             const uid = _.get(item, 'metadata.uid');
             if (!resourceCache.includes(uid, kind)) {
 
@@ -27,9 +26,10 @@ class CommonHandler {
                 }
 
                 resourceCache.put(uid, kind);
-                itemsForProcess.push(item);
+                return item;
             }
-        }
+            return null;
+        });
 
         resourceCache.flush(kind);
 
