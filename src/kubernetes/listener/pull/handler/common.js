@@ -7,7 +7,7 @@ const codefreshApi = require('../../../../api/codefresh.api');
 
 const resourceCache = require('../resource.cache');
 
-// const kubernetes = require('../../../index');
+const kubernetes = require('../../../index');
 
 class CommonHandler {
 
@@ -19,11 +19,11 @@ class CommonHandler {
             const uid = _.get(item, 'metadata.uid');
             if (!resourceCache.includes(uid, kind)) {
 
-                // if (kind === 'Service') {
-                //     const { globalStatus, spec } = await kubernetes.prepareService(item);
-                //     item.globalStatus = globalStatus;
-                //     item.spec = spec;
-                // }
+                if (kind === 'Service') {
+                    const { globalStatus, spec } = await kubernetes.prepareService(item);
+                    item.globalStatus = globalStatus;
+                    item.spec = spec;
+                }
 
                 resourceCache.put(uid, kind);
                 return item;
