@@ -16,7 +16,7 @@ class CommonHandler {
         logger.info(`Receive items ${items.length} ${kind}s`);
 
         const itemsForProcess = _.compact(await Promise.map(items, async (item) => {
-            const uid = _.get(item, 'metadata.name') + '-' + _.get(item, 'metadata.resourceVersion');
+            const uid = `${_.get(item, 'metadata.name')}-${_.get(item, 'metadata.resourceVersion')}`;
             if (!resourceCache.includes(uid, kind)) {
 
                 if (kind === 'Service') {
