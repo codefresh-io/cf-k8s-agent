@@ -23,4 +23,4 @@ RUN curl -L "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" -o helm
 
 ENV HELM_VERSION $HELM_VERSION
 
-ENTRYPOINT ["helm version"]
+ENTRYPOINT ["helm", "list"]
