@@ -15,10 +15,11 @@ RUN curl -L "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" -o helm
     && helm plugin install https://github.com/nouney/helm-gcs.git \
     && helm plugin install https://github.com/chartmuseum/helm-push.git
 
-COPY --from=setup /temp /root/.helm/* /root/.helm/
-COPY bin/* /opt/bin/
-RUN chmod +x /opt/bin/*
-COPY lib/* /opt/lib/
+
+#COPY --from=setup /temp /root/.helm/* /root/.helm/
+#COPY bin/* /opt/bin/
+#RUN chmod +x /opt/bin/*
+#COPY lib/* /opt/lib/
 
 ENV HELM_VERSION $HELM_VERSION
 
