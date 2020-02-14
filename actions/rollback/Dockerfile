@@ -6,8 +6,7 @@ ENV XDG_DATA_HOME=/root/.helm
 ENV XDG_CONFIG_HOME=/root/.helm
 
 RUN echo "HELM_VERSION is set to: ${HELM_VERSION}" && mkdir /temp
-RUN apt-get update; apt-get install curl \
-    && curl -L "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" -o helm.tar.gz \
+RUN curl -L "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" -o helm.tar.gz \
     && tar -zxvf helm.tar.gz \
     && mv ./linux-amd64/helm /usr/local/bin/helm \
     && helm plugin install https://github.com/hypnoglow/helm-s3.git \
