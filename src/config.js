@@ -45,7 +45,7 @@ module.exports = {
     enablePull: true,
     disableHelm: process.env.DISABLE_HELM || false,
     helm3: process.env.HELM3 || false,
-
+    namespace: process.env.NAMESPACE || 'default',
     optimizeRelease: process.env.OPTIMIZE_RELEASE || false
 
 };

@@ -104,6 +104,12 @@ class CodefreshAPI {
         return this._request({ uri });
     }
 
+    async getPendingTasks() {
+        const uri = '/tasks';
+        logger.debug(`Get tasks from ${uri}.`);
+        return this._request({ uri, qs: { type: 'rollback' } });
+    }
+
     async sendStatistics() {
         const uri = '/statistics';
         const body = statistics.result;

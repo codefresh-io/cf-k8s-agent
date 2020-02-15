@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('cookie-parser');
 const newRelicMonitor = require('cf-monitor');
+const Promise = require('bluebird');
 const loggerMiddleware = require('morgan')('dev');
 const logger = require('./logger');
 const { version } = require('../package.json');
@@ -11,6 +12,7 @@ const kubernetes = require('./kubernetes');
 
 const metadataHolder = require('./filters/metadata.holder');
 const ListenerFactory = require('./kubernetes/listener');
+const TaskListener = require('./actions/task.listener');
 
 // intervals
 let statisticsInterval;
@@ -34,8 +36,6 @@ async function init() {
         const client = await clientFactory();
         const metadata = await codefreshAPI.getMetadata();
 
-        await kubernetes.createPod();
-
         // Get instances for each resource and init cache for them
         const metadataFilter = await codefreshAPI.initEvents(accounts);
         metadataHolder.put(metadataFilter);
@@ -45,6 +45,8 @@ async function init() {
             logger.debug(`Exit after cleaning`);
             process.exit(0);
         }
+
+        TaskListener.listen();
 
         // Create listener for all resources and subscribe for cluster events
         const listeners = await ListenerFactory.create(client, metadata);
