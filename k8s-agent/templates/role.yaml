@@ -20,12 +20,6 @@ rules:
   - create
   - delete
 - apiGroups:
-    - "rbac.authorization.k8s.io"
-  resources: ["*"]
-  verbs:
-    - get
-    - list
-- apiGroups:
     - ""
   resources: ["pods"]
   verbs:
