@@ -21,7 +21,7 @@ rules:
   - delete
 - apiGroups:
     - "rbac.authorization.k8s.io"
-  resources: ["clusterroles", "clusterrolebindings"]
+  resources: ["*"]
   verbs:
     - get
     - list
