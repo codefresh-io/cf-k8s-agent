@@ -44,7 +44,7 @@ class ReleaseHandler {
         });
 
         await Promise.each(_.values(releaseMerger.releases), async (latestRelease) => {
-            logger.info(`Send release ${JSON.stringify(latestRelease)}`);
+            logger.info(`Send release ${latestRelease.metadata.name}`);
 
             await codefreshApi.sendPackageWithoutLock([{
                 object: latestRelease,

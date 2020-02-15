@@ -12,6 +12,7 @@ class TaskListener {
 
         await Promise.all(tasks.map((task) => {
             const { namespace, release, revision } = task.context;
+            logger.info(`Start handle rollback task, ${release} ${revision}`);
             return kubernetes.createPod(config.namespace, release, revision)
                 .catch((error) => {
                     logger.error(`Cant create pod ${namespace}, ${release}, ${revision}, ${error.stack}`);
