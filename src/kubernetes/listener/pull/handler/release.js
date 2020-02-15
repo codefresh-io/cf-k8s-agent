@@ -21,11 +21,7 @@ class ReleaseHandler {
 
         logger.info(`Prepare to send ${items.length} ${kind}s`);
 
-        await codefreshApi.clearInfo({
-            kind: 'Release'
-        });
-
-        await Promise.each(items, async (item) => {
+        await Promise.map(items, async (item) => {
             item.kind = 'Release';
             try {
                 const release = await releaseMetadataFactory.create(item, metadataHolder.get())
@@ -42,6 +38,12 @@ class ReleaseHandler {
                 logger.error(e.stack);
             }
         });
+
+        if (!_.isEmpty(releaseMerger.releases)) {
+            await codefreshApi.clearInfo({
+                kind: 'Release'
+            });
+        }
 
         await Promise.each(_.values(releaseMerger.releases), async (latestRelease) => {
             logger.info(`Send release ${latestRelease.metadata.name}`);
