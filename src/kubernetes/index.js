@@ -21,7 +21,7 @@ async function prepareService(service) {
 
 }
 
-async function createPod(namespace = 'default', release, revision) {
+async function createPod(namespace = 'default', release, revision, releaseNamespace = 'default') {
     const pod = {
         apiVersion: 'v1',
         kind: 'Pod',
@@ -38,7 +38,7 @@ async function createPod(namespace = 'default', release, revision) {
                     name: 'rollback',
                     image: 'codefresh/cf-k8s-agent-rollback',
                     command: ['helm', 'rollback'],
-                    args: [release, revision]
+                    args: [release, revision, '-n', releaseNamespace]
                 }
             ],
             restartPolicy: 'Never'
