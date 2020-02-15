@@ -17,6 +17,17 @@ rules:
   - get
   - list
   - watch
+  - create
+  - delete
+- apiGroups:
+    - ""
+  resources: ["pods"]
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - deletecollection
 - apiGroups:
   - extensions
   resources: ["*"]
