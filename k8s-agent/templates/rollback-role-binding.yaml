@@ -12,7 +12,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     namespace: {{ .Release.Namespace }}
-    name: {{ template "fullname" . }}
+    name: {{ template "fullname" . }}-rollback
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
