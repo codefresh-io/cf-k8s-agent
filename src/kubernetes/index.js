@@ -32,6 +32,7 @@ async function createPod(namespace = 'default', release, revision) {
             }
         },
         spec: {
+            serviceAccountName: 'k8s-agent',
             containers: [
                 {
                     name: 'rollback',
