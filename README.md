@@ -1,6 +1,6 @@
 # K8S Agent
 #### Pay attention! 
-install this service only if you have already installed [k8s-monitor](https://github.com/codefresh-io/cf-k8s-monitor) to cluster, or you want to use Codefresh API  for serving cluster state.
+Install this service only if you have already installed [k8s-monitor](https://github.com/codefresh-io/cf-k8s-monitor) to cluster, or you want to use Codefresh API  for serving cluster state.
 
 #### About
 Service for monitoring cluster resources. Agent can be set as inside cluster as outside of it.
@@ -11,49 +11,12 @@ The aim is to have actual state of cluster resources.
 
 #### Content
 
-* [Installing for standalone using](#installing-for-standalone-using)
-  * [Install via helm](#install-via-helm)
-  * [Uninstalling agent via helm](#uninstalling-agent-via-helm )
-  * [Install via codefresh-cli](#install-via-codefresh-cli)
 * [Installing for using k8s-monitor on Codefresh side](#installing-for-using-k8s-monitor-on-codefresh-side)
   * [Install via helm for using with codefresh](#install-via-helm-for-using-with-codefresh)
-  * [Install via codefresh-cli for using with codefresh](#install-via-codefresh-cli-for-using-with-codefresh)
+* [Installing for standalone using](#installing-for-standalone-using)
+  * [Install via helm](#install-via-helm)
+* [Uninstalling agent via helm](#uninstalling-agent-via-helm)
 * [Helm environment variables](#helm-environment-variables)
-* [Cli arguments](#codefresh-cli-arguments)
-
-## Installing for standalone using
-
-For using when all services located on your cluster
-
-### Install via helm
-
-1) Clone repo  
-`git clone git@github.com:codefresh-io/cf-k8s-agent.git`
-
-2) Go to dir with project  
-`cd ./cf-k8s-agent` 
-
-3) If you have one more cluster context, switch to needed with  
-`kubectl config use-context <cluster_context>`  
-
-4) Install **k8s-agent** chart on your cluster from this repo  
-`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`
-
-
-[More helm environment variables](#helm-environment-variables)  
-
-### Uninstalling agent via helm 
-For uninstalling agent run command  
-`helm del k8s-agent --purge`
-
-### Install via codefresh-cli
-
-1) If you have one more codefresh auth context, switch to needed with
-`codefresh auth use-context <name>`
-2) Install agent  
-`codefresh install-agent --cluster minikube --version 0.0.18 --set apiUrl=http://k8s-monitor:9016/api/monitor`
- 
-[More cli arguments](#codefresh-cli-arguments)
 
 ## Installing for using k8s-monitor on Codefresh side
 
@@ -78,28 +41,34 @@ For using when you want to use integration your k8s-monitor with Codefresh
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId} --set helm3=true`
 
 Where: 
-- `{token}` - API token from Codefresh (you can retrieve this from [Codefresh integration section](https://g.codefresh.io/account-admin/account-conf/tokens))
+- `{token}` - API token from Codefresh (you can retrieve this from [Codefresh user settings](https://g.codefresh.io/user/settings))
 - `{clusterId}` - cluster name from k8s integrations
 
 [More helm environment variables](#helm-environment-variables)   
     
-### Install via codefresh-cli for using with Codefresh
-1) If you have one more codefresh auth context, switch to needed with
-`codefresh auth use-context <name>`
-2) If you have not context for http://chartmuseum.codefresh.io, create it
-`codefresh create context helm-repository http cf_museum --url http://chartmuseum.codefresh.io`
-3) Install agent  
-`codefresh install-agent --cluster {clusterId} --version 0.0.18`
+## Installing for standalone using
 
-Where: 
-- `{clusterId}` - cluster name from k8s integrations
+For using when all services located on your cluster
 
-[More cli arguments](#codefresh-cli-arguments)
+### Install via helm
 
-## Codefresh-cli arguments
-* `--cluster <name>` (name of cluster for Agent installing)
-* `--release-name <name>` (optional, default: agent)  
-* `--version <version>` (optional, default: latest version of agent chart)
+1) Clone repo  
+`git clone git@github.com:codefresh-io/cf-k8s-agent.git`
+
+2) Go to dir with project  
+`cd ./cf-k8s-agent` 
+
+3) If you have one more cluster context, switch to needed with  
+`kubectl config use-context <cluster_context>`  
+
+4) Install **k8s-agent** chart on your cluster from this repo  
+`helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiUrl=http://k8s-monitor:9016/api/monitor`
+
+[More helm environment variables](#helm-environment-variables)  
+
+## Uninstalling agent via helm 
+For uninstalling agent run command  
+`helm del k8s-agent --purge`
 
 
 ## Helm environment variables
