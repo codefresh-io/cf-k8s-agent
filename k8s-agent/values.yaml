@@ -1,6 +1,3 @@
-# serviceType type of the service, set to LoadBalancer to expose the ip when there is not ingress
-serviceType: ClusterIP
-
 # replicaCount number of pods to be schedualed
 replicaCount: 1
 

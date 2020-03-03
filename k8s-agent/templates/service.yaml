@@ -9,7 +9,7 @@ metadata:
     heritage: {{ .Release.Service  | quote }}
     version: {{ .Values.imageTag | quote }}
 spec:
-  type: {{ default "ClusterIP" .Values.serviceType | quote }}
+  type: ClusterIP
   ports:
   - name: "http"
     port: {{ .Values.port }}
