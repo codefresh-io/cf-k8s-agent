@@ -33,10 +33,10 @@ For using when you want to use integration your k8s-monitor with Codefresh
 3) If you have one more cluster context, switch to needed with  
 `kubectl config use-context <cluster_context>`  
 
-   1) For helm 2 
+   1) For **helm2**
    - Install **k8s-agent** chart on your cluster from this repo  
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId}`
-   2) For helm 3 
+   2) For **helm3**
    - Install **k8s-agent** chart on your cluster from this repo with helm3 support
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId} --set helm3=true`
 
