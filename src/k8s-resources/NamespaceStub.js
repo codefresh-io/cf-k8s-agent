@@ -9,10 +9,10 @@ class NamespaceStub {
     get() {
         return {
             statusCode: 200,
-                body: {
+            body: {
                 kind: 'NamespaceList',
-                    apiVersion: 'v1',
-                    metadata: {
+                apiVersion: 'v1',
+                metadata: {
                     resourceVersion: '6458782'
                 },
                 items: [
