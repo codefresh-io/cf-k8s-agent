@@ -1,6 +1,6 @@
 FROM node:12.13.0-alpine
 
-WORKDIR /cf-k8s-agent
+WORKDIR /root/cf-k8s-agent
 
 RUN apk add --no-cache bash openssh-client
 
@@ -19,9 +19,6 @@ RUN apk update && apk add --no-cache  --virtual deps python make g++ krb5-dev gi
 
 # copy app files
 COPY . ./
-
-RUN chgrp -R 0 /cf-k8s-agent && \
-    chmod -R g+rwX /cf-k8s-agent
 
 EXPOSE 9020
 
