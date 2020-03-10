@@ -1,6 +1,6 @@
 const packageJson = require('../package');
 
-module.exports = {
+const config = {
     // Cluster credentials. Are used when agent started outside of cluster and useCurrentContext=false
     clusterUrl: process.env.CLUSTER_URL,
     clusterToken: process.env.CLUSTER_TOKEN,
@@ -46,6 +46,12 @@ module.exports = {
     disableHelm: process.env.DISABLE_HELM || false,
     helm3: process.env.HELM3 || false,
     namespace: process.env.NAMESPACE || 'default',
-    optimizeRelease: process.env.OPTIMIZE_RELEASE || false
-
+    optimizeRelease: process.env.OPTIMIZE_RELEASE || false,
+    roleBinding: process.env.ROLE_BINDING || false,
 };
+
+config.resourcesNamespace = () => {
+    return config.roleBinding ? config.namespace : null;
+};
+
+module.exports = config;
