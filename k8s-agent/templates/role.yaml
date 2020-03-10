@@ -1,5 +1,5 @@
 {{- if .Values.rbacEnabled }}
-kind: ClusterRole
+kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "fullname" . }}-cluster-reader
