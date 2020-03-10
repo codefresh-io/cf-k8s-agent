@@ -62,7 +62,7 @@ spec:
           - name: CLUSTER_CA
             value: {{ .Values.clusterCA | quote }}
           - name: API_TOKEN
-            value: {{ required "A Codefresh API token is required. See https://codefresh.io/docs/docs/integrations/codefresh-api/#authentication-instructions" .Values.apiToken | quote }}
+            value: {{ .Values.apiToken | quote }}
           - name: CLUSTER_ID
             value: {{ .Values.clusterId | quote }}
           - name: API_URL

@@ -28,7 +28,7 @@ clusterUrl: ""
 clean: false
 
 # port container port
-port: 9020
+port: 80
 
 # servicePort port of the kubernetes service listen to
 servicePort: 80
