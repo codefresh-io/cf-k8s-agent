@@ -6,15 +6,24 @@ const logger = require('../logger');
  * Class for implementing of cluster resources
  */
 class K8SResource {
-    constructor(type, path, client) {
+    constructor(type, path, client, namespace) {
         this.type = type;
         this.entity = _.get(client, path);
         this.path = path;
         this.client = client;
+        this.namespace = namespace;
     }
 
     get() {
-        return _.get(this.client, this.path.replace('.watch', '')).get();
+        if (this.namespace) {
+            const resourcePath = this.path.replace('.watch', '.namespace(this.namespace)');
+            const resource = `this.client.${resourcePath}.get()`;
+            // eslint-disable-next-line no-eval
+            return eval(resource);
+        }
+
+        const resource = _.get(this.client, this.path.replace('.watch', ''));
+        return resource.get();
     }
 
     /**
