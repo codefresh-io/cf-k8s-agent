@@ -28,7 +28,7 @@ clusterUrl: ""
 clean: false
 
 # port container port
-port: 80
+port: 9020
 
 # servicePort port of the kubernetes service listen to
 servicePort: 80
@@ -52,3 +52,4 @@ secretInterval: 120000
 disableHelm: false
 
 helm3: false
+useNamespaceWideRole: false

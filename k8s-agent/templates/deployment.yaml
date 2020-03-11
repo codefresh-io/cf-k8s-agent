@@ -53,6 +53,10 @@ spec:
             value: {{ .Values.serviceInterval | quote }}
           - name: SECRET_INTERVAL
             value: {{ .Values.secretInterval | quote }}
+          {{- if .Values.useNamespaceWideRole }}
+          - name: ROLE_BINDING
+            value: "true"
+          {{- end }}           
           - name: PORT
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL
@@ -62,7 +66,7 @@ spec:
           - name: CLUSTER_CA
             value: {{ .Values.clusterCA | quote }}
           - name: API_TOKEN
-            value: {{ .Values.apiToken | quote }}
+            value: {{ required "A Codefresh API token is required. See https://codefresh.io/docs/docs/integrations/codefresh-api/#authentication-instructions" .Values.apiToken | quote }}
           - name: CLUSTER_ID
             value: {{ .Values.clusterId | quote }}
           - name: API_URL
