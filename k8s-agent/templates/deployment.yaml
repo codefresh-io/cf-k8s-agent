@@ -53,6 +53,10 @@ spec:
             value: {{ .Values.serviceInterval | quote }}
           - name: SECRET_INTERVAL
             value: {{ .Values.secretInterval | quote }}
+          {{- if .Values.useNamespaceWideRole }}
+          - name: ROLE_BINDING
+            value: "true"
+          {{- end }}           
           - name: PORT
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL
