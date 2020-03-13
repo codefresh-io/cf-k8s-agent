@@ -3,12 +3,12 @@ const rp = require('request-promise');
 const newRelicMonitor = require('cf-monitor');
 const Promise = require('bluebird');
 const zlib = require('zlib');
+const url = require('url');
 
 const logger = require('../logger');
 const config = require('../config');
 const statistics = require('../statistics');
 const storage = require('../storage');
-
 
 class CodefreshAPI {
 
@@ -111,6 +111,21 @@ class CodefreshAPI {
         return metadata;
     }
 
+    async getClusterConfig(clusterId) {
+        const uri = `/api/helm/cluster-config/${clusterId}`;
+        logger.debug(`Get cluster config from ${uri}.`);
+
+        const parsedUrl = url.parse(config.apiUrl);
+
+        const requestURL = `${parsedUrl.protocol}//${parsedUrl.host}`;
+
+        try {
+            return await this._request({ uri }, requestURL);
+        } catch (e) {
+            return {};
+        }
+    }
+
     async getPendingTasks() {
         const uri = '/tasks';
         logger.debug(`Get tasks from ${uri}.`);
@@ -146,12 +161,12 @@ class CodefreshAPI {
         };
     }
 
-    _request(options) {
+    _request(options, requestURL = config.apiUrl) {
         const identify = this._getIdentifyOptions();
         const headers = _.merge(identify.headers, options.headers);
         const qs = _.merge(identify.qs, options.qs);
 
-        const uri = `${config.apiUrl}${options.uri}`;
+        const uri = `${requestURL}${options.uri}`;
         const opts = _.merge({ json: true }, options, { headers, qs, uri });
         return rp(opts)
             .catch((e) => {

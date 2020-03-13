@@ -43,11 +43,23 @@ const config = {
         common: 60 * 1000
     },
     enablePull: true,
+
+    // disable helm releases at all
     disableHelm: process.env.DISABLE_HELM || false,
+
+    // helm 3 or 2 should come from config in future
     helm3: process.env.HELM3 || false,
+
+    // namespace where agent installed
     namespace: process.env.NAMESPACE || 'default',
+
+    // remove history from release
     optimizeRelease: process.env.OPTIMIZE_RELEASE || false,
+
+    // not use cluster role
     roleBinding: process.env.ROLE_BINDING || false,
+
+    useConfig: process.env.USE_CONFIG || true
 };
 
 config.resourcesNamespace = () => {

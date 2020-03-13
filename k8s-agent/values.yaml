@@ -52,4 +52,5 @@ secretInterval: 120000
 disableHelm: false
 
 helm3: false
+useConfig: false
 useNamespaceWideRole: false

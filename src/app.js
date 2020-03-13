@@ -20,6 +20,11 @@ let stateInterval;
 
 const { clientFactory } = kubernetes;
 
+async function _prepareConfig() {
+    const clusterConfig = await codefreshAPI.getClusterConfig(config.clusterId);
+    config.helm3 = clusterConfig.helmVersion === 'helm3';
+}
+
 async function init() {
     try {
         // Register binded accounts
@@ -34,6 +39,13 @@ async function init() {
         }
 
         const client = await clientFactory();
+
+        if (config.useConfig) {
+            await _prepareConfig();
+        }
+
+        logger.info(`Running step with helm3=${config.helm3} support`);
+
         const metadata = await codefreshAPI.getMetadata();
 
         // Get instances for each resource and init cache for them
