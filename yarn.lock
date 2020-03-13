@@ -192,10 +192,10 @@
     request "^2.82.0"
     requestretry "^3.1.0"
 
-"@codefresh-io/kube-integration@1.15.3":
-  version "1.15.3"
-  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.15.3.tgz#0de47c970b904b72dbe538d10c92a8b8ceb9178c"
-  integrity sha512-7FNmtSn3ILECQW2Efjfk6NbNoD3X8f242BpHZ5pEtyCQgwxVpgVB+T88HkatriTivJTbap/R9HctFGgxmv7U2w==
+"@codefresh-io/kube-integration@1.15.5":
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.15.5.tgz#95c2bab524215d4e805f05939c619536a08fdc97"
+  integrity sha512-EW2Er6Xel8h1wIVqbCmwZeKWmwW9pqG/xXRiO1XbKijhjgTGhwZNvH20ixWQYFB69cXpvKRUvxhXiy8kC28t7w==
   dependencies:
     "@codefresh-io/authenticated-entity" "2.3.0"
     "@codefresh-io/docker-reference" "^0.0.5"
@@ -212,6 +212,7 @@
     eventemitter2 "^4.1.2"
     express "^4.15.3"
     express-validator "^3.2.0"
+    flat "^5.0.0"
     github "^9.2.0"
     google-protobuf "^3.5.0"
     googleapis "^19.0.0"
@@ -3134,6 +3135,13 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
+flat@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/flat/-/flat-5.0.0.tgz#dab7d71d60413becb0ac2de9bf4304495e3af6af"
+  integrity sha512-6KSMM+cHHzXC/hpldXApL2S8Uz+QZv+tq5o/L0KQYleoG+GcwrnIJhTWC7tCOiKQp8D/fIvryINU1OZCCwevjA==
+  dependencies:
+    is-buffer "~2.0.4"
+
 flush-write-stream@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/flush-write-stream/-/flush-write-stream-1.1.1.tgz#8dd7d873a1babc207d94ead0c2e0e44276ebf2e8"
@@ -4054,6 +4062,11 @@ is-buffer@^1.0.2, is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-buffer@~2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
+  integrity sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
 
 is-builtin-module@^1.0.0:
   version "1.0.0"
