@@ -56,7 +56,7 @@ spec:
           {{- if .Values.useNamespaceWideRole }}
           - name: ROLE_BINDING
             value: "true"
-          {{- end }}           
+          {{- end }}
           - name: PORT
             value: {{ .Values.port | quote }}
           - name: CLUSTER_URL
@@ -77,6 +77,8 @@ spec:
             value: {{ .Values.disableHelm | quote }}
           - name: HELM3
             value: {{ .Values.helm3 | quote }}
+          - name: USE_CONFIG
+            value: {{ .Values.useConfig | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: NAMESPACE
