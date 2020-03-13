@@ -1,24 +1,18 @@
-const Promise = require('bluebird');
-
 const kubernetes = require('../kubernetes');
-const codefreshAPI = require('../api/codefresh.api');
+
 const logger = require('../logger');
 const config = require('../config');
 
+const rollbackHandler = require('./rollback.handler');
+const refreshHandler = require('./refresh.handler');
+const reloadConfigHandler = require('./reload-config.handler');
+
+const HANDLERS = [rollbackHandler, refreshHandler, reloadConfigHandler];
+
 class TaskListener {
 
-    async _handle() {
-        const tasks = await codefreshAPI.getPendingTasks();
-
-        await Promise.all(tasks.map((task) => {
-            const { namespace, release, revision } = task.context;
-            logger.info(`Start handle rollback task, ${release} ${revision} in namespace ${namespace}`);
-            return kubernetes.createPod(config.namespace, release, revision, namespace)
-                .catch((error) => {
-                    logger.error(`Cant create pod ${namespace}, ${release}, ${revision}, ${error.stack}`);
-                });
-        }));
-
+    _handle() {
+        HANDLERS.forEach(handler => handler.handle());
     }
 
     listen() {

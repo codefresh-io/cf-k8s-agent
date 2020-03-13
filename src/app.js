@@ -13,6 +13,8 @@ const kubernetes = require('./kubernetes');
 const metadataHolder = require('./filters/metadata.holder');
 const ListenerFactory = require('./kubernetes/listener');
 const TaskListener = require('./actions/task.listener');
+const resourceHolder = require('./kubernetes/listener/pull/resource.holder');
+const resourcesFactory = require('./k8s-resources');
 
 // intervals
 let statisticsInterval;
@@ -60,10 +62,14 @@ async function init() {
 
         TaskListener.listen();
 
+        const resources = await resourcesFactory(client, metadata);
+
+        resourceHolder.set(resources);
+
         // Create listener for all resources and subscribe for cluster events
-        const listeners = await ListenerFactory.create(client, metadata);
+        const listeners = await ListenerFactory.create();
         await Promise.all(listeners.map((listener) => {
-            return listener.subscribe();
+            return listener.start();
         }));
 
         return {

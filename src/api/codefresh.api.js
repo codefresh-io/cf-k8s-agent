@@ -101,14 +101,7 @@ class CodefreshAPI {
     async getMetadata() {
         const uri = '/metadata';
         logger.debug(`Get metadata from ${uri}.`);
-        const metadata = await this._request({ uri });
-        // we not need configmap for helm 3 and secrets for helm 2
-        if (config.helm3) {
-            delete metadata.resources.configmap;
-        } else {
-            delete metadata.resources.secret;
-        }
-        return metadata;
+        return this._request({ uri });
     }
 
     async getClusterConfig(clusterId) {
@@ -126,10 +119,10 @@ class CodefreshAPI {
         }
     }
 
-    async getPendingTasks() {
+    async getPendingTasks(type = 'rollback') {
         const uri = '/tasks';
         logger.debug(`Get tasks from ${uri}.`);
-        return this._request({ uri, qs: { type: 'rollback' } });
+        return this._request({ uri, qs: { type } });
     }
 
     async sendStatistics() {
