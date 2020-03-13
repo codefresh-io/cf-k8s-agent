@@ -59,11 +59,15 @@ const config = {
     // not use cluster role
     roleBinding: process.env.ROLE_BINDING || false,
 
-    useConfig: process.env.USE_CONFIG || true
+    useConfig: process.env.USE_CONFIG || false
 };
 
 config.resourcesNamespace = () => {
     return config.roleBinding ? config.namespace : null;
+};
+
+config.helmResourceKey = () => {
+    return config.helm3 ? 'secret' : 'configmap';
 };
 
 module.exports = config;
