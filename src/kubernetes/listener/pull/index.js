@@ -14,8 +14,6 @@ let intervalObj;
  * Class for monitoring cluster resources
  */
 class EventsPuller {
-    constructor() {
-    }
 
     /**
      * Gets all supported resources, creates streams for each of them,
