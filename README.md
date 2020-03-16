@@ -40,6 +40,8 @@ For using when you want to use integration your k8s-monitor with Codefresh
    - Install **k8s-agent** chart on your cluster from this repo with helm3 support
 `helm upgrade k8s-agent ./k8s-agent --install --force --reset-values --set apiToken={token} --set clusterId={clusterId} --set helm3=true`
 
+In case if you want use configuration from UI , please use --set useConfig=true flag
+
 Where: 
 - `{token}` - API token from Codefresh (you can retrieve this from [Codefresh user settings](https://g.codefresh.io/user/settings))
 - `{clusterId}` - cluster name from k8s integrations
