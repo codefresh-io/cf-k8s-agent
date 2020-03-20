@@ -54,3 +54,4 @@ disableHelm: false
 helm3: false
 useConfig: false
 useNamespaceWideRole: false
+existingServiceAccount: ""
