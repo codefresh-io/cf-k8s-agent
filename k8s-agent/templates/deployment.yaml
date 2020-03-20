@@ -31,7 +31,9 @@ spec:
         heritage: {{ .Release.Service  | quote }}
         version: {{ .Values.imageTag | quote }}
     spec:
-      {{- if .Values.rbacEnabled}}
+      {{- if .Values.existingServiceAccount }}
+      serviceAccountName: {{ .Values.existingServiceAccount }}
+      {{- else if .Values.rbacEnabled }}
       serviceAccountName: {{ template "fullname" . }}
       {{- end }}
       containers:

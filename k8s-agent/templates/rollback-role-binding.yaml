@@ -1,4 +1,4 @@
-{{- if .Values.rbacEnabled }}
+{{- if and .Values.rbacEnabled (not .Values.existingServiceAccount)}}
 {{- if .Values.useNamespaceWideRole }}
 kind: RoleBinding
 {{- else }}
