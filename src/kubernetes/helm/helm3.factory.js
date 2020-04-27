@@ -1,16 +1,14 @@
 const _ = require('lodash');
 const SecretEntity = require('@codefresh-io/kube-integration/lib/kube-native/secret/secret');
-const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
+const KubeManagerHolder = require('./kube-manager.holder');
 
 const { resolveConfig } = require('../client');
 const logger = require('../../logger');
 
-const kubeManager = new KubeManager(resolveConfig());
-
 
 class Helm3Factory {
-
     async create(rawSecret) {
+        const kubeManager = await KubeManagerHolder.getInstance(resolveConfig());
         let releaseController;
         const namespace = _.get(rawSecret, 'metadata.namespace');
         const secret = new SecretEntity(rawSecret);

@@ -30,6 +30,7 @@ async function _prepareConfig() {
 async function init() {
     try {
         // Register binded accounts
+        await kubernetes.init();
         let accounts;
         try {
             accounts = process.env.ACCOUNTS ? JSON.parse(process.env.ACCOUNTS) : null;

@@ -1,17 +1,16 @@
 const _ = require('lodash');
 const ConfigMapEntity = require('@codefresh-io/kube-integration/lib/kube-native/configMap/configMap');
-const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
+const KubeManagerHolder = require('./kube-manager.holder');
+
 
 const { resolveConfig } = require('../client');
 
-const kubeManager = new KubeManager(resolveConfig());
-
-const releaseController = kubeManager.getReleaseController('kube-system');
-
 
 class Helm2Factory {
-
     async create(rawConfigMap) {
+        const kubeManager = await KubeManagerHolder.getInstance(resolveConfig());
+        const releaseController = kubeManager.getReleaseController('kube-system');
+
         const configMap = new ConfigMapEntity(rawConfigMap);
         let release;
         const releaseName = _.get(configMap.getLabels(), 'NAME');
