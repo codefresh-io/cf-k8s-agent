@@ -1,6 +1,4 @@
 # K8S Agent
-#### Pay attention! 
-Install this service only if you have already installed [k8s-monitor](https://github.com/codefresh-io/cf-k8s-monitor) to cluster, or you want to use Codefresh API  for serving cluster state.
 
 #### About
 Service for monitoring cluster resources. Agent can be set as inside cluster as outside of it.
@@ -71,11 +69,3 @@ For using when all services located on your cluster
 ## Uninstalling agent via helm 
 For uninstalling agent run command  
 `helm del k8s-agent --purge`
-
-
-## Helm environment variables
-You can use this variables for cli and helm install. Use as **--set key=value** in helm install command
-* `clusterId` - (id of your cluster, set name cluster, as your name cluster on Codefresh, if you use it)
-* `apiUrl` - (default: `https://g.codefresh.io/api/k8s-monitor/events`) agent use this endpoint for all work with k8s-monitor 
-* `port` - (default: `80`)
-* `servicePort` - (default: `80`)
