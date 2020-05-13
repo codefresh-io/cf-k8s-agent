@@ -85,10 +85,10 @@ spec:
             value: "{{ .Values.clean }}"
           - name: NAMESPACE
             value: "{{ .Release.Namespace }}"
-          - name: NEWRELIC_LICENSE_KEY
-            value: "{{ .Values.newRelicLicenseKey }}"
           - name: ACCOUNTS
             value: '{{ .Values.ACCOUNTS }}'
+          - name: NEWRELIC_LICENSE_KEY
+            value: "{{ .Values.newRelicLicenseKey }}"
           - name: NODE_OPTIONS
             value: "--max_old_space_size={{ .Values.heapSize }}"
           - name: FORCE_DISABLE_HELM_RELEASES
