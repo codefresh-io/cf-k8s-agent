@@ -27,8 +27,6 @@ async function _prepareConfig() {
     config.helm3 = clusterConfig.helmVersion === 'helm3';
 }
 
-
-
 async function init() {
     try {
         // Register binded accounts
