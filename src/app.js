@@ -9,7 +9,6 @@ const { version } = require('../package.json');
 const codefreshAPI = require('./api/codefresh.api');
 const config = require('./config');
 const kubernetes = require('./kubernetes');
-const _ = require('lodash');
 
 const metadataHolder = require('./filters/metadata.holder');
 const ListenerFactory = require('./kubernetes/listener');
@@ -28,16 +27,6 @@ async function _prepareConfig() {
     config.helm3 = clusterConfig.helmVersion === 'helm3';
 }
 
-process.on('uncaughtException', (err) => {
-    newRelicMonitor.noticeError(err);
-    logger.error(`Uncaught Exception: ${_.get(err, 'stack', err ? err.toString() : 'uncaughtException called without error')}`);
-});
-
-process.on('unhandledRejection', (err) => {
-    newRelicMonitor.noticeError(err);
-    // eslint-disable-next-line max-len
-    logger.error(`Unhandled Promise Rejection: ${_.get(err, 'stack', err ? err.toString() : 'unhandledRejection called without error')}`);
-});
 
 
 async function init() {
