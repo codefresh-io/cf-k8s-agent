@@ -7,6 +7,10 @@ const logger = require('../logger');
 
 const kubeManager = new KubeManager(resolveConfig());
 
+async function init() {
+    await kubeManager.init();
+}
+
 async function prepareService(service) {
     const namespace = _.get(service, 'metadata.namespace');
     const name = _.get(service, 'metadata.name');
@@ -61,5 +65,6 @@ module.exports = {
     kubeManager,
     prepareService,
     createPod,
-    clearCompletedPods
+    clearCompletedPods,
+    init,
 };
