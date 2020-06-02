@@ -70,8 +70,12 @@ class EventsPuller {
 
             logger.info(`Setup update interval for resource ${resource.type} in ${interval} ms`);
 
+            that.handle(tp, resource)
+                .catch(logger.error);
+
             intervalObj = setInterval(() => {
-                that.handle(tp, resource);
+                that.handle(tp, resource)
+                    .catch(logger.error);
             }, interval);
 
             return null;
