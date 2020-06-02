@@ -1,17 +1,19 @@
 const KubeManager = require('@codefresh-io/kube-integration/lib/kube.manager');
 
 class KubeManagerHolder {
-    static #kubeManager = null;
+    constructor() {
+        this.kubeManager = null;
+    }
 
-    static async getInstance(config) {
-        if (!this.#kubeManager) {
-            this.#kubeManager = new KubeManager(config);
-            await this.#kubeManager.init();
+    async getInstance(config) {
+        if (!this.kubeManager) {
+            this.kubeManager = new KubeManager(config);
+            await this.kubeManager.init();
         }
 
-        return this.#kubeManager;
+        return this.kubeManager;
     }
 }
 
 
-module.exports = KubeManagerHolder;
+module.exports = new KubeManagerHolder();
