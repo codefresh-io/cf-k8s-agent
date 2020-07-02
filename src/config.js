@@ -34,12 +34,12 @@ const config = {
     logLevel: process.env.LOG_LEVEL || 'info',
     forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false,
     intervals: {
-        namespace: process.env.NAMESPACE_INTERVAL || 2 * 60 * 1000,
-        pod: process.env.POD_INTERVAL || 2 * 60 * 1000,
-        deployment: process.env.DEPLOYMENT_INTERVAL || 2 * 60 * 1000,
-        configmap: process.env.RELEASE_INTERVAL || 2 * 60 * 1000,
-        service: process.env.SERVICE_INTERVAL ||  2 * 60 * 1000,
-        secret: process.env.SECRET_INTERVAL ||  2 * 60 * 1000,
+        namespace: process.env.NAMESPACE_INTERVAL || 4 * 60 * 1000,
+        pod: process.env.POD_INTERVAL || 4 * 60 * 1000,
+        deployment: process.env.DEPLOYMENT_INTERVAL || 4 * 60 * 1000,
+        configmap: process.env.RELEASE_INTERVAL || 4 * 60 * 1000,
+        service: process.env.SERVICE_INTERVAL ||  4 * 60 * 1000,
+        secret: process.env.SECRET_INTERVAL ||  4 * 60 * 1000,
         common: 60 * 1000
     },
     enablePull: true,
