@@ -49,6 +49,8 @@ releaseInterval: 600000
 serviceInterval: 120000
 secretInterval: 120000
 
+logLevel: info
+
 disableHelm: false
 
 helm3: false

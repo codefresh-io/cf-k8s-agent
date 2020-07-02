@@ -31,7 +31,7 @@ const config = {
     env: process.env.NODE_ENV || 'kubernetes',
 
     port: 9020,
-    logLevel: 'info',
+    logLevel: process.env.LOG_LEVEL || 'info',
     forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false,
     intervals: {
         namespace: process.env.NAMESPACE_INTERVAL || 60 * 1000,
