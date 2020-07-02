@@ -13,6 +13,8 @@ const kubernetes = require('./kubernetes');
 const metadataHolder = require('./filters/metadata.holder');
 const ListenerFactory = require('./kubernetes/listener');
 const TaskListener = require('./actions/task.listener');
+const resourceHolder = require('./kubernetes/listener/pull/resource.holder');
+const resourcesFactory = require('./k8s-resources');
 
 // intervals
 let statisticsInterval;
@@ -20,9 +22,15 @@ let stateInterval;
 
 const { clientFactory } = kubernetes;
 
+async function _prepareConfig() {
+    const clusterConfig = await codefreshAPI.getClusterConfig(config.clusterId);
+    config.helm3 = clusterConfig.helmVersion === 'helm3';
+}
+
 async function init() {
     try {
         // Register binded accounts
+        await kubernetes.init();
         let accounts;
         try {
             accounts = process.env.ACCOUNTS ? JSON.parse(process.env.ACCOUNTS) : null;
@@ -34,6 +42,13 @@ async function init() {
         }
 
         const client = await clientFactory();
+
+        if (config.useConfig) {
+            await _prepareConfig();
+        }
+
+        logger.info(`Running step with helm3=${config.helm3} support`);
+
         const metadata = await codefreshAPI.getMetadata();
 
         // Get instances for each resource and init cache for them
@@ -48,10 +63,14 @@ async function init() {
 
         TaskListener.listen();
 
+        const resources = await resourcesFactory(client, metadata);
+
+        resourceHolder.set(resources);
+
         // Create listener for all resources and subscribe for cluster events
-        const listeners = await ListenerFactory.create(client, metadata);
+        const listeners = await ListenerFactory.create();
         await Promise.all(listeners.map((listener) => {
-            return listener.subscribe();
+            return listener.start();
         }));
 
         return {

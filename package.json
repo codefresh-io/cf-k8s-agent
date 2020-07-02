@@ -1,6 +1,6 @@
 {
   "name": "cf-k8s-agent",
-  "version": "1.2.6",
+  "version": "1.2.8",
   "private": true,
   "scripts": {
     "start": "node ./src/index.js",
@@ -8,7 +8,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@codefresh-io/kube-integration": "1.15.5",
+    "@codefresh-io/kube-integration": "1.17.3",
     "bluebird": "^3.5.4",
     "body-parser": "^1.18.3",
     "cf-monitor": "^0.0.2",
@@ -25,7 +25,8 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "winston": "^3.1.0",
-    "semaphore": "^1.1.0"
+    "semaphore": "^1.1.0",
+    "url": "^0.11.0"
   },
   "main": "bin/www",
   "devDependencies": {

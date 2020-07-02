@@ -31,7 +31,9 @@ spec:
         heritage: {{ .Release.Service  | quote }}
         version: {{ .Values.imageTag | quote }}
     spec:
-      {{- if .Values.rbacEnabled}}
+      {{- if .Values.existingServiceAccount }}
+      serviceAccountName: {{ .Values.existingServiceAccount }}
+      {{- else if .Values.rbacEnabled }}
       serviceAccountName: {{ template "fullname" . }}
       {{- end }}
       containers:
@@ -79,6 +81,8 @@ spec:
             value: {{ .Values.disableHelm | quote }}
           - name: HELM3
             value: {{ .Values.helm3 | quote }}
+          - name: USE_CONFIG
+            value: {{ .Values.useConfig | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
           - name: NAMESPACE

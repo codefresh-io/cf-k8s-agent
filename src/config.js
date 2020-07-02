@@ -34,24 +34,40 @@ const config = {
     logLevel: process.env.LOG_LEVEL || 'info',
     forceDisableHelmReleases: process.env.FORCE_DISABLE_HELM_RELEASES || false,
     intervals: {
-        namespace: process.env.NAMESPACE_INTERVAL || 60 * 1000,
-        pod: process.env.POD_INTERVAL || 5 * 60 * 1000,
-        deployment: process.env.DEPLOYMENT_INTERVAL || 60 * 1000,
-        configmap: process.env.RELEASE_INTERVAL || 5 * 60 * 1000,
-        service: process.env.SERVICE_INTERVAL ||  60 * 1000,
-        secret: process.env.SECRET_INTERVAL ||  5 * 60 * 1000,
+        namespace: process.env.NAMESPACE_INTERVAL || 2 * 60 * 1000,
+        pod: process.env.POD_INTERVAL || 2 * 60 * 1000,
+        deployment: process.env.DEPLOYMENT_INTERVAL || 2 * 60 * 1000,
+        configmap: process.env.RELEASE_INTERVAL || 2 * 60 * 1000,
+        service: process.env.SERVICE_INTERVAL ||  2 * 60 * 1000,
+        secret: process.env.SECRET_INTERVAL ||  2 * 60 * 1000,
         common: 60 * 1000
     },
     enablePull: true,
+
+    // disable helm releases at all
     disableHelm: process.env.DISABLE_HELM || false,
+
+    // helm 3 or 2 should come from config in future
     helm3: process.env.HELM3 || false,
+
+    // namespace where agent installed
     namespace: process.env.NAMESPACE || 'default',
+
+    // remove history from release
     optimizeRelease: process.env.OPTIMIZE_RELEASE || false,
+
+    // not use cluster role
     roleBinding: process.env.ROLE_BINDING || false,
+
+    useConfig: process.env.USE_CONFIG || false
 };
 
 config.resourcesNamespace = () => {
     return config.roleBinding ? config.namespace : null;
+};
+
+config.helmResourceKey = () => {
+    return config.helm3 ? 'secret' : 'configmap';
 };
 
 module.exports = config;
