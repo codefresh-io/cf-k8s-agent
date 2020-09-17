@@ -23,7 +23,7 @@ class TaskListener {
         setInterval(() => {
             that._handle();
             kubernetes.clearCompletedPods(config.namespace);
-        }, 10000);
+        }, 40 * 1000);
     }
 
 }
