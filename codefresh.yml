@@ -74,7 +74,7 @@ steps:
       title: 'Pushing rollback image to docker registries'
       stage: push
       type: push
-      image_name: ${{IMAGE_NAME}}-rollback
+      image_name: ${{IMAGE_NAME_ROLLBACK}}
       candidate: ${{build_rollback_action}}
       tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}
@@ -123,7 +123,7 @@ steps:
       only:
        - master
     arguments:
-      image_name: ${{IMAGE_NAME}}
+      image_name: ${{IMAGE_NAME_ROLLBACK}}
       tags:
         - ${{CF_BRANCH_TAG_NORMALIZED}}
         - ${{CF_REVISION}}
