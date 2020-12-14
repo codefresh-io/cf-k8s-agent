@@ -14,6 +14,7 @@ steps:
     type: git-clone
     repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
     revision: '${{CF_REVISION}}'
+    git: ${{GIT_CONTEXT}}
 
   install_dependencies:
     title: 'Installing testing dependencies'
@@ -36,19 +37,37 @@ steps:
     type: build
     dockerfile: Dockerfile
     image_name: ${{IMAGE_NAME}}
+    disable_push: true
     metadata:
       set:
       - CF_QUALITY: true
-      
+
   build_rollback_action: 
     title: "Building rollback action image"
     stage: build
     type: build
     dockerfile: actions/rollback/Dockerfile
     image_name: ${{IMAGE_NAME}}-rollback
+    disable_push: true
     metadata:
       set:
       - CF_QUALITY: true
+
+  run_arm_build:
+    type: codefresh-run
+    stage: build
+    arguments:
+      PIPELINE_ID: ${{ARM_PIPELINE_ID}}
+      DETACH: false
+      VARIABLE:
+        - CF_REPO_OWNER=${{CF_REPO_OWNER}}
+        - CF_REPO_NAME=${{CF_REPO_NAME}}
+        - CF_REVISION=${{CF_REVISION}}
+        - CF_BRANCH=${{CF_BRANCH}}
+        - CF_BRANCH_TAG_NORMALIZED=${{CF_BRANCH_TAG_NORMALIZED}}
+        - GIT_CONTEXT=${{GIT_CONTEXT}}
+        - IMAGE_NAME=${{IMAGE_NAME}}
+        - ARM_TAG_POSTFIX="${{ARM_TAG_POSTFIX}}"
 
   push_rollback_action:
       title: 'Pushing rollback image to docker registries'
@@ -94,3 +113,58 @@ steps:
         registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
       push_gcr_enterprise:
         registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
+
+  create_manifest_list_rollback_image:
+    stage: push
+    type: "codefresh-inc/multiarch-manifester"
+    when:
+     branch:
+      only:
+       - master
+    arguments:
+      image_name: ${{IMAGE_NAME}}
+      tags:
+        - ${{CF_BRANCH_TAG_NORMALIZED}}
+        - ${{CF_REVISION}}
+        - latest
+      arch_tag_postfixes: 
+        arm64: "${{ARM_TAG_POSTFIX}}"
+      registries:
+        - name: 'quay.io'
+          username: '${{QUAY_USERNAME}}'
+          password: '${{QUAY_PASSWORD}}'
+        - name: 'docker.io'
+          username: '${{DOCKERHUB_USERNAME}}'
+          password: '${{DOCKERHUB_PASSWORD}}'
+        - name: 'gcr.io'
+          path_prefix: codefresh-enterprise
+          username: '${{GCR_USERNAME}}'
+          password: '${{GCR_PASSWORD}}'
+
+  create_manifest_list:
+    stage: push
+    type: "codefresh-inc/multiarch-manifester"
+    when:
+     branch:
+      only:
+       - master
+    arguments:
+      image_name: ${{IMAGE_NAME}}
+      tags:
+        - ${{CF_BRANCH_TAG_NORMALIZED}}
+        - ${{CF_REVISION}}
+        - latest
+        - stable
+      arch_tag_postfixes: 
+        arm64: "${{ARM_TAG_POSTFIX}}"
+      registries:
+        - name: 'quay.io'
+          username: '${{QUAY_USERNAME}}'
+          password: '${{QUAY_PASSWORD}}'
+        - name: 'docker.io'
+          username: '${{DOCKERHUB_USERNAME}}'
+          password: '${{DOCKERHUB_PASSWORD}}'
+        - name: 'gcr.io'
+          path_prefix: codefresh-enterprise
+          username: '${{GCR_USERNAME}}'
+          password: '${{GCR_PASSWORD}}'
