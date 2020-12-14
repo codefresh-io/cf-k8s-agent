@@ -8,9 +8,10 @@ ENV XDG_CONFIG_HOME=/root/.helm
 ARG HELM_VERSION=3.0.3
 
 RUN echo "HELM_VERSION is set to: $HELM_VERSION" && mkdir /temp
-RUN curl -L "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" -o helm.tar.gz \
+RUN export ARCH=$(if [ "$(uname -m)" = "aarch64" ]; then echo "arm64"; else echo "amd64"; fi) && \ 
+    curl -L "https://get.helm.sh/helm-v$HELM_VERSION-linux-${ARCH}.tar.gz" -o helm.tar.gz \
     && tar -zxvf helm.tar.gz \
-    && mv ./linux-amd64/helm /usr/local/bin/helm \
+    && mv ./linux-${ARCH}/helm /usr/local/bin/helm \
     && helm plugin install https://github.com/hypnoglow/helm-s3.git \
     && helm plugin install https://github.com/nouney/helm-gcs.git \
     && helm plugin install https://github.com/chartmuseum/helm-push.git
