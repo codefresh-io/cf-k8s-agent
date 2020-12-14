@@ -23,7 +23,7 @@ steps:
     title: "Building rollback action image"
     type: build
     dockerfile: actions/rollback/Dockerfile
-    image_name: ${{IMAGE_NAME}}-rollback
+    image_name: ${{IMAGE_NAME_ROLLBACK}}
     tag: ${{CF_BRANCH_TAG_NORMALIZED}}${{ARM_TAG_POSTFIX}}
     disable_push: true
     metadata:
@@ -33,7 +33,7 @@ steps:
   push_rollback_action:
       title: 'Pushing rollback image to docker registries'
       type: push
-      image_name: ${{IMAGE_NAME}}-rollback
+      image_name: ${{IMAGE_NAME_ROLLBACK}}
       candidate: ${{build_rollback_action}}
       tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}${{ARM_TAG_POSTFIX}}

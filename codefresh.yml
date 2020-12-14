@@ -67,6 +67,7 @@ steps:
         - CF_BRANCH_TAG_NORMALIZED=${{CF_BRANCH_TAG_NORMALIZED}}
         - GIT_CONTEXT=${{GIT_CONTEXT}}
         - IMAGE_NAME=${{IMAGE_NAME}}
+        - IMAGE_NAME_ROLLBACK=${{IMAGE_NAME_ROLLBACK}}
         - ARM_TAG_POSTFIX="${{ARM_TAG_POSTFIX}}"
 
   push_rollback_action:
