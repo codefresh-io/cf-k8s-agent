@@ -50,12 +50,11 @@ steps:
       set:
       - CF_QUALITY: true
 
-  push_rollback_action_to_dockerhub:
-      title: 'Pushing rollback image to dockerhub'
+  push_rollback_action:
+      title: 'Pushing rollback image to docker registries'
       stage: push
       type: push
       image_name: codefresh/cf-k8s-agent-rollback
-      registry: dockerhub
       candidate: ${{build_rollback_action}}
       tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}
@@ -65,13 +64,19 @@ steps:
        branch:
         only:
          - master
+      scale:
+        push_quay_rollback_image:
+          registry: "${{REGISTRY_INTEGRATION_QUAY}}"
+        push_dockerhub_rollback_image:
+          registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
+        push_gcr_enterprise_rollback_image:
+          registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
 
-  push_to_dockerhub:
-    title: 'Pushing image to dockerhub'
+  push:
+    title: 'Pushing image to docker registries'
     stage: push
     type: push
     image_name: ${{IMAGE_NAME}}
-    registry: dockerhub
     candidate: ${{build_step}}
     tags:
     - ${{CF_BRANCH_TAG_NORMALIZED}}
@@ -82,3 +87,10 @@ steps:
      branch:
       only:
        - master
+    scale:
+      push_quay:
+        registry: "${{REGISTRY_INTEGRATION_QUAY}}"
+      push_dockerhub:
+        registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
+      push_gcr_enterprise:
+        registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
