@@ -35,7 +35,7 @@ steps:
     stage: build
     type: build
     dockerfile: Dockerfile
-    image_name: codefresh/cf-k8s-agent
+    image_name: ${{IMAGE_NAME}}
     metadata:
       set:
       - CF_QUALITY: true
@@ -45,7 +45,7 @@ steps:
     stage: build
     type: build
     dockerfile: actions/rollback/Dockerfile
-    image_name: codefresh/cf-k8s-agent-rollback
+    image_name: ${{IMAGE_NAME}}-rollback
     metadata:
       set:
       - CF_QUALITY: true
@@ -54,7 +54,7 @@ steps:
       title: 'Pushing rollback image to docker registries'
       stage: push
       type: push
-      image_name: codefresh/cf-k8s-agent-rollback
+      image_name: ${{IMAGE_NAME}}-rollback
       candidate: ${{build_rollback_action}}
       tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}
