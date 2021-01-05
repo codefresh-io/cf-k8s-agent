@@ -2,8 +2,8 @@ version: '1.0'
 
 stages:
 - preparation
-- test
 - build
+- security scan
 - push
 - run
 
@@ -29,7 +29,6 @@ steps:
     image: node:12.13.0
     commands:
     - yarn lint
-
 
   build_step:
     title: "Building production image"
@@ -70,6 +69,73 @@ steps:
         - IMAGE_NAME_ROLLBACK=${{IMAGE_NAME_ROLLBACK}}
         - ARM_TAG_POSTFIX="${{ARM_TAG_POSTFIX}}"
 
+  security_scan:
+    stage: security scan
+    type: parallel
+    when:
+      steps:
+        - name: build_step
+          on:
+          - success
+    success_criteria:
+      condition:
+        any:
+         secScanStep: security_scan_1.result == 'success'
+         secScanFail: '"${{IGNORE_SEC_SCAN}}" == "true"'
+    steps:
+      security_scan_1:
+        stage: security scan
+        image: aquasec/trivy:latest
+        title: "Scanning image for security vulnerablities"
+        commands:
+          - rm -f ${{SEC_SCAN_REPORT_FILE}}
+          - |-
+            set -o pipefail
+            trivy \
+              --quiet \
+              ${{IMAGE_NAME}}:${{CF_BRANCH_TAG_NORMALIZED_LOWER_CASE}} > ${{SEC_SCAN_REPORT_FILE}}
+            trivy \
+              --quiet \
+              --skip-update \
+              --ignorefile /tmp/.trivy/trivyignore \
+              --ignore-unfixed \
+              --exit-code 1 \
+              --severity ${{SEC_SCAN_SEVERITY_THRESHOLD}} \
+              ${{IMAGE_NAME}}:${{CF_BRANCH_TAG_NORMALIZED_LOWER_CASE}}
+                      on_success:
+        metadata:
+          set:
+            - '${{build_step.imageId}}':
+                - SECURITY_CHECK_PASS: true
+
+  upload_sec_scan_report:
+    stage: security scan
+    image: mesosphere/aws-cli
+    fail_fast: false
+    when:
+      steps:
+        - name: security_scan
+          on:
+          - finished
+      branch:
+        only: [ master ]
+    environment:
+      - AWS_ACCESS_KEY_ID=${{SEC_SCAN_AWS_KEY_ID}}
+      - AWS_SECRET_ACCESS_KEY=${{SEC_SCAN_AWS_SECRET_KEY}}
+    commands:
+      - |-
+        aws s3 cp \
+        ${{SEC_SCAN_REPORT_FILE}} \
+        s3://${{SEC_SCAN_S3_BUCKET}}/codefresh/${{CF_REPO_NAME}}/${{CF_REPO_NAME}}:${{PACKAGE_VERSION}}.txt
+    on_success:
+      annotations:
+        set:
+          - entity_id: '${{CF_BUILD_ID}}'
+            entity_type: build
+            annotations:
+              - S3_report_reference: "s3://${{SEC_SCAN_S3_BUCKET}}/codefresh/${{CF_REPO_NAME}}/${{CF_REPO_NAME}}:${{PACKAGE_VERSION}}.txt"
+
+  
   push_rollback_action:
       title: 'Pushing rollback image to docker registries'
       stage: push
