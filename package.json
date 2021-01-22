@@ -18,7 +18,7 @@
     "jest": "^24.3.1",
     "json-stream": "^1.0.0",
     "kubernetes-client": "9.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.20",
     "morgan": "~1.9.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
