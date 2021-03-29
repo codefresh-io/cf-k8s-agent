@@ -19,14 +19,14 @@ steps:
   install_dependencies:
     title: 'Installing testing dependencies'
     stage: preparation
-    image: node:12.13.0
+    image: node:12.21.0
     commands:
     - yarn install --frozen-lockfile
 
   lint:
     title: 'lint code'
     stage: preparation
-    image: node:12.13.0
+    image: node:12.21.0
     commands:
     - yarn lint
 
@@ -41,7 +41,7 @@ steps:
       set:
       - CF_QUALITY: true
 
-  build_rollback_action: 
+  build_rollback_action:
     title: "Building rollback action image"
     stage: build
     type: build
@@ -102,7 +102,6 @@ steps:
               --exit-code 1 \
               --severity ${{SEC_SCAN_SEVERITY_THRESHOLD}} \
               ${{IMAGE_NAME}}:${{CF_BRANCH_TAG_NORMALIZED_LOWER_CASE}}
-                      on_success:
         metadata:
           set:
             - '${{build_step.imageId}}':
@@ -135,7 +134,7 @@ steps:
             annotations:
               - S3_report_reference: "s3://${{SEC_SCAN_S3_BUCKET}}/codefresh/${{CF_REPO_NAME}}/${{CF_REPO_NAME}}:${{PACKAGE_VERSION}}.txt"
 
-  
+
   push_rollback_action:
       title: 'Pushing rollback image to docker registries'
       stage: push
@@ -194,7 +193,7 @@ steps:
         - ${{CF_BRANCH_TAG_NORMALIZED}}
         - ${{CF_REVISION}}
         - latest
-      arch_tag_postfixes: 
+      arch_tag_postfixes:
         arm64: "${{ARM_TAG_POSTFIX}}"
       registries:
         - name: 'quay.io'
@@ -222,7 +221,7 @@ steps:
         - ${{CF_REVISION}}
         - latest
         - stable
-      arch_tag_postfixes: 
+      arch_tag_postfixes:
         arm64: "${{ARM_TAG_POSTFIX}}"
       registries:
         - name: 'quay.io'
