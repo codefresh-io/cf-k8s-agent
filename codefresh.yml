@@ -102,7 +102,6 @@ steps:
               --exit-code 1 \
               --severity ${{SEC_SCAN_SEVERITY_THRESHOLD}} \
               ${{IMAGE_NAME}}:${{CF_BRANCH_TAG_NORMALIZED_LOWER_CASE}}
-                      on_success:
         metadata:
           set:
             - '${{build_step.imageId}}':
