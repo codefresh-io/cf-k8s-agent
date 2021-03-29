@@ -7,8 +7,11 @@
     "test": "jest --coverage --detectOpenHandles --silent",
     "lint": "eslint ."
   },
+  "resolutions": {
+    "lodash": "4.17.21"
+  },
   "dependencies": {
-    "@codefresh-io/kube-integration": "1.23.2",
+    "@codefresh-io/kube-integration": "1.23.3",
     "bluebird": "^3.5.4",
     "cf-monitor": "git+https://github.com/codefresh-io/cf-monitor.git#dd953bd18b01b3e8c2bf40677151de894dd15b8e",
     "cookie-parser": "~1.4.3",
