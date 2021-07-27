@@ -8,7 +8,9 @@
     "lint": "eslint ."
   },
   "resolutions": {
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "underscore": "1.12.1",
+    "normalize-url": "4.5.1"
   },
   "dependencies": {
     "@codefresh-io/kube-integration": "1.23.6",
@@ -21,7 +23,7 @@
     "jest": "^27.0.6",
     "json-stream": "^1.0.0",
     "kubernetes-client": "9.0.0",
-    "lodash": "4.17.19",
+    "lodash": "4.17.21",
     "morgan": "~1.9.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
