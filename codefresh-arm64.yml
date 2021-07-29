@@ -19,38 +19,6 @@ steps:
       set:
       - CF_QUALITY: true
 
-  build_rollback_action: 
-    title: "Building rollback action image"
-    type: build
-    dockerfile: actions/rollback/Dockerfile
-    image_name: ${{IMAGE_NAME_ROLLBACK}}
-    tag: ${{CF_BRANCH_TAG_NORMALIZED}}${{ARM_TAG_POSTFIX}}
-    disable_push: true
-    metadata:
-      set:
-      - CF_QUALITY: true
-
-  push_rollback_action:
-      title: 'Pushing rollback image to docker registries'
-      type: push
-      image_name: ${{IMAGE_NAME_ROLLBACK}}
-      candidate: ${{build_rollback_action}}
-      tags:
-      - ${{CF_BRANCH_TAG_NORMALIZED}}${{ARM_TAG_POSTFIX}}
-      - ${{CF_REVISION}}${{ARM_TAG_POSTFIX}}
-      - latest${{ARM_TAG_POSTFIX}}
-      when:
-       branch:
-        only:
-         - master
-      scale:
-        push_quay_rollback_image:
-          registry: "${{REGISTRY_INTEGRATION_QUAY}}"
-        push_dockerhub_rollback_image:
-          registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
-        push_gcr_enterprise_rollback_image:
-          registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
-
   push:
     title: 'Pushing image to docker registries'
     type: push
