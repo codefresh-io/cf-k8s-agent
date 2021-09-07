@@ -1,5 +1,3 @@
-const kubernetes = require('../kubernetes');
-
 const logger = require('../logger');
 const config = require('../config');
 
