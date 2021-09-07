@@ -25,46 +25,9 @@ async function prepareService(service) {
 
 }
 
-async function createPod(namespace = 'default', release, revision, releaseNamespace = 'default') {
-    const pod = {
-        apiVersion: 'v1',
-        kind: 'Pod',
-        metadata: {
-            name: `rollback-${release}-${revision}`,
-            labels: {
-                provisionedBy: 'codefresh-agent'
-            }
-        },
-        spec: {
-            serviceAccountName: 'k8s-agent-rollback',
-            containers: [
-                {
-                    name: 'rollback',
-                    image: 'codefresh/cf-k8s-agent-rollback',
-                    command: ['helm', 'rollback'],
-                    args: [release, revision, '-n', releaseNamespace]
-                }
-            ],
-            restartPolicy: 'Never'
-        }
-    };
-    const client = (await clientFactory());
-    return client.api.v1.namespaces(namespace).pods.post({ body: pod });
-}
-
-async function clearCompletedPods(namespace = 'default') {
-    const client = (await clientFactory());
-    await client.api.v1.namespaces(namespace).pods
-        .delete({ qs: { labelSelector: 'provisionedBy=codefresh-agent', fieldSelector: 'status.phase==Succeeded' } });
-    return client.api.v1.namespaces(namespace).pods
-        .delete({ qs: { labelSelector: 'provisionedBy=codefresh-agent', fieldSelector: 'status.phase==Failed' } });
-}
-
 module.exports = {
     clientFactory,
     kubeManager,
     prepareService,
-    createPod,
-    clearCompletedPods,
     init,
 };
