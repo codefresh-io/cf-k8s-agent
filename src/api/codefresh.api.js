@@ -119,7 +119,7 @@ class CodefreshAPI {
         }
     }
 
-    async getPendingTasks(type = 'rollback') {
+    async getPendingTasks(type = 'refresh-releases') {
         const uri = '/tasks';
         logger.debug(`Get tasks from ${uri}.`);
         return this._request({ uri, qs: { type } });
