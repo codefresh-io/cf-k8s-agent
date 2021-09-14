@@ -7,8 +7,15 @@ class KubeManagerHolder {
 
     async getInstance(config) {
         if (!this.kubeManager) {
-            this.kubeManager = new KubeManager(config);
-            await this.kubeManager.init();
+            this.kubeManager = new Promise(async (resolve, reject) => {
+                try {
+                    const kubeManager = new KubeManager(config);
+                    await kubeManager.init();
+                    resolve(kubeManager);
+                } catch (error) {
+                    reject(error);
+                }
+            });
         }
 
         return this.kubeManager;
