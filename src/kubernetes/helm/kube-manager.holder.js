@@ -15,7 +15,7 @@ class KubeManagerHolder {
                 } catch (error) {
                     reject(error);
                 }
-            })
+            });
         }
 
         return this.kubeManager;
