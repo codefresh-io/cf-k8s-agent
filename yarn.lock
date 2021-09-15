@@ -478,10 +478,10 @@
     request "^2.88.2"
     requestretry "^3.1.0"
 
-"@codefresh-io/kube-integration@1.23.6":
-  version "1.23.6"
-  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.23.6.tgz#40082fc5d6fb1ee87df6c58b882f5d90f9d21808"
-  integrity sha512-YMfwEuBD7WWIyUTDDesHZOr8uwDIu8w9WykEMBOWVR3kiZuT3GXbbJ8xnX7LZKTzHHz0ZYzqq0t3rE5RAaLPAQ==
+"@codefresh-io/kube-integration@1.23.8":
+  version "1.23.8"
+  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.23.8.tgz#a1db12ebba5593dc65a896604e87d2ebeae10457"
+  integrity sha512-ZZUwtkMR/2qU/XIWhPFmsp6PV6YQDta6fW3XckV/VNLeC1NR6MLez8xDzTHgOqDmZkkIv5db95GMenF6GarTog==
   dependencies:
     "@codefresh-io/docker-reference" "^0.0.5"
     "@codefresh-io/eventbus" "^1.3.3"
