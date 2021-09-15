@@ -85,6 +85,8 @@ spec:
             value: {{ .Values.useConfig | quote }}
           - name: CLEAN
             value: "{{ .Values.clean }}"
+          - name: MAX_HELM_HISTORY_SIZE
+            value: "{{ .Values.maxHelmHistorySize }}"
           - name: NAMESPACE
             value: "{{ .Release.Namespace }}"
           - name: ACCOUNTS
