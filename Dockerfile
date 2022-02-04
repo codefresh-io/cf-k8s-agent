@@ -10,8 +10,7 @@ COPY yarn.lock ./
 
 RUN apk add --no-cache bash openssh-client
 
-# install cf-api required binaries
-RUN apk update && apk add --no-cache  --virtual deps python make g++ krb5-dev git && \
+RUN apk update && apk add --no-cache --virtual deps make g++ krb5-dev bash git openssh-client && \
     yarn install --forzen-lockfile --production && \
     yarn cache clean && \
     apk del deps && \
