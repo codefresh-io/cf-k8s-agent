@@ -1,4 +1,4 @@
-FROM node:12.22.4-alpine
+FROM node:12.22.8-alpine
 
 WORKDIR /cf-k8s-agent
 
@@ -10,8 +10,7 @@ COPY yarn.lock ./
 
 RUN apk add --no-cache bash openssh-client
 
-# install cf-api required binaries
-RUN apk update && apk add --no-cache  --virtual deps python make g++ krb5-dev git && \
+RUN apk update && apk add --no-cache --virtual deps make g++ krb5-dev bash git openssh-client && \
     yarn install --forzen-lockfile --production && \
     yarn cache clean && \
     apk del deps && \
