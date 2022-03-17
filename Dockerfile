@@ -1,4 +1,4 @@
-FROM node:12.22.8-alpine
+FROM node:12.22-alpine
 
 WORKDIR /cf-k8s-agent
 
