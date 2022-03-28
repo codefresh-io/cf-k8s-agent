@@ -1,6 +1,6 @@
 {
   "name": "cf-k8s-agent",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "private": true,
   "scripts": {
     "start": "node ./src/index.js",
@@ -13,7 +13,7 @@
     "normalize-url": "4.5.1"
   },
   "dependencies": {
-    "@codefresh-io/kube-integration": "1.24.1",
+    "@codefresh-io/kube-integration": "1.24.3-api",
     "bluebird": "^3.5.4",
     "cf-monitor": "git+https://github.com/codefresh-io/cf-monitor.git#dd953bd18b01b3e8c2bf40677151de894dd15b8e",
     "cookie-parser": "~1.4.3",
