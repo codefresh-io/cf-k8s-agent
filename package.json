@@ -15,7 +15,7 @@
     "underscore": "1.12.1"
   },
   "dependencies": {
-    "@codefresh-io/kube-integration": "1.24.9-node16",
+    "@codefresh-io/kube-integration": "1.25.0",
     "bluebird": "^3.5.4",
     "cf-monitor": "git+https://github.com/codefresh-io/cf-monitor.git#v0.0.22",
     "cookie-parser": "~1.4.3",
