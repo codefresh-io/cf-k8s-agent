@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const rp = require('request-promise');
-const newRelicMonitor = require('cf-monitor');
 const Promise = require('bluebird');
 const zlib = require('zlib');
 const url = require('url');
@@ -36,7 +35,6 @@ class CodefreshAPI {
     sendEventsWithLogger(...args) {
         return this.sendEvents(...args).catch((error) => {
             logger.error(error);
-            newRelicMonitor.noticeError(error);
         });
     }
 
@@ -55,7 +53,6 @@ class CodefreshAPI {
                 callback();
             }
         } catch (error) {
-            newRelicMonitor.noticeError(error);
             logger.error(`Error while checking state: ${error.message}`);
         }
     }
@@ -74,7 +71,6 @@ class CodefreshAPI {
                 statistics.incPackages();
             }).catch((e) => {
                 logger.error(`Cant send because ${e}`);
-                newRelicMonitor.noticeError(e);
             });
     }
 
@@ -164,7 +160,6 @@ class CodefreshAPI {
         return rp(opts)
             .catch((e) => {
                 logger.error(`Request error: ${e.statusCode} - ${e.message}`);
-                newRelicMonitor.noticeError(e);
                 return Promise.reject(e);
             });
     }
