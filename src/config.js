@@ -1,5 +1,3 @@
-const packageJson = require('../package');
-
 const config = {
     // Cluster credentials. Are used when agent started outside of cluster and useCurrentContext=false
     clusterUrl: process.env.CLUSTER_URL,
@@ -27,7 +25,7 @@ const config = {
         license_key: process.env.NEWRELIC_LICENSE_KEY
     },
 
-    name: packageJson.name,
+    name: 'cf-k8s-agent',
     env: process.env.NODE_ENV || 'kubernetes',
 
     port: 9020,
