@@ -50,10 +50,14 @@ function _convertK8sConfigToUser(k8sConfig) {
 async function clientFactory() {
     const k8sConfig = resolveConfig();
     if (config.useK8sClient) {
-        const cluster = _convertK8sConfigToCluster(k8sConfig);
-        const user = _convertK8sConfigToUser(k8sConfig);
         const kc = new k8s.KubeConfig();
-        kc.loadFromClusterAndUser(cluster, user);
+        if (!config.clusterUrl) {
+            kc.loadFromCluster();
+        } else {
+            const cluster = _convertK8sConfigToCluster(k8sConfig);
+            const user = _convertK8sConfigToUser(k8sConfig);
+            kc.loadFromClusterAndUser(cluster, user);
+        }
         const coreApi = kc.makeApiClient(k8s.CoreV1Api);
         const appsApi = kc.makeApiClient(k8s.AppsV1Api);
 
