@@ -57,5 +57,6 @@ disableHelm: false
 
 helm3: false
 useConfig: false
+useK8sClient: false
 useNamespaceWideRole: false
 existingServiceAccount: ""
