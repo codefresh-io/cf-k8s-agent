@@ -29,7 +29,7 @@ function resolveConfig() {
 
 function _convertK8sConfigToCluster(k8sConfig) {
     return {
-        caData: _.get(k8sConfig, 'clusterCA') || _.get(k8sConfig, 'ca'),
+        caData: _.get(k8sConfig, 'ca'),
         server: _.get(k8sConfig, 'url'),
         skipTLSVerify: k8sConfig.insecureSkipTlsVerify,
     };
