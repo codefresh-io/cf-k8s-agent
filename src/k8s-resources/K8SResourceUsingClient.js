@@ -60,8 +60,19 @@ class K8SResourceUsingClient {
      * @param force - true will cause starting of new stream even if stream of this type already exists
      * @returns { stream|jsonStream }
      */
-    startStream() {
-        throw new Error(`Unsupported resource startStream`);
+    startStream(force = false) {
+        if (!force && this.stream) {
+            logger.info(`Return existing stream of type "${this.type}"`);
+            return this;
+        }
+
+        logger.info(`Start new stream of type "${this.type}"`);
+        this.stream = this.entity.getStream();
+
+        return {
+            stream: this.stream,
+            jsonStream: this.stream.pipe(new JSONStream()),
+        };
     }
 
     /**
@@ -69,7 +80,7 @@ class K8SResourceUsingClient {
      * @returns {stream|jsonStream}
      */
     restartStream() {
-        throw new Error(`Unsupported resource startStream`);
+        return this.startStream(true);
     }
 
 }
