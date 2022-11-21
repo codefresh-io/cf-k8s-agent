@@ -1,4 +1,5 @@
 const K8SResource = require('./K8SResource');
+const K8SResourceUsingClient = require('./K8SResourceUsingClient');
 const NamespaceStub = require('../k8s-resources/NamespaceStub');
 const config = require('../config');
 
@@ -11,7 +12,11 @@ async function createResources(client, metadata) {
     const ns = config.resourcesNamespace();
     const resources = {};
     Object.entries(metadata.resources).forEach(([resource, data]) => {
-        resources[resource] = new K8SResource(resource, data.path, client, ns);
+        if (client.newClient) {
+            resources[resource] = new K8SResourceUsingClient(resource, data.path, client, ns);
+        } else {
+            resources[resource] = new K8SResource(resource, data.path, client, ns);
+        }
     });
 
     if (ns) {
