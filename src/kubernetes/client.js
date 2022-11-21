@@ -56,8 +56,6 @@ async function clientFactory() {
         kc.loadFromClusterAndUser(cluster, user);
         const coreApi = kc.makeApiClient(k8s.CoreV1Api);
         const appsApi = kc.makeApiClient(k8s.AppsV1Api);
-        await coreApi.listNamespacedConfigMap('default');
-        await coreApi.listConfigMapForAllNamespaces();
 
         return { coreApi, appsApi, newClient: true };
     }
