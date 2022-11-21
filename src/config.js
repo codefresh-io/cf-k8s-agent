@@ -14,6 +14,7 @@ const config = {
     // If true, you need to set active context before starting agent. kubectl config use-context <contextname>
     // If false, cluster credentials will be got from environment. CLUSTER_URL, CLUSTER_TOKEN, CLUSTER_CA
     useCurrentContext: process.env.USE_CURRENT_CONTEXT || false,
+    useK8sClient: process.env.USE_K8S_CLIENT === 'true',
 
     // Interval for restoring stream from k8s cluster after error
     retryInterval: 2000,
