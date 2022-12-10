@@ -313,6 +313,13 @@
     lodash "^4.17.21"
     semver "^7.0.0"
 
+"@codefresh-io/cf-monitor@0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@codefresh-io/cf-monitor/-/cf-monitor-0.0.25.tgz#d72cface55b59b93c8a491c5960e9a2cdac09f37"
+  integrity sha512-zwKBdBZce7xQuBE1okP6eiLo2KOOXtu7X2FJmLUFM55ut6AmurY/UGyhuA/su9rK9MDW3bj61/X+2AZHZggbRw==
+  dependencies:
+    newrelic "^9.1.0"
+
 "@codefresh-io/docker-reference@^0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@codefresh-io/docker-reference/-/docker-reference-0.0.5.tgz#bf039ee1fe373ef823149b6336cc04d5979fbcd4"
@@ -344,11 +351,12 @@
     request "^2.88.2"
     requestretry "^7.0.0"
 
-"@codefresh-io/kube-integration@1.25.0":
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.25.0.tgz#daa08dc1dda39e691b34123c35da1dd07245df39"
-  integrity sha512-/WcBYjuAVLnFUZh3uZWEwvOoof5+M8YPnqbIAS15DFNp228g2NTmBsZlwG1kakfuJW1sr0n3Tjzr8oSRld9dZQ==
+"@codefresh-io/kube-integration@1.25.23":
+  version "1.25.23"
+  resolved "https://registry.yarnpkg.com/@codefresh-io/kube-integration/-/kube-integration-1.25.23.tgz#defffd3cc7d0c0a968bcd49c06fc1a19c0fa6a7c"
+  integrity sha512-vK6Af1REYlvBgjcGGi4bUKVa3WVBWllKwmxfWNkXgKn8EUHg3hqv3usZY2wyNFn4uoFC3I4nTGuIX7U2yhL0Wg==
   dependencies:
+    "@codefresh-io/cf-monitor" "0.0.25"
     "@codefresh-io/docker-reference" "^0.0.5"
     "@codefresh-io/eventbus" "1.4.3"
     "@codefresh-io/http-infra" "^1.8.11"
@@ -356,7 +364,6 @@
     body-parser "^1.17.2"
     cf-errors "^0.1.16"
     cf-logs "^1.1.24"
-    cf-monitor "git+https://github.com/codefresh-io/cf-monitor.git#00af78d3d7c7bffc41f27f75279a66a30f0ab987"
     compression "^1.6.2"
     cookie-parser "^1.4.3"
     eventemitter2 "^4.1.2"
@@ -1612,12 +1619,6 @@ cf-logs@^1.1.24:
   dependencies:
     lodash "^4.17.21"
     winston "3.3.3"
-
-"cf-monitor@git+https://github.com/codefresh-io/cf-monitor.git#00af78d3d7c7bffc41f27f75279a66a30f0ab987":
-  version "0.0.21"
-  resolved "git+https://github.com/codefresh-io/cf-monitor.git#00af78d3d7c7bffc41f27f75279a66a30f0ab987"
-  dependencies:
-    newrelic "5.10.0"
 
 chalk@^1.1.3:
   version "1.1.3"
@@ -4416,7 +4417,7 @@ negotiator@0.6.3:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.3.tgz#58e323a72fedc0d6f9cd4d31fe49f51479590ccd"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
-newrelic@5.10.0, newrelic@^8.0.0:
+newrelic@^8.0.0, newrelic@^9.1.0:
   version "8.17.1"
   resolved "https://registry.yarnpkg.com/newrelic/-/newrelic-8.17.1.tgz#0cea28c6eaab302815d10d5e57bd15e4016f1a50"
   integrity sha512-7KJQaTTszlX2DaHRFXgvhG1Ebt0sR57ix5PXw/06dALP2G2f+5B9VBI2QenYuiwwebcw9KcxI07+yQRjF46fWg==
