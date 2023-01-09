@@ -19,7 +19,7 @@
     "@codefresh-io/kube-integration": "1.25.23",
     "bluebird": "^3.5.4",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
+    "debug": "~3.1.0",
     "eslint-plugin-jest": "^22.3.0",
     "express": "~4.16.0",
     "jest": "^27.0.6",
