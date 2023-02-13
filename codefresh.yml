@@ -130,7 +130,6 @@ steps:
     candidate: ${{build_step}}
     tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}
-      - ${{CF_REVISION}}
     scale:
       push_quay_to_branch:
         registry: "${{REGISTRY_INTEGRATION_QUAY}}"
