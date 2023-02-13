@@ -122,6 +122,23 @@ steps:
             annotations:
               - S3_report_reference: "s3://${{SEC_SCAN_S3_BUCKET}}/codefresh/${{CF_REPO_NAME}}/${{CF_REPO_NAME}}:${{PACKAGE_VERSION}}.txt"
 
+  push_to_branch:
+    title: 'Pushing image to docker registries'
+    stage: push
+    type: push
+    image_name: ${{IMAGE_NAME}}
+    candidate: ${{build_step}}
+    tags:
+      - ${{CF_BRANCH_TAG_NORMALIZED}}
+      - ${{CF_REVISION}}
+    scale:
+      push_quay:
+        registry: "${{REGISTRY_INTEGRATION_QUAY}}"
+      push_dockerhub:
+        registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
+      push_gcr_enterprise:
+        registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
+
 
   push:
     title: 'Pushing image to docker registries'
