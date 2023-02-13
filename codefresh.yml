@@ -130,13 +130,12 @@ steps:
     candidate: ${{build_step}}
     tags:
       - ${{CF_BRANCH_TAG_NORMALIZED}}
-      - ${{CF_REVISION}}
     scale:
-      push_quay:
+      push_quay_to_branch:
         registry: "${{REGISTRY_INTEGRATION_QUAY}}"
-      push_dockerhub:
+      push_dockerhub_to_branch:
         registry: "${{REGISTRY_INTEGRATION_DOCKERHUB}}"
-      push_gcr_enterprise:
+      push_gcr_enterprise_to_branch:
         registry: "${{REGISTRY_INTEGRATION_ENTERPRISE}}"
 
 
