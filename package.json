@@ -14,7 +14,8 @@
     "normalize-url": "4.5.1",
     "underscore": "1.12.1",
     "newrelic": "^8.0.0",
-    "mongoose": "6.4.6"
+    "mongoose": "6.4.6",
+    "http-cache-semantics": "4.1.1"
   },
   "dependencies": {
     "@codefresh-io/kube-integration": "1.25.23",
@@ -23,7 +24,6 @@
     "debug": "~2.6.9",
     "eslint-plugin-jest": "^22.3.0",
     "express": "4.17.3",
-    "jest": "^27.0.6",
     "json-stream": "^1.0.0",
     "kubernetes-client": "9.0.0",
     "@kubernetes/client-node": "0.17.1",
@@ -36,6 +36,7 @@
   },
   "main": "bin/www",
   "devDependencies": {
+    "jest": "^27.0.6",
     "eslint": "^4.18.2",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
