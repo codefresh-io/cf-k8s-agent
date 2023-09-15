@@ -19,14 +19,14 @@ steps:
   install_dependencies:
     title: 'Installing testing dependencies'
     stage: preparation
-    image: node:14.21.1
+    image: node:16.20.2
     commands:
     - yarn install --frozen-lockfile
 
   lint:
     title: 'lint code'
     stage: preparation
-    image: node:14.21.1
+    image: node:16.20.2
     commands:
     - yarn lint
 
