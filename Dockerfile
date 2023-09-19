@@ -1,4 +1,4 @@
-FROM node:14.21.3-alpine
+FROM node:16.20.2-alpine
 
 WORKDIR /cf-k8s-agent
 
@@ -11,6 +11,7 @@ COPY yarn.lock ./
 RUN apk add --no-cache --virtual deps python3 make g++ krb5-dev git && \
     yarn install --forzen-lockfile --production && \
     yarn cache clean && \
+    npm update -g npm && \
     apk del deps && \
     rm -rf /tmp/*
 
