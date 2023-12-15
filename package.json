@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./src/index.js",
-    "test": "jest --coverage --detectOpenHandles --silent",
+    "test": "jest --coverage --detectOpenHandles --silent --passWithNoTests",
     "lint": "eslint ."
   },
   "resolutions": {
