@@ -22,7 +22,7 @@
     "bluebird": "^3.5.4",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "4.17.3",
+    "express": "4.20.0",
     "json-stream": "^1.0.0",
     "kubernetes-client": "9.0.0",
     "@kubernetes/client-node": "0.17.1",
