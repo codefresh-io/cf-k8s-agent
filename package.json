@@ -26,7 +26,7 @@
     "express": "4.21.2",
     "json-stream": "^1.0.0",
     "kubernetes-client": "9.0.0",
-    "@kubernetes/client-node": "0.22.2",
+    "@kubernetes/client-node": "1.2.0",
     "lodash": "^4.17.21",
     "morgan": "~1.9.0",
     "request": "^2.88.0",
